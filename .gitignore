@@ -43,6 +43,7 @@ pom.xml.asc
 
 # Node
 node_modules
+dist
 
 # Visual Studio Code
 .vscode
