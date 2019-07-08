@@ -48,9 +48,9 @@ All actions require an **id** field that contains the id of the search
 box they are related to.  The main actions that you might want to emit
 or listen for elsewhere are:
 
- 1) `SYNSET_SEARCH_SUBMITTED`: emitted when the user submits the form
+ 1. `SYNSET_SEARCH_SUBMITTED`: emitted when the user submits the form
  that initiates a search. Created by `submitSearch` function.
- 1) `SYNSET_SEARCH_RESULTS_RETURNED`: emitted when results are
+ 1. `SYNSET_SEARCH_RESULTS_RETURNED`: emitted when results are
  returned by a search. Created by `receiveResults` function. 
  
 The action creator which handles the full request-response cycle for a
@@ -66,8 +66,8 @@ changes.)
 
 The two important selectors for this component are:
 
- 1) `synsets`: the synsets returned by a search in a particular search box
- 1) `searchBoxState`: the whole state tree for a particular search box
+ 1. `synsets`: the synsets returned by a search in a particular search box
+ 1. `searchBoxState`: the whole state tree for a particular search box
 
 For example, if you want to use the synsets returned by a search to
 display a table of results, you could do:
