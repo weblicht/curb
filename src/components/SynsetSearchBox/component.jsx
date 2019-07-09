@@ -46,7 +46,7 @@ class SynsetSearchBox extends React.Component {
                                 <input
                                     className="form-control"
                                     type="text"
-                                    placeholder={this.props.mostRecentSearchTerm}
+                                    placeholder={this.props.mostRecentSearchTerm || "Enter a Word or Id"}
                                     value={this.props.currentSearchTerm}
                                     onChange={this.handleOnSearchTermChange}
                                     autoFocus={true}
