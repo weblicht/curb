@@ -2,6 +2,7 @@
 // State management for SynsetSearchBox state 
 
 import { actionTypes } from './actions';
+import { makePublicReducer } from '../../helpers';
 import { ValidationError } from '../../validation';
 
 import SI from 'seamless-immutable';
@@ -17,7 +18,7 @@ const searchBoxPrivState = SI({
 export { searchBoxPrivState as defaultSearchBoxState }; 
 
 // manages private state for an individual search box
-function privateReducer(state = searchBoxPrivState, action) {
+function searchBoxPrivReducer(state = searchBoxPrivState, action) {
     switch (action.type) {
     case actionTypes.SYNSET_SEARCH_TOGGLE_CASE: {
         return state.merge({ ignoreCase: !state.ignoreCase });
@@ -28,9 +29,17 @@ function privateReducer(state = searchBoxPrivState, action) {
     case actionTypes.SYNSET_SEARCH_UPDATE_ERROR: {
         return state.merge({ error: action.error });
     }
+    case actionTypes.SYNSET_SEARCH_SUBMITTED: {
+        // once a search is submitted, the current search term becomes
+        // the most recent search term
+        return state.merge({
+            mostRecentSearchTerm: state.currentSearchTerm,
+            currentSearchTerm: ''
+        })
+    }
     case actionTypes.SYNSET_SEARCH_RESULTS_RETURNED: {
         return state.merge({
-            synsets: action.data.synsets,
+            synsets: action.data.synsets, // TODO: do we really need a copy of these results here?
             error: action.data.length === 0 ? 'No synsets found.' : ''
         })
     }
@@ -39,37 +48,13 @@ function privateReducer(state = searchBoxPrivState, action) {
     }
 }
 
-// overall search boxes state is managed by publicReducer; it may include
-// state for multiple search boxes:
+// overall search boxes state is managed by publicReducer; it handles
+// state for multiple search boxes by their ids:
 const defaultSearchBoxesState = SI({});
+const publicReducer = makePublicReducer(searchBoxPrivReducer,
+                                        actionTypes.SYNSET_SEARCH_NEW_SEARCH_BOX,
+                                        actionTypes,
+                                        defaultSearchBoxesState);
 
-function publicReducer(state = defaultSearchBoxesState, action) {
-    const componentId = action.id;
-
-    switch (action.type) {
-    // initialize a part of the store for a new search box during
-    // component construction; it's necessary to do this by handling
-    // an action because we won't know component IDs until they are
-    // created by some consuming application. This also enables the
-    // consuming application to dynamically add search boxes if
-    // necessary.
-    case actionTypes.SYNSET_SEARCH_NEW_SEARCH_BOX: {
-        return SI.setIn(state, ['byId', componentId],
-                        searchBoxPrivState);
-    }
-    // any other SYNSET_SEARCH actions are handled by the privateReducer:
-    default: {
-        if (action.type.startsWith("SYNSET_SEARCH")) {
-            const oldPrivState = state.byId[componentId];
-            return SI.setIn(state, ['byId', componentId],
-                            privateReducer(oldPrivState, action));
-        } else {
-            return state;
-        }
-        
-    }
-
-    }
-}
 export { publicReducer as synsetSearchBoxes };        
 
