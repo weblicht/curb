@@ -2,7 +2,7 @@
 // State management for SynsetSearchBox state 
 
 import { actionTypes } from './actions';
-import { makePublicReducer } from '../../helpers';
+import { makeByIdReducer } from '../../helpers';
 import { ValidationError } from '../../validation';
 
 import SI from 'seamless-immutable';
@@ -48,13 +48,13 @@ function searchBoxPrivReducer(state = searchBoxPrivState, action) {
     }
 }
 
-// overall search boxes state is managed by publicReducer; it handles
+// overall search boxes state is managed by byIdReducer; it handles
 // state for multiple search boxes by their ids:
 const defaultSearchBoxesState = SI({});
-const publicReducer = makePublicReducer(searchBoxPrivReducer,
-                                        actionTypes.SYNSET_SEARCH_NEW_SEARCH_BOX,
-                                        actionTypes,
-                                        defaultSearchBoxesState);
+const byIdReducer = makeByIdReducer(searchBoxPrivReducer,
+                                    actionTypes.SYNSET_SEARCH_NEW_SEARCH_BOX,
+                                    actionTypes,
+                                    defaultSearchBoxesState);
 
-export { publicReducer as synsetSearchBoxes };        
+export { byIdReducer as synsetSearchBoxes };        
 

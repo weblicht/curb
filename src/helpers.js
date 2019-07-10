@@ -17,26 +17,38 @@ export function actionTypesFromStrings (strs) {
     return types;
 }
 
-// makePublicReducer 
+// makeByIdReducer
 //
 // Creates a reducer that can manage the state for a dynamic list of
-// components based on their IDs.  Assumes that IDs are unique and
-// included on the .id field of actions (in particular, those actions
-// with type === createAction).  Parameters:
-//   privReducer: function that manages the state for just one 
+// components based on their IDs.  That is, given a reducer which
+// manages state that looks like { foo: fooVal, ...}, this
+// function creates a reducer which manages state that looks like:
+// { byId: {
+//      idA: { foo: fooVal, ... },
+//      idB: { foo: fooVal, ... },
+//      ...
+//   }
+// }
+//           
+// The returned reducer assumes that IDs are unique within the slice
+// of state that it manages, and that an .id field is included on all
+// of the actions it handles.  
+//
+// Parameters:
+//   innerReducer: reducer function that manages the internal state for a  
 //   createActionType: an action type to listen for that indicates a new
-//     part of the store should be created to contain the state for a new
-//     component instance
-//   privActions: an action types object that specifies the action types the
-//     privReducer can handle. Note: these actions are *required* to have an
-//     .id field when emitted!
-//   defaultPublicState (optional): a Seamless Immutable object representing
-//     the default state which the returned reducer will manage
-export function makePublicReducer(privReducer,
-                                  createActionType,
-                                  privActions,
-                                  defaultPublicState = SI({})) {
-    return function (state = defaultPublicState, action) {
+//     part of the state should be created corresponding to a new ID
+//   innerActions: an action types object that specifies the action types the
+//     innerReducer can handle. Important: these actions are *required* to have
+//     an .id field whenever they are emitted!
+//   initialSharedState (optional): a Seamless Immutable object that represents
+//     any initial state.  The byId object will become a property of this object.
+//     
+export function makeByIdReducer(innerReducer,
+                                createActionType,
+                                innerActions,
+                                initialSharedState = SI({})) {
+    return function (state = initialSharedState, action) {
         const componentId = action.id;
         var initializedState = state;
         
@@ -55,7 +67,7 @@ export function makePublicReducer(privReducer,
             // default state handled by the private reducer; see 
             // https://redux.js.org/basics/reducers
             // https://redux.js.org/api/combinereducers
-            const defaultPrivState = privReducer(undefined,
+            const defaultPrivState = innerReducer(undefined,
                                                  // dummy action type:
                                                  { type: '_DEFAULT_STATE_PROBE' }); 
 
@@ -65,15 +77,14 @@ export function makePublicReducer(privReducer,
         } 
 
         // We now pass the appropriate part of the initialized state
-        // on to the privReducer, and let it handle the action,
+        // on to the innerReducer, and let it handle the action,
         // including possibly the creation action handled above, since
-        // the privReducer may want to perform further initialization
+        // the innerReducer may want to perform further initialization
         // with the data in the action object.
-
-        if (action.type in privActions) {
+        if (action.type in innerActions) {
             const oldPrivState = initializedState.byId[componentId];
             return SI.setIn(initializedState, ['byId', componentId],
-                            privReducer(oldPrivState, action));
+                            innerReducer(oldPrivState, action));
 
         // any other actions are not handled by us and should return
         // the original state unchanged:
