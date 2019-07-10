@@ -27,23 +27,25 @@ export function actionTypesFromStrings (strs) {
 //   createActionType: an action type to listen for that indicates a new
 //     part of the store should be created to contain the state for a new
 //     component instance
-//   privateActions: the action types handled by privReducer
+//   privActions: an action types object that specifies the action types the
+//     privReducer can handle. Note: these actions are *required* to have an
+//     .id field when emitted!
 //   defaultPublicState (optional): a Seamless Immutable object representing
 //     the default state which the returned reducer will manage
 export function makePublicReducer(privReducer,
                                   createActionType,
-                                  privateActions,
+                                  privActions,
                                   defaultPublicState = SI({})) {
     return function (state = defaultPublicState, action) {
         const componentId = action.id;
-       
-        switch (action.type) {
-
-        // initialize a part of the store for a given component during
-        // component construction; it's necessary to do this by handling
-        // an action because we won't know component IDs until they are
-        // created by some consuming application: 
-        case createActionType: {
+        var initializedState = state;
+        
+        // An action of the createActionType initializes a part of the
+        // store for a given component during component construction;
+        // it's necessary to do this by handling an action because we
+        // won't know component IDs until they are created by some
+        // consuming application.
+        if (action.type === createActionType) {
             if (componentId === undefined) {
                 throw new InternalError(`${createActionType} was emitted with an undefined .id`);
             }
@@ -57,23 +59,26 @@ export function makePublicReducer(privReducer,
                                                  // dummy action type:
                                                  { type: '_DEFAULT_STATE_PROBE' }); 
 
-            return SI.setIn(state, ['byId', componentId],
-                            defaultPrivState);
-        }
-        default: {
-            // any actions in privateAction are handled by the privReducer:
-            if (action.type in privateActions) {
-                
- 
-                const oldPrivState = state.byId[componentId];
-                return SI.setIn(state, ['byId', componentId],
-                                privReducer(oldPrivState, action));
+            initializedState = SI.setIn(state, ['byId', componentId],
+                                        defaultPrivState);
+            
+        } 
 
-            // and any other actions are not handled by us:
-            } else {
-                return state;
-            }
-        }
+        // We now pass the appropriate part of the initialized state
+        // on to the privReducer, and let it handle the action,
+        // including possibly the creation action handled above, since
+        // the privReducer may want to perform further initialization
+        // with the data in the action object.
+
+        if (action.type in privActions) {
+            const oldPrivState = initializedState.byId[componentId];
+            return SI.setIn(initializedState, ['byId', componentId],
+                            privReducer(oldPrivState, action));
+
+        // any other actions are not handled by us and should return
+        // the original state unchanged:
+        } else {
+            return state;
         }
     }
 }
