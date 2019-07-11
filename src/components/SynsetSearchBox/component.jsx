@@ -1,7 +1,7 @@
 // SynsetSearchBox/component.jsx
 // Definition of SynsetSearchBox component
 
-import { registerSearchBox, doSearch, updateSearchTerm, updateIgnoreCase } from './actions';
+import { doSearch, updateSearchTerm, updateIgnoreCase } from './actions';
 import { searchBoxState } from './selectors';
 
 import React from 'react';
@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 class SynsetSearchBox extends React.Component {
     constructor(props){
         super(props);
-        this.props.register();
         
         this.handleOnSearchTermChange = this.handleOnSearchTermChange.bind(this);
         this.handleToggleCheckIgnoreCase = this.handleToggleCheckIgnoreCase.bind(this); 
@@ -76,7 +75,6 @@ function mapStateToProps (state, ownProps) {
 
 function mapDispatchToProps (dispatch, ownProps) {
     return {
-        register: () => dispatch(registerSearchBox(ownProps.id)),
         doSearch: (term, igcase) => dispatch(doSearch(ownProps.id, term, igcase)),
         updateSearchTerm: (term) => dispatch(updateSearchTerm(ownProps.id, term)),
         updateIgnoreCase: () => dispatch(updateIgnoreCase(ownProps.id)),

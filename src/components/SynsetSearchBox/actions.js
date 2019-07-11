@@ -5,8 +5,8 @@ import { apiPath } from '../../constants';
 
 import axios from 'axios';
 
+// these are all per-id actions:
 export const actionTypes = actionTypesFromStrings([
-    'SYNSET_SEARCH_NEW_SEARCH_BOX',
     'SYNSET_SEARCH_UPDATE_SEARCH_TERM',
     'SYNSET_SEARCH_TOGGLE_CASE',
     'SYNSET_SEARCH_UPDATE_ERROR',
@@ -16,12 +16,8 @@ export const actionTypes = actionTypesFromStrings([
 ])
 
 
-// Simple action creators: these emit actions that do not call the
-// backend and only serve to update the UI
+// Simple action creators
 
-export function registerSearchBox(id) {
-    return { type: actionTypes.SYNSET_SEARCH_NEW_SEARCH_BOX, id };
-}
 export function updateSearchTerm(id, searchTerm) {
     return { type: actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_TERM, id, searchTerm };
 }

@@ -8,17 +8,17 @@ import { ValidationError } from '../../validation';
 import SI from 'seamless-immutable';
 
 // internal state for a particular search box:
-const searchBoxPrivState = SI({
+const searchBoxInnerState = SI({
     ignoreCase: false,
     currentSearchTerm: '',
     mostRecentSearchTerm: '',
     synsets: [], // TODO: these represent results; but are there any other kinds of results?
     error: ''
 })
-export { searchBoxPrivState as defaultSearchBoxState }; 
+export { searchBoxInnerState as defaultSearchBoxState }; 
 
 // manages private state for an individual search box
-function searchBoxPrivReducer(state = searchBoxPrivState, action) {
+function searchBoxInnerReducer(state = searchBoxInnerState, action) {
     switch (action.type) {
     case actionTypes.SYNSET_SEARCH_TOGGLE_CASE: {
         return state.merge({ ignoreCase: !state.ignoreCase });
@@ -48,13 +48,9 @@ function searchBoxPrivReducer(state = searchBoxPrivState, action) {
     }
 }
 
-// overall search boxes state is managed by byIdReducer; it handles
-// state for multiple search boxes by their ids:
-const defaultSearchBoxesState = SI({});
-const byIdReducer = makeByIdReducer(searchBoxPrivReducer,
-                                    actionTypes.SYNSET_SEARCH_NEW_SEARCH_BOX,
-                                    actionTypes,
-                                    defaultSearchBoxesState);
+// manages overall search boxes state by their ids:
+const byIdReducer = makeByIdReducer(searchBoxInnerReducer,
+                                    actionTypes);
 
 export { byIdReducer as synsetSearchBoxes };        
 
