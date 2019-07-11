@@ -30,61 +30,57 @@ export function actionTypesFromStrings (strs) {
 //   }
 // }
 //           
-// The returned reducer assumes that IDs are unique within the slice
-// of state that it manages, and that an .id field is included on all
-// of the actions it handles.  
+// The returned reducer assumes that IDs are unique within the state
+// tree that it manages, and that an .id field is included on all of
+// the actions it handles.  Based on that .id, it routes the
+// corresponding slice of state to the given reducer, and updates the
+// state tree with its return value.  Thus, the given reducer is
+// called *exactly once* per action.
 //
 // Parameters:
 //   innerReducer: reducer function that manages the internal state for a  
-//   createActionType: an action type to listen for that indicates a new
-//     part of the state should be created corresponding to a new ID
 //   innerActions: an action types object that specifies the action types the
 //     innerReducer can handle. Important: these actions are *required* to have
 //     an .id field whenever they are emitted!
 //   initialSharedState (optional): a Seamless Immutable object that represents
-//     any initial state.  The byId object will become a property of this object.
+//     an initial state tree for the returned reducer to manage.  The byId object
+//     will become a property of this object.
 //     
 export function makeByIdReducer(innerReducer,
-                                createActionType,
                                 innerActions,
                                 initialSharedState = SI({})) {
     return function (state = initialSharedState, action) {
         const componentId = action.id;
         var initializedState = state;
-        
-        // An action of the createActionType initializes a part of the
-        // store for a given component during component construction;
-        // it's necessary to do this by handling an action because we
-        // won't know component IDs until they are created by some
-        // consuming application.
-        if (action.type === createActionType) {
-            if (componentId === undefined) {
-                throw new InternalError(`${createActionType} was emitted with an undefined .id`);
-            }
 
-            // redux reducers are required to return a default state
-            // if given an undefined state, so we use that to get the
-            // default state handled by the private reducer; see 
-            // https://redux.js.org/basics/reducers
-            // https://redux.js.org/api/combinereducers
-            const defaultPrivState = innerReducer(undefined,
-                                                 // dummy action type:
-                                                 { type: '_DEFAULT_STATE_PROBE' }); 
-
-            initializedState = SI.setIn(state, ['byId', componentId],
-                                        defaultPrivState);
-            
-        } 
-
-        // We now pass the appropriate part of the initialized state
-        // on to the innerReducer, and let it handle the action,
-        // including possibly the creation action handled above, since
-        // the innerReducer may want to perform further initialization
-        // with the data in the action object.
         if (action.type in innerActions) {
-            const oldPrivState = initializedState.byId[componentId];
+
+            if (componentId === undefined) {
+                throw new InternalError(`${action.type} was emitted with an undefined .id`);
+            }
+        
+            // initialize a slice of state corresponding to the given
+            // ID if it doesn't yet exist
+            if ((state.byId === undefined) ||
+                !(componentId in state.byId)) {
+                // redux reducers are required to return a default
+                // state if given an undefined state, so we use that to get
+                // the default state handled by the inner reducer; see 
+                // https://redux.js.org/basics/reducers
+                // https://redux.js.org/api/combinereducers
+                const defaultInnerState = innerReducer(undefined,
+                                                      // dummy action type:
+                                                      { type: '_DEFAULT_STATE_PROBE' }); 
+
+                initializedState = SI.setIn(state, ['byId', componentId],
+                                            defaultInnerState);
+            }
+            
+            // pass the appropriate slice of the initialized state on
+            // to the innerReducer, and let it handle the action
+            const oldInnerState = initializedState.byId[componentId];
             return SI.setIn(initializedState, ['byId', componentId],
-                            innerReducer(oldPrivState, action));
+                            innerReducer(oldInnerState, action));
 
         // any other actions are not handled by us and should return
         // the original state unchanged:
