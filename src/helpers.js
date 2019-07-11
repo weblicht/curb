@@ -17,6 +17,11 @@ export function actionTypesFromStrings (strs) {
     return types;
 }
 
+// mergeActionTypes :: Object -> Object -> Object
+export function mergeActionTypes(typesA, typesB) {
+    return { ...typesA, ...typesB };
+}
+
 // makeByIdReducer
 //
 // Creates a reducer that can manage the state for a dynamic list of
@@ -33,12 +38,13 @@ export function actionTypesFromStrings (strs) {
 // The returned reducer assumes that IDs are unique within the state
 // tree that it manages, and that an .id field is included on all of
 // the actions it handles.  Based on that .id, it routes the
-// corresponding slice of state to the given reducer, and updates the
-// state tree with its return value.  Thus, the given reducer is
-// called *exactly once* per action.
+// corresponding slice of state to the given reducer (first
+// initializing it if necessary), and updates the state tree with the
+// return value.  Thus, the given reducer is called *exactly once* per
+// action handled.
 //
 // Parameters:
-//   innerReducer: reducer function that manages the internal state for a  
+//   innerReducer: reducer function that manages internal slices of state 
 //   innerActions: an action types object that specifies the action types the
 //     innerReducer can handle. Important: these actions are *required* to have
 //     an .id field whenever they are emitted!
@@ -53,43 +59,102 @@ export function makeByIdReducer(innerReducer,
         const componentId = action.id;
         var initializedState = state;
 
-        if (action.type in innerActions) {
-
-            if (componentId === undefined) {
-                throw new InternalError(`${action.type} was emitted with an undefined .id`);
-            }
-        
-            // initialize a slice of state corresponding to the given
-            // ID if it doesn't yet exist
-            if ((state.byId === undefined) ||
-                !(componentId in state.byId)) {
-                // redux reducers are required to return a default
-                // state if given an undefined state, so we use that to get
-                // the default state handled by the inner reducer; see 
-                // https://redux.js.org/basics/reducers
-                // https://redux.js.org/api/combinereducers
-                const defaultInnerState = innerReducer(undefined,
-                                                      // dummy action type:
-                                                      { type: '_DEFAULT_STATE_PROBE' }); 
-
-                initializedState = SI.setIn(state, ['byId', componentId],
-                                            defaultInnerState);
-            }
-            
-            // pass the appropriate slice of the initialized state on
-            // to the innerReducer, and let it handle the action
-            const oldInnerState = initializedState.byId[componentId];
-            return SI.setIn(initializedState, ['byId', componentId],
-                            innerReducer(oldInnerState, action));
-
-        // any other actions are not handled by us and should return
-        // the original state unchanged:
-        } else {
+        // any actions other than those in innerActions are not
+        // handled by us and should return the original state
+        // unchanged:
+        if (!(action.type in innerActions)) {
             return state;
         }
+
+        if (componentId === undefined) {
+            throw new InternalError(`${action.type} was emitted with an undefined .id`);
+        }
+        
+        // initialize a slice of state corresponding to the given
+        // ID if it doesn't yet exist
+        if ((state.byId === undefined) ||
+            !(componentId in state.byId)) {
+            // redux reducers are required to return a default
+            // state if given an undefined state, so we use that to get
+            // the default state handled by the inner reducer; see 
+            // https://redux.js.org/basics/reducers
+            // https://redux.js.org/api/combinereducers
+            const defaultInnerState = innerReducer(undefined,
+                                                   // dummy action type:
+                                                   { type: '_DEFAULT_STATE_PROBE' }); 
+            
+            initializedState = SI.setIn(state, ['byId', componentId],
+                                        defaultInnerState);
+        }
+            
+        // pass the appropriate slice of the initialized state on
+        // to the innerReducer, and let it handle the action
+        const oldInnerState = initializedState.byId[componentId];
+        return SI.setIn(initializedState, ['byId', componentId],
+                        innerReducer(oldInnerState, action));
+
     }
 }
 
+// makeBroadcastingReducer
+//
+// Creates a reducer that "broadcasts" actions which can potentially
+// update multiple parts of a state tree that looks like:
+//
+// { byId: {
+//      idA: { foo: fooVal, ... },
+//      idB: { foo: fooVal, ... },
+//      ...
+//   }
+// }
+//           
+// given a reducer which handles a state like { foo: fooVal, ...}.
+//
+// The given reducer is called with the action to be handled and the
+// slice of state corresponding to a particular id for *every* id that
+// already exists in the state tree.  Thus, the given reducer will be
+// called *as many times as there are IDs*.
+//
+// This provides a complementary pattern to the type of reducer
+// returned by makeByIdReducer.  Use makeByIdReducer to handle actions
+// where you know, at the time you generate the action, the ID for the
+// slice of the state tree it should update.  Use this function to
+// handle actions that might need to update the tree in multiple
+// places, or where the ID of the slice of state that needs to be
+// updated is not known at the point where the action is generated.
+//
+// Parameters:
+//   innerReducer: reducer function that manages internal slices of state 
+//   innerActions: an action types object that specifies the action types the
+//     innerReducer can handle. 
+//
+export function makeBroadcastingReducer(innerReducer, innerActions) {
+    return function (state = SI({}), action) {
+
+        // any actions other than those in innerActions are not handled by us;
+        // and if there is not yet an internal state tree, there's nothing to do.
+        if (!(action.type in innerActions) || 
+            (state.byId === undefined)) {    
+            return state;
+        }
+
+        // for actions we should handle, create a new state by
+        // iterating over all the slices of the .byId property and
+        // letting the innerReducer return an updated state for that
+        // slice:
+        var newState = state;
+        
+        // Object.getOwnPropertyNames ensures we only iterate over the
+        // actual IDs and not property names elsewhere in the
+        // prototype chain
+        Object.getOwnPropertyNames(state.byId).forEach( id => {
+            newState = SI.setIn(newState, ["byId", id],
+                                innerReducer(state.byId[id], action));
+            })
+                                                        
+        return newState;
+    }
+}
        
 // debugResponse :: Response ->
 // can drop this onto Promise objects to debug errors in server responses
