@@ -3,6 +3,7 @@
 
 import { InternalError } from './errors';
 
+import axios from 'axios';
 import SI from 'seamless-immutable';
 
 // actionTypesFromStrings :: [ String ] -> Object
@@ -20,6 +21,68 @@ export function actionTypesFromStrings (strs) {
 // mergeActionTypes :: Object -> Object -> Object
 export function mergeActionTypes(typesA, typesB) {
     return { ...typesA, ...typesB };
+}
+
+// makeApiActions
+// Makes action types, action creators, and async actions for
+// interacting with data via an API
+// params:
+//   prefix :: String : used to name action types
+//   endpoints :: { get: URL, ... } : object mapping REST names to endpoint URLs
+// returns: {
+//   actionTypes: action types object with requested, returned, error types
+//   fetchActions: {
+//     doFetch(params): async action creator that performs complete request/response cycle
+//     requested(params): action creator for request
+//     returned(params, data): action creator for returned data
+//     error(params): action creator for fetch error
+//       where params is an object describing (axios) request parameters for the API, e.g.,
+//       { id: some_id } or { lexUnitId: some_id }
+//   }
+// }
+export function makeApiActions(prefix, endpoints) {
+
+    const requested = prefix + '_REQUESTED';
+    const returned = prefix + '_RETURNED';
+    const errored = prefix + '_FETCH_ERROR';
+    const actionTypes = actionTypesFromStrings([
+        requested,
+        returned,
+        errored
+    ]);
+
+    function fetchRequested(params) {
+        return { type: actionTypes[requested], params };
+    }
+    function fetchReturned(params, data) {
+        return { type: actionTypes[returned], params, data };
+    }
+    function fetchError(params, error) {
+        return { type: actionTypes[error], params, error };
+    }
+
+    function doFetch(params) {
+        return function (dispatch) {
+            dispatch(fetchRequested(params));
+
+            return axios.get(endpoints.get, params).then(
+                response => dispatch(fetchReturned(params, response.data)),
+                err => dispatch(fetchError(params, err)));
+        }
+    }
+    // TODO: there is room to expand this to other REST actions; but
+    // at the moment we have no need for that and the API doesn't
+    // support it
+
+    return {
+        actionTypes,
+        fetchActions: {
+            doFetch,
+            requested: fetchRequested,
+            returned: fetchReturned,
+            error: fetchError,
+        }
+    };
 }
 
 // makeByIdReducer
