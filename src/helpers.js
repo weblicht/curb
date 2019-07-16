@@ -31,6 +31,12 @@ export function mergeActionTypes(typesA, typesB) {
 // params:
 //   prefix :: String : used to name action types
 //   endpoints :: { get: URL, ... } : object mapping REST names to endpoint URLs
+//   paramsTransformer (optional) :: params -> Object : a function
+//     that transforms API request params into action object
+//     fields. The results of paramsTransformer(params) will be
+//     spliced into action objects returned by the returned action
+//     creators.
+//
 // returns: {
 //   actionTypes: action types object with requested, returned, error types
 //   fetchActions: {
@@ -42,7 +48,9 @@ export function mergeActionTypes(typesA, typesB) {
 //       { id: some_id } or { lexUnitId: some_id }
 //   }
 // }
-export function makeApiActions(prefix, endpoints) {
+export function makeApiActions(prefix, endpoints,
+                               paramsTransformer = (params) => undefined,
+                              ) {
 
     const requested = prefix + '_REQUESTED';
     const returned = prefix + '_RETURNED';
@@ -54,13 +62,13 @@ export function makeApiActions(prefix, endpoints) {
     ]);
 
     function fetchRequested(params) {
-        return { type: actionTypes[requested], params };
+        return { type: actionTypes[requested], params, ...paramsTransformer(params) };
     }
     function fetchReturned(params, data) {
-        return { type: actionTypes[returned], params, data };
+        return { type: actionTypes[returned], params, ...paramsTransformer(params), data };
     }
     function fetchError(params, error) {
-        return { type: actionTypes[error], params, error };
+        return { type: actionTypes[errored], params, ...paramsTransformer(params), error };
     }
 
     function doFetch(params) {
