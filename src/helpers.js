@@ -109,16 +109,18 @@ export function makeApiActions(prefix, endpoints,
 //     selector should return some other empty-but-trueish-value, such
 //     as [] or {}.)
 //   fetchActions: an object containing API action creators for fetching, e.g. as
-//     returned by makeApiActions.  
-//   innerMSTP: 
-//   innerMDTP: 
+//     returned by makeApiActions.
+//   innerMSTP (optional): 
+//   innerMDTP (optional): 
 //      mapStateToProps and mapDispatchToProps functions to pass
 //      through to redux's connect
 // 
 // Returns a function with which to wrap a component.  Thus, you can use it very much
 // like redux's connect() function:
 // ConnectedSomeComponent = connectWithApi(selector, fetchActions)(SomeComponent);
-export function connectWithApi(selector, fetchActions, innerMSTP, innerMDTP) {
+export function connectWithApi(selector,
+                               fetchActions,
+                               innerMSTP, innerMDTP) {
     // TODO: again, there's room to expand here to other REST methods
     // In that case we want not just fetchActions, but a whole API actions object
     function wrap(Component) {
@@ -158,7 +160,7 @@ export function connectWithApi(selector, fetchActions, innerMSTP, innerMDTP) {
 
     function mapDispatchToProps(dispatch, ownProps) {
         return {
-            // user must define props.fetchParams 
+            // for now, user must supply fetchParams 
             fetchData: () => dispatch(
                 fetchActions.doFetch(ownProps.fetchParams)),
             ...innerMDTP ? innerMDTP(dispatch, ownProps) : undefined
