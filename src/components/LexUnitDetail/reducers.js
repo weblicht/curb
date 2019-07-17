@@ -1,35 +1,14 @@
 import { lexUnitsActions, wiktDefsActions, iliActions, examplesActions } from './actions';
-
+import { makeSimpleApiReducer } from '../../helpers';
 import { combineReducers } from 'redux';
 import SI from 'seamless-immutable';
 
 
 const wiktDefsActionTypes = wiktDefsActions.actionTypes;
-
-function wiktDefs(state = SI({}), action) {
-    switch (action.type) {
-    case wiktDefsActionTypes.WIKT_DEFS_RETURNED: {
-        const lexUnitId = action.params.lexUnitId;
-        return SI.setIn(state, ["byLexUnitId", lexUnitId],
-                        action.data.wikiRecords);
-    }
-    default:
-        return state;
-    }
-}
-
+const wiktDefs = makeSimpleApiReducer(wiktDefsActionTypes, ["byLexUnitId"], "lexUnitId");
+                                      
 const iliActionTypes = iliActions.actionTypes;
-function iliDefs(state = SI({}), action) {
-    switch (action.type) {
-    case iliActionTypes.ILI_DEFS_RETURNED: {
-        const lexUnitId = action.params.lexUnitId;
-        return SI.setIn(state, ["byLexUnitId", lexUnitId],
-                        action.data.iliRecords);
-    }
-    default:
-        return state;
-    }
-}
+const iliDefs = makeSimpleApiReducer(iliActionTypes, ["byLexUnitId"], "lexUnitId");
 
 const examplesActionTypes = examplesActions.actionTypes;
 function lexExamples(state = SI({}), action) {
@@ -57,17 +36,7 @@ function lexExamples(state = SI({}), action) {
 // requesting lexunits by ID, and only an endpoint for requesting
 // multiple lexunits by synset id.
 const lexUnitsActionTypes = lexUnitsActions.actionTypes;
-function lexUnits(state = SI({ byId: {} }), action) {
-    switch(action.type) {
-    case lexUnitsActionTypes.LEX_UNITS_RETURNED: {
-        const synsetId = action.params.synsetId;
-        return SI.setIn(state, ["bySynsetId", synsetId],
-                        action.data.lexUnits);
-    }
-    default:
-        return state;
-    }
-}
+const lexUnits = makeSimpleApiReducer(lexUnitsActionTypes, ["bySynsetId"], "synsetId");
         
 const dataReducer = combineReducers({
     wiktDefs,
