@@ -89,6 +89,9 @@ class LexUnitDetail extends React.Component {
     constructor(props) {
         super(props);
         this.asSimpleLi = this.asSimpleLi.bind(this);
+        this.asDetailedLi = this.asDetailedLi.bind(this);
+        this.asOption = this.asOption.bind(this);
+        this.asTableRow = this.asTableRow.bind(this);
     }
 
     asSimpleLi() {
@@ -108,6 +111,14 @@ class LexUnitDetail extends React.Component {
         );
     }
 
+    asOption() {
+        return (
+            <option key={this.props.data.id} value={this.props.data.id}>
+              { withNullAsString(this.props.data.orthForm) } 
+            </option>
+        );
+    }
+    
     asTableRow() {
         return (
             <tr key={this.props.data.id} id={this.props.data.id} className="lexunit-detail">
@@ -159,8 +170,10 @@ class LexUnitsContainer extends React.Component {
     constructor(props) {
         super(props);
         this.asList = this.asList.bind(this);
+        this.asSelect = this.asSelect.bind(this);
         this.tableHeaders = this.tableHeaders.bind(this);
         this.asTable = this.asTable.bind(this);
+
     }
 
     asList(liDisplay) {
@@ -173,6 +186,16 @@ class LexUnitsContainer extends React.Component {
             </ul>
         );
                                  
+    }
+
+    asSelect() {
+        return (
+            <select className='lexunit-container'>
+              {this.props.data.map(
+                  lu => <LexUnitDetail data={lu} displayAs='option'/>
+              )}
+            </select>
+        );
     }
 
     tableHeaders() {
@@ -208,10 +231,11 @@ class LexUnitsContainer extends React.Component {
             return this.asList('simpleLi');
         case 'detailedList':
             return this.asList('detailedLi');
+        case 'select':
+            return this.asSelect();
         case 'table':
             return this.asTable();
         default:
-            console.log(typeof this.props.displayAs);
             return null;
         }
     }
