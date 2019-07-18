@@ -1,5 +1,5 @@
-// GenericWrappers/component.jsx
-// Definition of generic wrapper components that are reused elsewhere
+// GenericDisplay/component.jsx
+// Definition of generic display components that are reused elsewhere
 
 import React from 'react';
 

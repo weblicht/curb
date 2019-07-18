@@ -1,6 +1,6 @@
 import { wiktDefsActions } from './actions';
 import { selectWiktDefs } from './selectors';
-import { DefList } from '../GenericWrappers/component';
+import { DefList } from '../GenericDisplay/component';
 import { connectWithApi } from '../../helpers';
 
 import React from 'react';
