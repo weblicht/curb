@@ -1,11 +1,9 @@
 import { lexUnitsActions, iliActions, examplesActions } from './actions';
 import { wiktDefs } from '../WiktionaryDefs/reducers';
+import { iliDefs } from '../ILIDefs/reducers';
 import { makeSimpleApiReducer } from '../../helpers';
 import { combineReducers } from 'redux';
 import SI from 'seamless-immutable';
-
-const iliActionTypes = iliActions.actionTypes;
-const iliDefs = makeSimpleApiReducer(iliActionTypes, ["byLexUnitId"], "lexUnitId");
 
 const examplesActionTypes = examplesActions.actionTypes;
 function lexExamples(state = SI({}), action) {

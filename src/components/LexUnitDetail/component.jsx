@@ -1,6 +1,7 @@
-import { lexUnitsActions, iliActions, examplesActions } from './actions';
-import { selectLexUnits, selectIliDefs, selectExamples } from './selectors';
+import { lexUnitsActions, examplesActions } from './actions';
+import { selectLexUnits, selectExamples } from './selectors';
 import { WiktionaryDefs } from '../WiktionaryDefs/component';
+import { ILIDefs } from '../ILIDefs/component';
 import { DefList } from '../GenericWrappers/component';
 import { connectWithApi, withNullAsString } from '../../helpers';
 
@@ -22,17 +23,6 @@ const lexUnitFieldMap = [
     ['comment', 'Comment']
 ];
 
-
-
-// props:
-//   fetchParams :: { lexUnitId: ... }
-function ILIDefs(props) {
-    const terms = props.data.map( d => d.relation.replace('_', ' '));
-    const defs = props.data.map( d => d.pwn20Paraphrase );
-    return ( <DefList className="ili" terms={terms} defs={defs} /> );
-}
-ILIDefs = connectWithApi(selectIliDefs, iliActions.fetchActions)(ILIDefs);
-export { ILIDefs };
 
 
 // props:

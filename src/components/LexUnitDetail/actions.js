@@ -35,9 +35,6 @@ import axios from 'axios';
 //     };
 // }
 
-const iliEndpoints = { get: apiPath.displayilirecords }
-export const iliActions = makeApiActions('ILI_DEFS', iliEndpoints);
-
 const examplesEndpoints = { get: apiPath.displayexamples }
 export const examplesActions = makeApiActions('LEX_EXAMPLES', examplesEndpoints);
 
