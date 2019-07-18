@@ -7,12 +7,12 @@ manage data via the API.
 
 There are three important functions defined here:
 
-1) `connectWithApi`, analogous to Redux's `connect`, is a higher-order
+1. `connectWithApi`, analogous to Redux's `connect`, is a higher-order
     component that wraps a given component with the functions
     necessary to fetch data from the API
-2) `makeApiActions` provides a simple and consistent way to define
+2. `makeApiActions` provides a simple and consistent way to define
     action types and action creators for making API calls
-3) `makeSimpleApiReducer` extracts the logic of handling API responses
+3. `makeSimpleApiReducer` extracts the logic of handling API responses
     in the simple case where all that's needed is to stick the data
     from the API response into the Redux store
     
