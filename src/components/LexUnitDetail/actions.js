@@ -1,4 +1,4 @@
-import { makeApiActions, actionTypesFromStrings } from '../../helpers';
+import { makeApiActions } from '../APIWrapper';
 import { apiPath } from '../../constants';
 import { updateDataFrom } from '../DataContainer/actions';
 

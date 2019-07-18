@@ -1,4 +1,4 @@
-import { makeApiActions, actionTypesFromStrings } from '../../helpers';
+import { makeApiActions } from '../APIWrapper';
 import { apiPath } from '../../constants';
 
 const wiktEndpoints = { get: apiPath.displaywikirecords };

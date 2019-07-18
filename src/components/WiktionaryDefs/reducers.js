@@ -1,5 +1,5 @@
 import { wiktDefsActions } from './actions';
-import { makeSimpleApiReducer } from '../../helpers';
+import { makeSimpleApiReducer } from '../APIWrapper';
 
 const wiktDefsActionTypes = wiktDefsActions.actionTypes;
 const wiktDefs = makeSimpleApiReducer(wiktDefsActionTypes, ["byLexUnitId"], "lexUnitId");

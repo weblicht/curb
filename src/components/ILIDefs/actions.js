@@ -1,4 +1,4 @@
-import { makeApiActions, actionTypesFromStrings } from '../../helpers';
+import { makeApiActions, actionTypesFromStrings } from '../APIWrapper';
 import { apiPath } from '../../constants';
 
 const iliEndpoints = { get: apiPath.displayilirecords };

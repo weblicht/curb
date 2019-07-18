@@ -1,7 +1,7 @@
 import { examplesActions } from './actions';
 import { selectExamples } from './selectors';
 import { DefList } from '../GenericDisplay/component';
-import { connectWithApi } from '../../helpers';
+import { connectWithApi } from '../APIWrapper';
 
 import React from 'react';
 

@@ -3,7 +3,8 @@ import { selectLexUnits } from './selectors';
 import { WiktionaryDefs } from '../WiktionaryDefs/component';
 import { ILIDefs } from '../ILIDefs/component';
 import { Examples } from '../LexExamples/component';
-import { connectWithApi, withNullAsString } from '../../helpers';
+import { connectWithApi } from '../APIWrapper';
+import { withNullAsString } from '../../helpers';
 
 import React from 'react';
 import { connect } from 'react-redux';

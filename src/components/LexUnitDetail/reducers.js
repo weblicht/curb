@@ -1,5 +1,5 @@
 import { lexUnitsActions, iliActions, examplesActions } from './actions';
-import { makeSimpleApiReducer } from '../../helpers';
+import { makeSimpleApiReducer } from '../APIWrapper';
 import { combineReducers } from 'redux';
 import SI from 'seamless-immutable';
 
