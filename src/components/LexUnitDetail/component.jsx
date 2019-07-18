@@ -1,9 +1,24 @@
 import { lexUnitsActions, wiktDefsActions, iliActions, examplesActions } from './actions';
 import { selectLexUnits, selectWiktDefs, selectIliDefs, selectExamples } from './selectors';
-import { connectWithApi } from '../../helpers';
+import { connectWithApi, withNullAsString } from '../../helpers';
 
 import React from 'react';
 import { connect } from 'react-redux';
+
+// Maps all data fields in lex unit objects to their display names.
+const lexUnitFieldMap = [
+    ['id', 'Lex Unit Id'],
+    ['synsetId', 'Synset Id'],
+    ['orthForm', 'Orth Form'],
+    ['orthVar', 'Orth Var'],
+    ['oldOrthForm', 'Old Orth Form'],
+    ['oldOrthVar', 'Old Orth Var'],
+    ['source', 'Source'],
+    ['namedEntity', 'Named Entity'],
+    ['artificial', 'Artificial'],
+    ['styleMarking', 'Style Marking'],
+    ['comment', 'Comment']
+];
 
 
 // DefList
@@ -77,7 +92,9 @@ class LexUnitDetail extends React.Component {
     }
 
     asSimpleLi() {
-        return (<li key={this.props.data.id}>{this.props.data.orthForm}</li>);
+        return (
+            <li key={this.props.data.id}>{withNullAsString(this.props.data.orthForm)}</li>
+        );
     }
 
     asDetailedLi() {
@@ -91,7 +108,22 @@ class LexUnitDetail extends React.Component {
         );
     }
 
+    asTableRow() {
+        return (
+            <tr key={this.props.data.id} id={this.props.data.id} className="lexunit-detail">
+              {this.props.displayFields.map(
+                  (field) => <td>{ withNullAsString(this.props.data[field]) }</td>
+              )}
+            </tr>
+        );
+    }
+
     render () {
+        // TODO: I can already foresee a need to pass a custom
+        // rendering component Moreover, the container component will
+        // need a good way to pass a detailed renderer down to its
+        // children. It's a pity that components don't automatically
+        // have access to their *parents*. ...
         switch (this.props.displayAs) {
         case 'simpleLi': {
             return this.asSimpleLi();
@@ -99,11 +131,22 @@ class LexUnitDetail extends React.Component {
         case 'detailedLi': {
             return this.asDetailedLi();
         }
+        case 'tableRow': {
+            return this.asTableRow();
+        }
+        case 'option': {
+            return this.asOption();
+        }
         default:    
             return null;
         }
     }
 }
+LexUnitDetail.defaultProps = {
+    // names of data fields that should be displayed by default:
+    displayFields: lexUnitFieldMap.map( entry => entry[0]),
+};
+
 // TODO: there is actually a hole in the API here. We can't at present
 // request lex unit details by ID.  So we need to pass data= directly
 // from a parent, e.g., LexUnitsContainer, and can't wrap
@@ -116,6 +159,8 @@ class LexUnitsContainer extends React.Component {
     constructor(props) {
         super(props);
         this.asList = this.asList.bind(this);
+        this.tableHeaders = this.tableHeaders.bind(this);
+        this.asTable = this.asTable.bind(this);
     }
 
     asList(liDisplay) {
@@ -130,12 +175,41 @@ class LexUnitsContainer extends React.Component {
                                  
     }
 
+    tableHeaders() {
+        const fieldMapObj = Object.fromEntries(this.props.fieldMap);
+        return (
+            <tr>
+              {this.props.displayFields.map(
+                  field => <th key={field} scope="col">{fieldMapObj[field]}</th>
+              )}
+            </tr>
+        );
+    }
+
+    asTable() {
+        return (
+            <table className='lexunit-container'>
+              <thead>{this.tableHeaders()}</thead>
+              <tbody>
+                {this.props.data.map(
+                    lu => <LexUnitDetail data={lu}
+                                         displayAs='tableRow'
+                                         displayFields={this.props.displayFields}
+                          />
+                )}
+              </tbody>
+            </table>
+        );
+    }
+
     render() {
         switch (this.props.displayAs) {
         case 'simpleList':
             return this.asList('simpleLi');
         case 'detailedList':
             return this.asList('detailedLi');
+        case 'table':
+            return this.asTable();
         default:
             console.log(typeof this.props.displayAs);
             return null;
@@ -143,8 +217,13 @@ class LexUnitsContainer extends React.Component {
     }
 
 }
+LexUnitsContainer.defaultProps = {
+    fieldMap: lexUnitFieldMap,
+    displayFields: lexUnitFieldMap.map( entry => entry[0] )
+};
 LexUnitsContainer = connectWithApi(selectLexUnits,
                                    lexUnitsActions.fetchActions
                                    )(LexUnitsContainer);
+
 
 export { LexUnitsContainer }
