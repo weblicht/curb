@@ -35,10 +35,6 @@ import axios from 'axios';
 //     };
 // }
 
-
-const wiktEndpoints = { get: apiPath.displaywikirecords };
-export const wiktDefsActions = makeApiActions('WIKT_DEFS', wiktEndpoints);
-
 const iliEndpoints = { get: apiPath.displayilirecords }
 export const iliActions = makeApiActions('ILI_DEFS', iliEndpoints);
 

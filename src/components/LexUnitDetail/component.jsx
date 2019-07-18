@@ -1,5 +1,6 @@
-import { lexUnitsActions, wiktDefsActions, iliActions, examplesActions } from './actions';
-import { selectLexUnits, selectWiktDefs, selectIliDefs, selectExamples } from './selectors';
+import { lexUnitsActions, iliActions, examplesActions } from './actions';
+import { selectLexUnits, selectIliDefs, selectExamples } from './selectors';
+import { WiktionaryDefs } from '../WiktionaryDefs/component';
 import { DefList } from '../GenericWrappers/component';
 import { connectWithApi, withNullAsString } from '../../helpers';
 
@@ -22,21 +23,6 @@ const lexUnitFieldMap = [
 ];
 
 
-
-// props:
-//   lexUnit :: String
-//   fetchParams :: { lexUnitId: ... }
-// TODO: need at least table and dl variants of this
-
-function WiktionaryDefs(props) {
-    const terms = props.data.map( _ => props.lexUnit );
-    const defs = props.data.map( d => d.wknParaphrase ); 
-    return (
-        <DefList className="wiktionary" terms={terms} defs={defs}/>
-    );
-}
-WiktionaryDefs = connectWithApi(selectWiktDefs, wiktDefsActions.fetchActions)(WiktionaryDefs);
-export { WiktionaryDefs };
 
 // props:
 //   fetchParams :: { lexUnitId: ... }
