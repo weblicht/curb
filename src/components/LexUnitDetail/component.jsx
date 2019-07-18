@@ -130,11 +130,11 @@ class LexUnitDetail extends React.Component {
     }
 
     render () {
-        // TODO: I can already foresee a need to pass a custom
-        // rendering component Moreover, the container component will
-        // need a good way to pass a detailed renderer down to its
-        // children. It's a pity that components don't automatically
-        // have access to their *parents*. ...
+        if (typeof this.props.displayAs === 'function') {
+            const Renderer = this.props.displayAs;
+            return (<Renderer {...this.props} />);
+        }
+
         switch (this.props.displayAs) {
         case 'simpleLi': {
             return this.asSimpleLi();
@@ -166,6 +166,7 @@ LexUnitDetail.defaultProps = {
 // props:
 //   fetchParams :: { synsetId: ... }
 //   displayAs :: | | | Component
+//   unitsDisplayAs :: will be passed to LexUnitDetail as its displayAs prop
 class LexUnitsContainer extends React.Component {
     constructor(props) {
         super(props);
@@ -181,7 +182,8 @@ class LexUnitsContainer extends React.Component {
             <ul>
               {this.props.data.map(
                   lu =>
-                      <LexUnitDetail data={lu} displayAs={liDisplay}/>
+                      <LexUnitDetail data={lu}
+                                     displayAs={this.props.unitsDisplayAs || liDisplay }/>
               )}
             </ul>
         );
@@ -192,7 +194,8 @@ class LexUnitsContainer extends React.Component {
         return (
             <select className='lexunit-container'>
               {this.props.data.map(
-                  lu => <LexUnitDetail data={lu} displayAs='option'/>
+                  lu => <LexUnitDetail data={lu}
+                                       displayAs={this.props.unitsDisplayAs || 'option'}/>
               )}
             </select>
         );
@@ -216,7 +219,7 @@ class LexUnitsContainer extends React.Component {
               <tbody>
                 {this.props.data.map(
                     lu => <LexUnitDetail data={lu}
-                                         displayAs='tableRow'
+                                         displayAs={this.props.unitsDisplayAs || 'tableRow'}
                                          displayFields={this.props.displayFields}
                           />
                 )}
@@ -226,6 +229,12 @@ class LexUnitsContainer extends React.Component {
     }
 
     render() {
+        // allow a user-supplied component to render, if given:
+        if (typeof this.props.displayAs === 'function') {
+            const Renderer = this.props.displayAs;
+            return (<Renderer {...this.props} />);
+        }
+
         switch (this.props.displayAs) {
         case 'simpleList':
             return this.asList('simpleLi');
