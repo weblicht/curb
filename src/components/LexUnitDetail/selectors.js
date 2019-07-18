@@ -5,7 +5,7 @@ import SI from 'seamless-immutable';
 //     try {
 //         const luId = props.fetchParams.id;
 //         // this already returns undefined if the lexunit is not yet in the db:
-//         const selected = globalState.data.lexUnits.byId[luId];
+//         const selected = globalState.apiData.lexUnits.byId[luId];
 //         return selected;
 //     } catch (e) {
 //         return undefined;
@@ -14,7 +14,7 @@ import SI from 'seamless-immutable';
 
 export function selectLexUnits(globalState, props) {
     try {
-        const selected = globalState.data.lexUnits.bySynsetId[props.fetchParams.synsetId] || [];
+        const selected = globalState.apiData.lexUnits.bySynsetId[props.fetchParams.synsetId] || [];
         return selected;
     } catch (e) {
         return undefined;

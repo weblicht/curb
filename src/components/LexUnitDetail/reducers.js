@@ -1,7 +1,4 @@
 import { lexUnitsActions, iliActions, examplesActions } from './actions';
-import { wiktDefs } from '../WiktionaryDefs/reducers';
-import { iliDefs } from '../ILIDefs/reducers';
-import { lexExamples } from '../LexExamples/reducers';
 import { makeSimpleApiReducer } from '../../helpers';
 import { combineReducers } from 'redux';
 import SI from 'seamless-immutable';
@@ -12,13 +9,5 @@ import SI from 'seamless-immutable';
 // requesting lexunits by ID, and only an endpoint for requesting
 // multiple lexunits by synset id.
 const lexUnitsActionTypes = lexUnitsActions.actionTypes;
-const lexUnits = makeSimpleApiReducer(lexUnitsActionTypes, ["bySynsetId"], "synsetId");
+export const lexUnits = makeSimpleApiReducer(lexUnitsActionTypes, ["bySynsetId"], "synsetId");
         
-const dataReducer = combineReducers({
-    wiktDefs,
-    iliDefs,
-    lexExamples,
-    lexUnits
-})
-
-export { dataReducer as data };
