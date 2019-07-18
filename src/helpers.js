@@ -25,6 +25,16 @@ export function mergeActionTypes(typesA, typesB) {
     return { ...typesA, ...typesB };
 }
 
+// withNullAsString :: Object -> String
+// params:
+//   data: the data to convert to a string
+//   nullString (optional): the string to use for null values
+// Returns data as a string, unless data is null, in which case it returns nullString.
+// This is needed because Object.toString does not work on null.
+export function withNullAsString(data, nullString = '') {
+    return data !== null ? data.toString() : nullString;
+}
+
 // makeApiActions
 // Makes action types, action creators, and async actions for
 // interacting with data via an API
