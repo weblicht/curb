@@ -1,29 +1,5 @@
 import SI from 'seamless-immutable';
 
-// TODO: there is much shameless duplication here.
-// Abstract this to a selectAt function
-// function selectAt(statePath, key, empty = []) {
-//     return function selector(globalState, props) {
-//         try {
-//             // walk down the statePath one property at a time until 
-//             const selected = statePath.reduce(
-//                 (acc, cur) => acc[cur], globalState,
-//                 globalState);
-
- 
-export function selectExamples(globalState, props) {
-    try {
-        const selected = globalState.data.lexExamples.byLexUnitId[props.fetchParams.lexUnitId] || [];
-        return selected;
-    } catch (e) {
-        // if one of the properties in the middle is not defined yet,
-        // it raises a TypeError; this indicates the data is not yet
-        // in the store, and we should return undefined
-        return undefined;
-    }
-
-}
-    
 // TODO: this isn't in effect yet because we always look up lex units by synset ID, not by ID
 // export function selectLexUnit(globalState, props) {
 //     try {

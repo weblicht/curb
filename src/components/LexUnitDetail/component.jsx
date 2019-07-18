@@ -1,8 +1,8 @@
-import { lexUnitsActions, examplesActions } from './actions';
-import { selectLexUnits, selectExamples } from './selectors';
+import { lexUnitsActions } from './actions';
+import { selectLexUnits } from './selectors';
 import { WiktionaryDefs } from '../WiktionaryDefs/component';
 import { ILIDefs } from '../ILIDefs/component';
-import { DefList } from '../GenericWrappers/component';
+import { Examples } from '../LexExamples/component';
 import { connectWithApi, withNullAsString } from '../../helpers';
 
 import React from 'react';
@@ -24,18 +24,6 @@ const lexUnitFieldMap = [
 ];
 
 
-
-// props:
-//   fetchParams :: { lexUnitId: ... }
-function Examples(props) {
-    const terms = props.data.map( d => d.frameType );
-    const defs = props.data.map( d => d.text );
-    return (
-          <DefList className="examples" terms={terms} defs={defs}/>
-    );
-}
-Examples = connectWithApi(selectExamples, examplesActions.fetchActions)(Examples);
-export { Examples };
 
 
 // props:

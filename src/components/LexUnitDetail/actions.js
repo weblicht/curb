@@ -35,9 +35,6 @@ import axios from 'axios';
 //     };
 // }
 
-const examplesEndpoints = { get: apiPath.displayexamples }
-export const examplesActions = makeApiActions('LEX_EXAMPLES', examplesEndpoints);
-
 const lexUnitsEndpoints = { get: apiPath.displaylexunits }
 export const lexUnitsActions = makeApiActions('LEX_UNITS', lexUnitsEndpoints);
 
