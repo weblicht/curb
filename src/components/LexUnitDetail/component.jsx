@@ -1,5 +1,6 @@
 import { lexUnitsActions, wiktDefsActions, iliActions, examplesActions } from './actions';
 import { selectLexUnits, selectWiktDefs, selectIliDefs, selectExamples } from './selectors';
+import { DefList } from '../GenericWrappers/component';
 import { connectWithApi, withNullAsString } from '../../helpers';
 
 import React from 'react';
@@ -20,27 +21,6 @@ const lexUnitFieldMap = [
     ['comment', 'Comment']
 ];
 
-
-// DefList
-// TODO: this is a generic display component and should probably live in a different place
-// props:
-//   className :: String  (CSS class for dl)
-//   terms :: [ String ]
-//   defs :: [ String ]
-// terms and defs should be co-indexed
-function DefList(props) {
-    return (
-        <dl className={props.className}>
-                {props.terms.map(
-                    (term, idx) =>
-                        <React.Fragment key={term}>
-                          <dt>{term}</dt>
-                          <dd>{props.defs[idx]}</dd>
-                        </React.Fragment>
-                )}
-        </dl>
-    );
-}
 
 
 // props:
