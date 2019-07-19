@@ -1,5 +1,6 @@
 import { lexUnitsActions } from './actions';
 import { selectLexUnits } from './selectors';
+import { DataTable, DataTableRow } from '../GenericDisplay/component';
 import { WiktionaryDefs } from '../WiktionaryDefs/component';
 import { ILIDefs } from '../ILIDefs/component';
 import { Examples } from '../LexExamples/component';
@@ -66,11 +67,8 @@ class LexUnitDetail extends React.Component {
     
     asTableRow() {
         return (
-            <tr key={this.props.data.id} id={this.props.data.id} className="lexunit-detail">
-              {this.props.displayFields.map(
-                  (field) => <td>{ withNullAsString(this.props.data[field]) }</td>
-              )}
-            </tr>
+            <DataTableRow data={this.props.data} displayFields={this.props.displayFields}
+                          className="lexunit-detail" />
         );
     }
 
@@ -117,7 +115,6 @@ class LexUnitsContainer extends React.Component {
         super(props);
         this.asList = this.asList.bind(this);
         this.asSelect = this.asSelect.bind(this);
-        this.tableHeaders = this.tableHeaders.bind(this);
         this.asTable = this.asTable.bind(this);
 
     }
@@ -137,7 +134,7 @@ class LexUnitsContainer extends React.Component {
 
     asSelect() {
         return (
-            <select className='lexunit-container'>
+            <select className='lexunits-container'>
               {this.props.data.map(
                   lu => <LexUnitDetail data={lu}
                                        displayAs={this.props.unitsDisplayAs || 'option'}/>
@@ -146,30 +143,12 @@ class LexUnitsContainer extends React.Component {
         );
     }
 
-    tableHeaders() {
-        const fieldMapObj = Object.fromEntries(this.props.fieldMap);
-        return (
-            <tr>
-              {this.props.displayFields.map(
-                  field => <th key={field} scope="col">{fieldMapObj[field]}</th>
-              )}
-            </tr>
-        );
-    }
-
     asTable() {
         return (
-            <table className='lexunit-container'>
-              <thead>{this.tableHeaders()}</thead>
-              <tbody>
-                {this.props.data.map(
-                    lu => <LexUnitDetail data={lu}
-                                         displayAs={this.props.unitsDisplayAs || 'tableRow'}
-                                         displayFields={this.props.displayFields}
-                          />
-                )}
-              </tbody>
-            </table>
+            <DataTable className='lexunits-container'
+                       fieldMap={this.props.fieldMap}
+                       displayFields={this.props.displayFields}
+                       data={this.props.data} />
         );
     }
 
