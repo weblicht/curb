@@ -1,7 +1,7 @@
 // SynsetsContainer/selectors.js
 // Data selectors for SynsetsContainer state
 
-export function synsets(id, globalState) {
+export function selectSynsets(id, globalState) {
     try {
         return globalState.synsetsContainers.byId[id].records || [];
     } catch (e) {
