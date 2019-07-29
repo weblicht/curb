@@ -93,7 +93,7 @@ To write a new component that transparently loads data via the API:
      ```
      export function selectIliDefs(globalState, props) {
          try {
-             const selected = globalState.data.iliDefs.byLexUnitId[props.fetchParams.lexUnitId] || [];
+             const selected = globalState.apiData.iliDefs.byLexUnitId[props.fetchParams.lexUnitId] || [];
              return selected;
          } catch (e) {
              // if one of the properties in the middle is not defined yet,
