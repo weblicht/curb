@@ -10,8 +10,10 @@ import { withNullAsString } from '../../helpers';
 import React from 'react';
 import { connect } from 'react-redux';
 
+// Constants:
+
 // Maps all data fields in lex unit objects to their display names.
-const lexUnitFieldMap = [
+const LU_FIELD_MAP = [
     ['id', 'Lex Unit Id'],
     ['synsetId', 'Synset Id'],
     ['orthForm', 'Orth Form'],
@@ -24,163 +26,149 @@ const lexUnitFieldMap = [
     ['styleMarking', 'Style Marking'],
     ['comment', 'Comment']
 ];
+// All data field names:
+const LU_ALL_FIELDS = LU_FIELD_MAP.map( entry => entry[0] );
 
+// Display components for individual lex units:
 
+// props:
+//   data :: Object, a lex unit
+function LexUnitAsOption(props) {
+    return (
+        <option key={props.data.id} value={props.data.id} className="lexunit-detail">
+          { withNullAsString(props.data.orthForm) } 
+        </option>
+    );
+
+}
+
+// props:
+//   data :: Object, a lex unit
+function LexUnitAsListItem(props) {
+    const luId = props.data.id;
+
+    return (
+        <li key={luId} className="lexunit-detail">
+          {props.data.orthForm}
+          <Examples fetchParams={{lexUnitId: luId}}/>
+          <WiktionaryDefs fetchParams={{lexUnitId: luId}}/>
+          <ILIDefs fetchParams={{lexUnitId: luId}}/>
+        </li>
+    );
+}
 
 
 // props:
-//   fetchParams :: { id: ... }
-//   displayAs :: | | | Component
-class LexUnitDetail extends React.Component {
-    constructor(props) {
-        super(props);
-        this.asSimpleLi = this.asSimpleLi.bind(this);
-        this.asDetailedLi = this.asDetailedLi.bind(this);
-        this.asOption = this.asOption.bind(this);
-        this.asTableRow = this.asTableRow.bind(this);
-    }
+//   data :: Object, a lex unit
+//   displayFields :: [ String ], a list of field names in the lex unit object to display
+function LexUnitAsTableRow(props) {
+    // display all data fields by default:
+    const displayFields = props.displayFields || LU_ALL_FIELDS;
 
-    asSimpleLi() {
-        return (
-            <li key={this.props.data.id}>{withNullAsString(this.props.data.orthForm)}</li>
-        );
-    }
+    return (
+        <DataTableRow data={props.data} displayFields={displayFields}
+                      className="lexunit-detail" />
+    );
 
-    asDetailedLi() {
-        const luId = this.props.data.id;
-        return (
-            <li key={luId}>
-              <Examples fetchParams={{lexUnitId: luId}}/>
-              <WiktionaryDefs fetchParams={{lexUnitId: luId}}/>
-              <ILIDefs fetchParams={{lexUnitId: luId}}/>
-            </li>
-        );
-    }
+}
 
-    asOption() {
-        return (
-            <option key={this.props.data.id} value={this.props.data.id}>
-              { withNullAsString(this.props.data.orthForm) } 
-            </option>
-        );
-    }
-    
-    asTableRow() {
-        return (
-            <DataTableRow data={this.props.data} displayFields={this.props.displayFields}
-                          className="lexunit-detail" />
-        );
-    }
+// TODO: 
+// present a lexunit in a form for editing
+// function LexUnitAsForm 
 
-    render () {
-        if (typeof this.props.displayAs === 'function') {
-            const Renderer = this.props.displayAs;
-            return (<Renderer {...this.props} />);
-        }
-
-        switch (this.props.displayAs) {
-        case 'simpleLi': {
-            return this.asSimpleLi();
-        }
-        case 'detailedLi': {
-            return this.asDetailedLi();
-        }
-        case 'tableRow': {
-            return this.asTableRow();
-        }
-        case 'option': {
-            return this.asOption();
-        }
-        default:    
-            return null;
-        }
+// props:
+//   displayAs :: Component to render a lex unit object for display
+function LexUnitDetail(props) {
+    if (typeof props.displayAs === 'function') {
+        const Renderer = props.displayAs;
+        return (<Renderer {...props} />);
+    } else {
+        return null;
     }
 }
-LexUnitDetail.defaultProps = {
-    // names of data fields that should be displayed by default:
-    displayFields: lexUnitFieldMap.map( entry => entry[0]),
-};
+// TODO: there is a hole in the API. We can't at present request lex
+// unit details by ID.  So we need to pass data= directly from a
+// parent, e.g., LexUnitsContainer, and can't wrap LexUnitDetail with
+// connectWithApi().
 
-// TODO: there is actually a hole in the API here. We can't at present
-// request lex unit details by ID.  So we need to pass data= directly
-// from a parent, e.g., LexUnitsContainer, and can't wrap
-// LexUnitDetail with connectWithApi().
+// Display components for an array of lex unit objects:
+
+
+// props:
+//   data :: [ Object ], the lex units 
+//   unitsDisplayAs (optional) :: Component to render a lexunit as a list item
+//     Defaults to LexUnitAsListItem.
+function LexUnitsAsList(props) {
+    return (
+        <ul className='lexunits-container'>
+          {props.data.map(
+              lu =>
+                  <LexUnitDetail data={lu}
+                                 displayAs={props.unitsDisplayAs 
+                                            || LexUnitAsListItem} />
+          )}
+        </ul>
+    );
+}
+                                 
+// props:
+//   data :: [ Object ], the lex units 
+//   unitsDisplayAs (optional) :: Component to render a lexunit as an option
+//     Defaults to LexUnitAsOption
+function LexUnitsAsSelect(props) {
+    return (
+        <select className='lexunits-container'>
+          {props.data.map(
+              lu => <LexUnitDetail data={lu}
+                                   displayAs={props.unitsDisplayAs
+                                              || LexUnitAsOption} />
+          )}
+        </select>
+    );
+}
+
+// props:
+//   data :: [ Object ], the lex units 
+//   fieldMap
+//   displayFields 
+//   unitsDisplayAs (optional) :: Component to render a lexunit as a table row
+//     Defaults to LexUnitAsTableRow
+function LexUnitsAsTable(props) {
+    const fieldMap = props.fieldMap || LU_FIELD_MAP;
+    const displayFields = props.displayFields || LU_ALL_FIELDS;
+    const RowComponent = props.unitsDisplayAs || LexUnitAsTableRow;
+    
+    return (
+        <DataTable className='lexunits-container'
+                   data={props.data}
+                   fieldMap={fieldMap}
+                   displayFields={displayFields}
+                   displayRowAs={RowComponent}
+        />
+    );
+}
+
 
 // props:
 //   fetchParams :: { synsetId: ... }
-//   displayAs :: | | | Component
-//   unitsDisplayAs :: will be passed to LexUnitDetail as its displayAs prop
-class LexUnitsContainer extends React.Component {
-    constructor(props) {
-        super(props);
-        this.asList = this.asList.bind(this);
-        this.asSelect = this.asSelect.bind(this);
-        this.asTable = this.asTable.bind(this);
-
+//   displayAs :: Component to render a list of lex units
+//   unitsDisplayAs (optional) :: Component to render each lex unit
+function LexUnitsContainer(props) {
+    if (typeof props.displayAs === 'function') {
+        const Renderer = props.displayAs;
+        return (<Renderer {...props} />);
+    } else {
+        return null;
     }
-
-    asList(liDisplay) {
-        return (
-            <ul>
-              {this.props.data.map(
-                  lu =>
-                      <LexUnitDetail data={lu}
-                                     displayAs={this.props.unitsDisplayAs || liDisplay }/>
-              )}
-            </ul>
-        );
-                                 
-    }
-
-    asSelect() {
-        return (
-            <select className='lexunits-container'>
-              {this.props.data.map(
-                  lu => <LexUnitDetail data={lu}
-                                       displayAs={this.props.unitsDisplayAs || 'option'}/>
-              )}
-            </select>
-        );
-    }
-
-    asTable() {
-        return (
-            <DataTable className='lexunits-container'
-                       fieldMap={this.props.fieldMap}
-                       displayFields={this.props.displayFields}
-                       data={this.props.data} />
-        );
-    }
-
-    render() {
-        // allow a user-supplied component to render, if given:
-        if (typeof this.props.displayAs === 'function') {
-            const Renderer = this.props.displayAs;
-            return (<Renderer {...this.props} />);
-        }
-
-        switch (this.props.displayAs) {
-        case 'simpleList':
-            return this.asList('simpleLi');
-        case 'detailedList':
-            return this.asList('detailedLi');
-        case 'select':
-            return this.asSelect();
-        case 'table':
-            return this.asTable();
-        default:
-            return null;
-        }
-    }
-
 }
-LexUnitsContainer.defaultProps = {
-    fieldMap: lexUnitFieldMap,
-    displayFields: lexUnitFieldMap.map( entry => entry[0] )
-};
+
 LexUnitsContainer = connectWithApi(selectLexUnits,
                                    lexUnitsActions.fetchActions
-                                   )(LexUnitsContainer);
+                                  )(LexUnitsContainer);
 
 
-export { LexUnitsContainer }
+export { LexUnitsContainer,
+         LexUnitsAsList,
+         LexUnitsAsSelect,
+         LexUnitsAsTable
+       };
