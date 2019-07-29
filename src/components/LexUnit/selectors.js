@@ -1,5 +1,3 @@
-import SI from 'seamless-immutable';
-
 // TODO: this isn't in effect yet because we always look up lex units by synset ID, not by ID
 // export function selectLexUnit(globalState, props) {
 //     try {
