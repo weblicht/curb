@@ -2,9 +2,60 @@
 // Definition of generic display components that are reused elsewhere
 
 import { withNullAsString } from '../../helpers';
+import { InternalError } from '../../errors';
 
 import React from 'react';
 
+
+// props:
+//   data :: [ Object ]
+//   displayItemAs :: Object -> HTML list item,
+//     a component to display a single data object as an item in the list
+//   ordered (optional) :: Bool
+//   className (optional) :: String
+export function DataList(props) {
+    // TODO: is there any way to provide a sensible default, or must
+    // the user always pass a custom component to render the list items?
+    const ItemComponent = props.displayItemAs;
+    
+    return (
+        <List ordered={props.ordered} className={props.className}>
+          {props.data.map(
+              item =>
+                  <ItemComponent {...props} data={item}/>
+          )}
+        </List>
+    );
+
+}
+
+// props:
+//   data :: [ Object ]
+//   displayItemAs :: Object -> HTML list item,
+//     a component to display a single data object as an option in the select
+//   disabledOption (optional) :: String,
+//     a message to use as an initial, disabled option in the select
+//   ordered (optional) :: Bool
+//   className (optional) :: String
+export function DataSelect(props) {
+    // TODO: this component might belong somewhere else. It's not
+    // purely a display component; it has to be hooked up to actions
+    // for selecting the various options.
+
+    // TODO: is there any way to provide a sensible default, or must
+    // the user always pass a custom component to render the options?
+    const ItemComponent = props.displayItemAs;
+ 
+    return (
+        <select className={props.className}>
+          {props.disabledOption && <option value="none" disabled={true}>{props.disabledOption}</option>}
+          {props.data.map(
+              item => <ItemComponent {...props} data={item} />
+          )}
+        </select>
+    );
+
+}
 
 // props:
 //   fieldMap :: [ [String, String] ], array mapping data field names to display names
@@ -103,3 +154,30 @@ export function DelimitedArray(props) {
         </span>
     );
 }
+
+// props:
+//   ordered :: Bool
+//   className (optional) :: String
+export function List(props) {
+    if (props.ordered) {
+        return (<ol className={props.className}>{props.children}</ol>);
+    } else {
+        return (<ul className={props.className}>{props.children}</ul>);
+    }
+}
+
+
+// HOC that abstracts the logic for data container components.   
+// params:
+//    name :: String, a name for the container type 
+export function makeDisplayableContainer(name) {
+    return function (props) {
+        if (typeof props.displayAs === 'function') {
+            const Renderer = props.displayAs;
+            return (<Renderer {...props} />);
+        } else {
+            throw new InternalError(`${name} was rendered with an incorrect displayAs prop`);
+        }
+    };
+}
+

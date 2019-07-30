@@ -5,17 +5,30 @@ are intended to be reused by higher-level components.
 
 ## Components defined here
 
-`DataTable`: given an array of data and formatting information,
-generate an HTML table to display that data
+`DataList`: given an array of data objects and a component to render
+individual items, generate an HTML list of that data
 
-`DataTableRow`: given a data object and a list of fields, generate an
-HTML table row containing its data.
+`DataSelect`: given an array of data objects and a component to render
+individual options, generate an HTML select for the data
+
+`DataTable`: given an array of data objects and formatting information,
+generate an HTML table to display that data
 
 `DataTableHeaders`: given a field map and a list of fields, generate
 an HTML table header
+
+`DataTableRow`: given a data object and a list of fields, generate an
+HTML table row containing its data.
 
 `DefList`: given a list of terms and a co-indexed list of definitions,
 generate an HTML definition list.
 
 `DelimitedArray`: given an array of data, pretty-print this data with
 delimiters as an HTML span.
+
+`List`: display an ordered or unordered list, depending on `ordered`
+prop
+
+`makeDisplayableContainer`: a higher-order component that abstracts
+the logic of various other container components (LexUnitsContainer,
+SynsetsContainer, etc.).
