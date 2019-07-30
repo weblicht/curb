@@ -1,6 +1,6 @@
 import { lexUnitsActions } from './actions';
 import { selectLexUnits } from './selectors';
-import { DataTable, DataTableRow } from '../GenericDisplay/component';
+import { DataTable, DataTableRow, DataList, DataSelect, makeDisplayableContainer } from '../GenericDisplay/component';
 import { WiktionaryDefs } from '../WiktionaryDefs/component';
 import { ILIDefs } from '../ILIDefs/component';
 import { Examples } from '../LexExamples/component';
@@ -57,7 +57,6 @@ function LexUnitAsListItem(props) {
     );
 }
 
-
 // props:
 //   data :: Object, a lex unit
 //   displayFields :: [ String ], a list of field names in the lex unit object to display
@@ -78,14 +77,8 @@ function LexUnitAsTableRow(props) {
 
 // props:
 //   displayAs :: Component to render a lex unit object for display
-function LexUnitDetail(props) {
-    if (typeof props.displayAs === 'function') {
-        const Renderer = props.displayAs;
-        return (<Renderer {...props} />);
-    } else {
-        return null;
-    }
-}
+const LexUnitDetail = makeDisplayableContainer('LexUnitDetail');
+
 // TODO: there is a hole in the API. We can't at present request lex
 // unit details by ID.  So we need to pass data= directly from a
 // parent, e.g., LexUnitsContainer, and can't wrap LexUnitDetail with
@@ -93,21 +86,17 @@ function LexUnitDetail(props) {
 
 // Display components for an array of lex unit objects:
 
-
 // props:
 //   data :: [ Object ], the lex units 
+//   orderd :: Bool, whether or not to display the 
 //   unitsDisplayAs (optional) :: Component to render a lexunit as a list item
 //     Defaults to LexUnitAsListItem.
 function LexUnitsAsList(props) {
     return (
-        <ul className='lexunits-container'>
-          {props.data.map(
-              lu =>
-                  <LexUnitDetail data={lu}
-                                 displayAs={props.unitsDisplayAs 
-                                            || LexUnitAsListItem} />
-          )}
-        </ul>
+        <DataList data={props.data}
+                  ordered={props.ordered}
+                  className='lexunits-container'
+                  displayItemAs={props.unitsDisplayAs || LexUnitAsListItem} />
     );
 }
                                  
@@ -117,13 +106,10 @@ function LexUnitsAsList(props) {
 //     Defaults to LexUnitAsOption
 function LexUnitsAsSelect(props) {
     return (
-        <select className='lexunits-container'>
-          {props.data.map(
-              lu => <LexUnitDetail data={lu}
-                                   displayAs={props.unitsDisplayAs
-                                              || LexUnitAsOption} />
-          )}
-        </select>
+        <DataSelect data={props.data}
+                    disabledOption='Select a lexical unit'
+                    className='lexunits-container'
+                    displayAs={props.unitsDisplayAs || LexUnitAsOption} />
     );
 }
 
@@ -153,15 +139,7 @@ function LexUnitsAsTable(props) {
 //   fetchParams :: { synsetId: ... }
 //   displayAs :: Component to render a list of lex units
 //   unitsDisplayAs (optional) :: Component to render each lex unit
-function LexUnitsContainer(props) {
-    if (typeof props.displayAs === 'function') {
-        const Renderer = props.displayAs;
-        return (<Renderer {...props} />);
-    } else {
-        return null;
-    }
-}
-
+var LexUnitsContainer = makeDisplayableContainer('LexUnitsContainer');
 LexUnitsContainer = connectWithApi(selectLexUnits,
                                    lexUnitsActions.fetchActions
                                   )(LexUnitsContainer);
