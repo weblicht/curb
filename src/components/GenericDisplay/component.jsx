@@ -14,6 +14,7 @@ import React from 'react';
 //   ordered (optional) :: Bool
 //   className (optional) :: String
 export function DataList(props) {
+    if (!(props.data && props.data.length)) return null;
     // TODO: is there any way to provide a sensible default, or must
     // the user always pass a custom component to render the list items?
     const ItemComponent = props.displayItemAs;
@@ -21,8 +22,7 @@ export function DataList(props) {
     return (
         <List ordered={props.ordered} className={props.className}>
           {props.data.map(
-              item =>
-                  <ItemComponent {...props} data={item}/>
+              item => <ItemComponent {...props} data={item}/>
           )}
         </List>
     );
@@ -42,6 +42,7 @@ export function DataSelect(props) {
     // purely a display component; it has to be hooked up to actions
     // for selecting the various options.
 
+    if (!(props.data && props.data.length)) return null;
     // TODO: is there any way to provide a sensible default, or must
     // the user always pass a custom component to render the options?
     const ItemComponent = props.displayItemAs;
@@ -100,6 +101,8 @@ export function DataTableRow(props) {
 //      a component to display a single data object as a table row.
 //      Defaults to DataTableRow.
 export function DataTable(props) {
+    if (!(props.data && props.data.length)) return null;
+
     const RowComponent = props.displayRowAs || DataTableRow;
 
     return (
@@ -120,6 +123,8 @@ export function DataTable(props) {
 //   defs :: [ String ]
 // terms and defs should be co-indexed
 export function DefList(props) {
+    if (!(props.terms && props.terms.length)) return null;
+
     return (
         <dl className={props.className}>
                 {props.terms.map(
@@ -141,6 +146,8 @@ export function DefList(props) {
 //   displayItemAs (optional) :: data object -> String
 //     defaults to withNullAsString helper
 export function Delimited(props) {
+    if (!(props.data && props.data.length)) return null;
+
     const delim = props.delimiter || ', ';
     const formatter = props.displayItemAs || withNullAsString;
     // Note: we're relying here on the fact that React does some magic
