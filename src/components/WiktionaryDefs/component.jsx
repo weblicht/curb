@@ -6,10 +6,9 @@ import { connectWithApi } from '../APIWrapper';
 import React from 'react';
 
 // props:
-//   lexUnit :: String
 //   fetchParams :: { lexUnitId: ... }
 function WiktionaryDefs(props) {
-    const terms = props.data.map( _ => props.lexUnit );
+    const terms = props.data.map( d => d.orthForm );
     const defs = props.data.map( d => d.wknParaphrase ); 
     return (
         <DefList className="wiktionary" terms={terms} defs={defs}/>
