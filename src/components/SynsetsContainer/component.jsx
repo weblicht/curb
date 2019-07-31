@@ -4,7 +4,7 @@
 import { registerSource } from './actions';
 import { selectSynsets } from './selectors';
 import { asDataContainer } from '../DataContainer/component';
-import { DataTable, DataTableRow, DelimitedArray, DataList, DataSelect, makeDisplayableContainer } from '../GenericDisplay/component';
+import { DataTable, DataTableRow, Delimited, DataList, DataSelect, makeDisplayableContainer } from '../GenericDisplay/component';
 import { withNullAsString } from '../../helpers';
 
 import React from 'react';
@@ -42,7 +42,7 @@ function SynsetAsOption(props) {
         // TODO: what's the best data to display to disambiguate between synsets with the same orthforms?
         <option key={props.data.id} value={props.data.id}>
           <WordClass data={props.data.wordClass}/>:
-          <DelimitedArray data={props.data.orthForms} className="synset-orthforms"/>
+          <Delimited data={props.data.orthForms} className="synset-orthforms"/>
         </option>
     );
 }
@@ -71,10 +71,10 @@ function SynsetAsTableRow(props) {
                     return <td>{props.data.wordClass.wordClass}</td>;
                 }
                 case 'orthForms': {
-                    return <td><DelimitedArray className='synset-orthforms' data={props.data.orthForms}/></td>;
+                    return <td><Delimited data={props.data.orthForms} className='synset-orthforms'/></td>;
                 }
                 case 'wiktionaryParaphrases': {
-                    return <td><DelimitedArray className='synset-paraphrases' data={props.data[field]} delimiter="; "/></td>;
+                    return <td><Delimited data={props.data[field]} delimiter='; ' className='synset-paraphrases'/></td>;
                 }
                 default:
                     return <td>{withNullAsString( props.data[field] )}</td>;
