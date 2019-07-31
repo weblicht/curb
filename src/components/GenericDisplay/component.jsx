@@ -171,13 +171,15 @@ export function List(props) {
 // params:
 //    name :: String, a name for the container type 
 export function makeDisplayableContainer(name) {
-    return function (props) {
+    function DisplayableContainer(props) {
         if (typeof props.displayAs === 'function') {
             const Renderer = props.displayAs;
             return (<Renderer {...props} />);
         } else {
             throw new InternalError(`${name} was rendered with an incorrect displayAs prop`);
         }
-    };
+    }
+    DisplayableContainer.displayName = name;
+    return DisplayableContainer;
 }
 
