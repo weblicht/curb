@@ -23,8 +23,8 @@ HTML table row containing its data.
 `DefList`: given a list of terms and a co-indexed list of definitions,
 generate an HTML definition list.
 
-`DelimitedArray`: given an array of data, pretty-print this data with
-delimiters as an HTML span.
+`Delimited`: given an array of data, pretty-print this data with
+delimiters.
 
 `List`: display an ordered or unordered list, depending on `ordered`
 prop

@@ -135,25 +135,25 @@ export function DefList(props) {
 
 
 // props:
-//   className :: String
 //   data :: [ Object ]
 //   delimiter (optional) :: String
 //     prepended to all but the first element; defaults to ', '
 //   displayItemAs (optional) :: data object -> String
 //     defaults to withNullAsString helper
-export function DelimitedArray(props) {
+export function Delimited(props) {
     const delim = props.delimiter || ', ';
     const formatter = props.displayItemAs || withNullAsString;
-    const formattedItems = props.data.map(
-        (el, idx) => (idx > 0 ? delim : '') + formatter(el)
-    );
-
-    return (
-        <span className={props.className}>
-          {"".concat(...formattedItems)}
-        </span>
+    // Note: we're relying here on the fact that React does some magic
+    // behind the scenes to convert this array, which looks like 
+    // [ [String, Object], ... ], into a flat array of elements.  This
+    // works in React 16 but I haven't been able to find any official
+    // documentation, so it may break.  See
+    // https://stackoverflow.com/questions/23618744/rendering-comma-separated-list-of-links/40276830#40276830
+    return props.data.map(
+            (el, idx) => [(idx > 0 ? delim : ''), formatter(el)]
     );
 }
+
 
 // props:
 //   ordered :: Bool
