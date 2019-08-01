@@ -5,24 +5,100 @@ import { withNullAsString } from '../../helpers';
 import { InternalError } from '../../errors';
 
 import React from 'react';
-
+import classNames from 'classnames';
 
 // props:
+//   id :: String
+//   text (optional) :: String to use as button text; defaults to props.children
+//   onClick :: Event handler function
+//   type (optional) :: String, defaults to 'button'
+//   className (optional), defaults to 'btn'
+//   extras (optional), extra classes for button input
+export function Button(props) {
+    return (
+          <button type={props.type || 'button'}
+                  id={props.id}
+                  className={classNames(props.className || 'btn', props.extras)}
+                  onClick={props.onClick}>
+            {props.text || props.children}
+          </button>
+    );
+}
+
+// props:
+//   id :: String
+//   onChange :: Event handler function
+//   checked :: Bool
+//   label :: String
+//   className (optional), defaults to 'form-check-input'
+//   extras (optional), extra classes for checkbox input
+//   labelClassName (optional), defaults to 'form-check-label'
+//   labelExtras (optional), extra classes for label 
+export function Checkbox(props) {
+    return (
+        <React.Fragment>
+          <input type='checkbox'
+                 id={props.id}
+                 className={classNames(props.className || 'form-check-input', props.extras)}
+                 onChange={props.onChange}
+                 checked={props.checked}
+          />
+          <label className={classNames(props.labelClassName || 'form-check-label', props.labelExtras)}
+                 htmlFor={props.id}>
+            {props.label}
+          </label>
+        </React.Fragment>
+    );
+}
+ 
+// props:
+//   id :: String
+//   label :: String
+//   onChange :: Event handler function
+//   value (optional) :: String
+//   placeholder (optional) :: String
+//   autoFocus (optional) :: Bool
+//   className (optional), defaults to 'form-control'
+//   extras (optional), extra classes for text input
+//   labelClassName (optional),  defaults to 'sr-only'
+//   labelExtras (optional), extra classes for label 
+export function TextInput(props) {
+    return (
+        <React.Fragment>
+          <label className={classNames(props.labelClassName || 'sr-only', props.labelExtras)}
+                 htmlFor={props.id}>
+            {props.label}
+          </label>
+          <input type='text'
+                 id={props.id}
+                 className={classNames(props.className || 'form-control', props.extras)}
+                 onChange={props.onChange}
+                 value={props.value || ''}
+                 placeholder={props.placeholder || ''}
+                 autoFocus={props.autoFocus || false}
+          />
+        </React.Fragment>
+    );
+}
+ 
+// props:
 //   data :: [ Object ]
-//   displayItemAs :: Object -> HTML list item,
-//     a component to display a single data object as an item in the list
+//   displayItemAs (optional) :: Object -> HTML list item,
+//     a component to display a single object as an item in the list;
+//     defaults to ListItem
 //   ordered (optional) :: Bool
-//   className (optional) :: String
+//   className (optional)
+//   extras (optional)
+//   itemClassName (optional), passed to item formatting component as className
+//   itemExtras (optional), passed to item formatting component as extras
 export function DataList(props) {
     if (!(props.data && props.data.length)) return null;
-    // TODO: is there any way to provide a sensible default, or must
-    // the user always pass a custom component to render the list items?
-    const ItemComponent = props.displayItemAs;
-    
+
+    const ItemComponent = props.displayItemAs || ListItem;
     return (
-        <List ordered={props.ordered} className={props.className}>
+        <List ordered={props.ordered} className={props.className} extras={props.extras}>
           {props.data.map(
-              item => <ItemComponent {...props} data={item}/>
+              item => <ItemComponent data={item} className={classNames(props.itemClassName, props.itemExtras)}/>
           )}
         </List>
     );
@@ -92,21 +168,22 @@ export function DataTableRow(props) {
 }
 
 // props:
-//   className :: String
+//   data :: [ Object ], the data objects which will be formattted as the rows of the table
 //   fieldMap :: [ [String, String] ], array mapping data field names to display names
 //   displayFields :: [ String ], array of data fields to be displayed
 //     This should be a subset of the keys in fieldMap.
-//   data :: [ Object ], the data objects which will be formattted as the rows of the table
 //   displayRowAs (optional) :: Object -> HTML table row,
 //      a component to display a single data object as a table row.
 //      Defaults to DataTableRow.
+//   className (optional), defaults to 'table'
+//   extras (optional), extra classes for table element
 export function DataTable(props) {
     if (!(props.data && props.data.length)) return null;
 
     const RowComponent = props.displayRowAs || DataTableRow;
 
     return (
-        <table className={props.className}>
+        <table className={classNames(props.className || 'table', props.extras)}>
           <DataTableHeaders fieldMap={props.fieldMap} displayFields={props.displayFields}/>
           <tbody>
             {props.data.map(
@@ -118,15 +195,16 @@ export function DataTable(props) {
 }
 
 // props:
-//   className :: String  (CSS class for dl)
 //   terms :: [ String ]
 //   defs :: [ String ]
-// terms and defs should be co-indexed
+//     Note: terms and defs should be co-indexed
+//   className (optional)
+//   extras (optional), extra classes for dl element
 export function DefList(props) {
     if (!(props.terms && props.terms.length)) return null;
 
     return (
-        <dl className={props.className}>
+        <dl className={classNames(props.className, props.extras)}>
                 {props.terms.map(
                     (term, idx) =>
                         <React.Fragment key={term}>
@@ -143,7 +221,7 @@ export function DefList(props) {
 //   data :: [ Object ]
 //   delimiter (optional) :: String
 //     prepended to all but the first element; defaults to ', '
-//   displayItemAs (optional) :: data object -> String
+//   displayItemAs (optional) :: data object -> Element
 //     defaults to withNullAsString helper
 export function Delimited(props) {
     if (!(props.data && props.data.length)) return null;
@@ -152,7 +230,7 @@ export function Delimited(props) {
     const formatter = props.displayItemAs || withNullAsString;
     // Note: we're relying here on the fact that React does some magic
     // behind the scenes to convert this array, which looks like 
-    // [ [String, Object], ... ], into a flat array of elements.  This
+    // [ [String, Element], ... ], into a flat array of elements.  This
     // works in React 16 but I haven't been able to find any official
     // documentation, so it may break.  See
     // https://stackoverflow.com/questions/23618744/rendering-comma-separated-list-of-links/40276830#40276830
@@ -161,19 +239,34 @@ export function Delimited(props) {
     );
 }
 
-
 // props:
 //   ordered :: Bool
-//   className (optional) :: String
+//   className (optional), defaults to 'list-group'
+//   extras (optional), extra classes for list
 export function List(props) {
+    const defaultClass = 'list-group';
+    const classes = classNames(props.className || defaultClass, props.extras);
     if (props.ordered) {
-        return (<ol className={props.className}>{props.children}</ol>);
+        return (<ol className={classes}>{props.children}</ol>);
     } else {
-        return (<ul className={props.className}>{props.children}</ul>);
+        return (<ul className={classes}>{props.children}</ul>);
     }
 }
 
-
+// props:
+//   key :: the key for the list item
+//   data :: Object, the contents of the list item;
+//      if not present, defaults to props.children
+//   className (optional), defaults to 'list-group-item'
+//   extras (optional), extra classes for list item
+export function ListItem(props) {
+    return (
+        <li key={props.key} className={classNames(props.className || 'list-group-item', props.extras)}>
+          {props.data || props.children}
+        </li>
+    );
+}
+   
 // HOC that abstracts the logic for data container components.   
 // params:
 //    name :: String, a name for the container type 
