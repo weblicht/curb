@@ -28,10 +28,28 @@ const SYNSET_ALL_FIELDS = SYNSET_FIELD_MAP.map(entry => entry[0]);
 
 // props:
 //   data :: Object containing a .wordClass field 
-//   displayAs :: 
 function WordClass(props) {
     return (
         <span className="wordClass">{props.data.wordClass}</span>
+    );
+}
+
+// props:
+//   data :: Object containing a .wordCategory field 
+function WordCategory(props) {
+    return (
+        <span className="wordCategory">{props.data.wordCategory}</span>
+    );
+}
+
+// props:
+//    data :: Object, a synset
+function SynsetAsListItem(props) {
+    return (
+        // TODO: is this a reasonable default?
+        <li key={props.data.id} className="synset-detail">
+          <Delimited data={props.data.orthForms} />
+        </li>
     );
 }
 
@@ -42,7 +60,7 @@ function SynsetAsOption(props) {
         // TODO: what's the best data to display to disambiguate between synsets with the same orthforms?
         <option key={props.data.id} value={props.data.id}>
           <WordClass data={props.data.wordClass}/>:
-          <Delimited data={props.data.orthForms} className="synset-orthforms"/>
+          <Delimited data={props.data.orthForms} />
         </option>
     );
 }
@@ -71,10 +89,10 @@ function SynsetAsTableRow(props) {
                     return <td>{props.data.wordClass.wordClass}</td>;
                 }
                 case 'orthForms': {
-                    return <td><Delimited data={props.data.orthForms} className='synset-orthforms'/></td>;
+                    return <td><Delimited data={props.data.orthForms} /></td>;
                 }
                 case 'wiktionaryParaphrases': {
-                    return <td><Delimited data={props.data[field]} delimiter='; ' className='synset-paraphrases'/></td>;
+                    return <td><Delimited data={props.data[field]} delimiter='; '/></td>;
                 }
                 default:
                     return <td>{withNullAsString( props.data[field] )}</td>;
@@ -152,7 +170,7 @@ class SynsetsContainer extends React.Component {
         } else {
             return null;
         }
-    }           
+    }
 }
 
 
@@ -172,5 +190,7 @@ export { SynsetsContainer,
          SynsetsAsList,
          SynsetsAsSelect,
          SynsetsAsTable,
+         WordClass,
+         WordCategory
        };
 
