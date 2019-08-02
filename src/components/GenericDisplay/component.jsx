@@ -114,7 +114,7 @@ export function DataList(props) {
     return (
         <List ordered={props.ordered} className={props.className} extras={props.extras}>
           {props.data.map(
-              item => <ItemComponent data={item} className={classNames(props.itemClassName, props.itemExtras)}/>
+              item => <ItemComponent data={item} className={props.itemClassName} extras={props.itemExtras}/>
           )}
         </List>
     );
