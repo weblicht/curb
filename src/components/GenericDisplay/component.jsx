@@ -96,7 +96,7 @@ export function TextInput(props) {
         </React.Fragment>
     );
 }
- 
+
 // props:
 //   data :: [ Object ]
 //   displayItemAs (optional) :: Object -> HTML list item,
@@ -154,10 +154,15 @@ export function DataSelect(props) {
 //   fieldMap :: [ [String, String] ], array mapping data field names to display names
 //   displayFields :: [ String ], array of data fields to be displayed
 //     This should be a subset of the keys in fieldMap.
+//   className (optional)
+//   extras (optional
 export function DataTableHeaders(props) {
     const fieldMapObj = Object.fromEntries(props.fieldMap);
     return (
-        <thead>
+        // no need for withDefault here because we don't need to set a
+        // default class on table headers, but the user can pass
+        // .thead-light, etc. if desired
+        <thead className={classNames(props.className, props.extras)}>
           <tr>
             {props.displayFields.map(
                 field => <th key={field} scope="col">{fieldMapObj[field]}</th>
@@ -168,14 +173,15 @@ export function DataTableHeaders(props) {
 }
 
 // props:
-//   className :: String
 //   displayFields :: [ String ] 
 //   data :: Object, with at least the following properties:
 //     .id :: an identifier
 //     all the properties listed in displayFields
 export function DataTableRow(props) {
     return (
-        <tr key={props.data.id} id={props.data.id} className={props.className}>
+        // Bootstrap doesn't really provide any classes for table
+        // *rows* so we leave out styling information for now
+        <tr key={props.data.id}>
               {props.displayFields.map(
                   (field) => <td>{ withNullAsString(props.data[field]) }</td>
               )}
