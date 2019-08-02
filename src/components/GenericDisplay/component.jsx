@@ -7,6 +7,14 @@ import { InternalError } from '../../errors';
 import React from 'react';
 import classNames from 'classnames';
 
+// helper for constructing className prop.  The convention is:
+// props.className, if given, *replaces* the default class name;
+// props.extras, if given, are *added* to the class name.
+// See the README for motivation and examples for this convention.
+function withDefault(dfault, props) {
+    return classNames(props.className || dfault, props.extras);
+}
+
 // props:
 //   id :: String
 //   text (optional) :: String to use as button text; defaults to props.children
@@ -17,8 +25,8 @@ import classNames from 'classnames';
 export function Button(props) {
     return (
           <button type={props.type || 'button'}
-                  id={props.id}
-                  className={classNames(props.className || 'btn', props.extras)}
+                  name={props.id}
+                  className={withDefault('btn', props)}
                   onClick={props.onClick}>
             {props.text || props.children}
           </button>
@@ -38,12 +46,16 @@ export function Checkbox(props) {
     return (
         <React.Fragment>
           <input type='checkbox'
-                 id={props.id}
-                 className={classNames(props.className || 'form-check-input', props.extras)}
+                 name={props.id}
+                 className={withDefault('form-check-input', props)}
                  onChange={props.onChange}
                  checked={props.checked}
           />
-          <label className={classNames(props.labelClassName || 'form-check-label', props.labelExtras)}
+          <label className={
+              withDefault('form-check-label', {
+                  className: props.labelClassName,
+                  extras: props.labelExtras
+              })}
                  htmlFor={props.id}>
             {props.label}
           </label>
@@ -65,13 +77,17 @@ export function Checkbox(props) {
 export function TextInput(props) {
     return (
         <React.Fragment>
-          <label className={classNames(props.labelClassName || 'sr-only', props.labelExtras)}
+          <label className={
+              withDefault('sr-only', {
+                  className: props.labelClassName,
+                  extras: props.labelExtras
+              })}
                  htmlFor={props.id}>
             {props.label}
           </label>
           <input type='text'
-                 id={props.id}
-                 className={classNames(props.className || 'form-control', props.extras)}
+                 name={props.id}
+                 className={withDefault('form-control', props)}
                  onChange={props.onChange}
                  value={props.value || ''}
                  placeholder={props.placeholder || ''}
@@ -177,14 +193,20 @@ export function DataTableRow(props) {
 //      Defaults to DataTableRow.
 //   className (optional), defaults to 'table'
 //   extras (optional), extra classes for table element
+//   headClassName (optional), className for thead element
+//   headClassExtras (optional), extras for thead element
 export function DataTable(props) {
     if (!(props.data && props.data.length)) return null;
 
     const RowComponent = props.displayRowAs || DataTableRow;
 
     return (
-        <table className={classNames(props.className || 'table', props.extras)}>
-          <DataTableHeaders fieldMap={props.fieldMap} displayFields={props.displayFields}/>
+        <table className={withDefault('table', props)}>
+          <DataTableHeaders fieldMap={props.fieldMap}
+                            displayFields={props.displayFields}
+                            className={props.headClassName}
+                            extras={props.headClassExtras}
+          />
           <tbody>
             {props.data.map(
                 row => <RowComponent data={row} displayFields={props.displayFields}/>
@@ -204,6 +226,7 @@ export function DefList(props) {
     if (!(props.terms && props.terms.length)) return null;
 
     return (
+        // no default class name needed for dl in Bootstrap
         <dl className={classNames(props.className, props.extras)}>
                 {props.terms.map(
                     (term, idx) =>
@@ -244,8 +267,7 @@ export function Delimited(props) {
 //   className (optional), defaults to 'list-group'
 //   extras (optional), extra classes for list
 export function List(props) {
-    const defaultClass = 'list-group';
-    const classes = classNames(props.className || defaultClass, props.extras);
+    const classes = withDefault('list-group', props);
     if (props.ordered) {
         return (<ol className={classes}>{props.children}</ol>);
     } else {
@@ -261,7 +283,7 @@ export function List(props) {
 //   extras (optional), extra classes for list item
 export function ListItem(props) {
     return (
-        <li key={props.key} className={classNames(props.className || 'list-group-item', props.extras)}>
+        <li key={props.key} className={withDefault('list-group-item', props)}>
           {props.data || props.children}
         </li>
     );
