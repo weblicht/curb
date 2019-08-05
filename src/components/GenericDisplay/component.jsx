@@ -98,6 +98,24 @@ export function TextInput(props) {
 }
 
 // props:
+//   title :: String
+//   level :: Number, the level of the card heading 
+//   children :: used as content for body of card
+//   extras
+//   bodyExtras, extras for card body
+//   Note: className does nothing here, since there is no reason to use this component *except* for the .card* classes it introduces
+export function Card(props) {
+    // TODO: support for header, footer, and extras for these? or should these be different components?
+    return (
+        <div className={classNames('card', props.extras)}>
+          <div className={classNames('card-body', props.bodyExtras)}>
+            <Heading level={props.level} className='card-title' data={props.title}/>
+            {props.children}
+          </div>
+        </div>
+    );
+}
+// props:
 //   data :: [ Object ]
 //   displayItemAs (optional) :: Object -> HTML list item,
 //     a component to display a single object as an item in the list;
@@ -266,6 +284,32 @@ export function Delimited(props) {
     return props.data.map(
             (el, idx) => [(idx > 0 ? delim : ''), formatter(el)]
     );
+}
+
+// props:
+//    level :: Number in 1...6
+//    data (optional) :: String, content of heading; defaults to props.children
+//    className
+//    extras
+export function Heading(props) {
+    const classnames = classNames(props.className, props.extras);
+    const text = props.data || props.children;
+    switch (props.level) {
+    case 1:
+        return <h1 className={classnames}>{text}</h1>;
+    case 2:
+        return <h2 className={classnames}>{text}</h2>;
+    case 3:
+        return <h3 className={classnames}>{text}</h3>;
+    case 4:
+        return <h4 className={classnames}>{text}</h4>;
+    case 5:
+        return <h5 className={classnames}>{text}</h5>;
+    case 6:
+        return <h6 className={classnames}>{text}</h6>;
+    default:
+        throw new InternalError(`Heading was rendered with nonsensical level=${props.level}`);
+    }
 }
 
 // props:

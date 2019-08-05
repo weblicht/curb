@@ -7,6 +7,8 @@ are intended to be reused by higher-level components.
 
 `Button`: display a button
 
+`Card`: wrap some content in a Bootstrap card div and add a title
+
 `Checkbox`: display a checkbox and corresponding label
 
 `DataList`: given an array of data objects and a component to render
@@ -29,6 +31,8 @@ generate an HTML definition list.
 
 `Delimited`: given an array of data, pretty-print this data with
 delimiters.
+
+`Heading`: generate an HTML section heading at an appropriate level
 
 `List`: display an ordered or unordered list, depending on `ordered`
 prop
