@@ -8,7 +8,7 @@ import React from 'react';
 // props:
 //   fetchParams :: { lexUnitId: ... }
 function ILIDefs(props) {
-    const terms = props.data.map( d => d.relation.replace('_', ' '));
+    const terms = props.data.map( d => `${d.englishEquivalent} (${d.relation.replace('_', ' ')})`);
     const defs = props.data.map( d => d.pwn20Paraphrase );
     return ( <DefList className="ili" terms={terms} defs={defs} /> );
 }
