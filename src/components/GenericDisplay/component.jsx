@@ -98,23 +98,47 @@ export function TextInput(props) {
 }
 
 // props:
-//   title :: String
-//   level :: Number, the level of the card heading 
+//   title (optional) :: String
+//   level (required only if title given) :: Number, the level of the card heading 
 //   children :: used as content for body of card
 //   extras
 //   bodyExtras, extras for card body
 //   Note: className does nothing here, since there is no reason to use this component *except* for the .card* classes it introduces
 export function Card(props) {
-    // TODO: support for header, footer, and extras for these? or should these be different components?
     return (
         <div className={classNames('card', props.extras)}>
           <div className={classNames('card-body', props.bodyExtras)}>
-            <Heading level={props.level} className='card-title' data={props.title}/>
+            {props.title && <Heading level={props.level} className='card-title' data={props.title}/>}
             {props.children}
           </div>
         </div>
     );
 }
+
+// props:
+//   children :: used as content for footer of card
+//   extras
+//   Note: className does nothing here, since there is no reason to use this component *except* for the .card* classes it introduces
+export function CardFooter(props) {
+    return (
+        <div className={classNames('card-footer', props.extras)}>
+            {props.children}
+        </div>
+    );
+}
+
+// props:
+//   children :: used as content for header of card
+//   extras
+//   Note: className does nothing here, since there is no reason to use this component *except* for the .card* classes it introduces
+export function CardHeader(props) {
+    return (
+        <div className={classNames('card-header', props.extras)}>
+            {props.children}
+        </div>
+    );
+}
+
 // props:
 //   data :: [ Object ]
 //   displayItemAs (optional) :: Object -> HTML list item,
