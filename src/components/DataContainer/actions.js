@@ -1,41 +1,42 @@
 // DataContainer/actions.js
 // Action types and creators for DataContainer
-import { actionTypesFromStrings, mergeActionTypes } from '../../helpers';
+import { actionTypesFromStrings } from '../../helpers';
 
-export const byIdActionTypes = actionTypesFromStrings([
-    'DATA_CONTAINER_SELECT_ROW',
+export const actionTypes = actionTypesFromStrings([
+    'DATA_CONTAINER_CHOOSE_UNIQUELY',
+    'DATA_CONTAINER_SELECT',
+    'DATA_CONTAINER_UNSELECT',
 ])
 
-export const broadcastActionTypes = actionTypesFromStrings([
-    'DATA_CONTAINER_UPDATE_DATA',
-])
+// Makes action creators for a given data container.
+// params:
+//   containerId, a unique identifier for the container
+export function makeActionsForContainer(containerId) {
 
-export const actionTypes = mergeActionTypes(byIdActionTypes, broadcastActionTypes);
+    function choose(itemId) {
+        return { type: actionTypes.DATA_CONTAINER_CHOOSE_UNIQUELY,
+                 id: containerId,
+                 itemId
+               };
+    }
 
-export function withDataActions(otherTypes) {
-    return mergeActionTypes(actionTypes, otherTypes);
-}
+    function select(itemId) {
+        return { type: actionTypes.DATA_CONTAINER_SELECT,
+                 id: containerId,
+                 itemId
+               };
+    }
 
-// Simple action creators: these emit actions that do not call the
-// backend and only serve to update the UI
-export function registerDataContainer(id, source) {
-    return { type: actionTypes.DATA_CONTAINER_NEW_CONTAINER, id, source };
-}
+    function unselect(itemId) {
+        return { type: actionTypes.DATA_CONTAINER_UNSELECT,
+                 id: containerId,
+                 itemId
+               };
+    }
     
-export function updateDataFrom(source, data) {
-    return { type: actionTypes.DATA_CONTAINER_UPDATE_DATA, source, data };
+    return {
+        choose,
+        select,
+        unselect
+    }
 }
-// todo: do we also want a updateDataIn(id, data) ?
-// this would be a complementary way of telling a data container to
-// update when we know where it should go, but not which source the
-// container is "listening" to
-
-// TODO: we should provide basic selection functionality here
-// export function selectDataRow(id, row) {
-//     return { type: actionTypes.DATA_CONTAINER_SELECT_ROW, id, row };
-// }
-
-
-
-
-
