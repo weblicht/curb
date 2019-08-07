@@ -1,9 +1,15 @@
 import { lexUnitsActions } from './actions';
+import { dataContainerFor } from '../DataContainer/component';
 import { selectLexUnits } from './selectors';
-import { DataTable, DataTableRow, DataList, DataSelect, makeDisplayableContainer } from '../GenericDisplay/component';
-import { WiktionaryDefs } from '../WiktionaryDefs/component';
-import { ILIDefs } from '../ILIDefs/component';
-import { Examples } from '../LexExamples/component';
+import { DataTable,
+         DataTableRow,
+         DataList,
+         DataSelect,
+         ListItem,
+         makeDisplayableContainer } from '../GenericDisplay/component';
+import { WiktionaryDefs, WiktDefsAsDefList } from '../WiktionaryDefs/component';
+import { ILIDefs, ILIRecordsAsDefList } from '../ILIDefs/component';
+import { Examples, ExamplesAsDefList } from '../LexExamples/component';
 import { connectWithApi } from '../APIWrapper';
 import { withNullAsString } from '../../helpers';
 
@@ -48,12 +54,12 @@ function LexUnitAsListItem(props) {
     const luId = props.data.id;
 
     return (
-        <li key={luId} className="lexunit-detail">
+        <ListItem key={luId} extras="lexunit-detail">
           {props.data.orthForm}
-          <Examples fetchParams={{lexUnitId: luId}}/>
-          <WiktionaryDefs fetchParams={{lexUnitId: luId}}/>
-          <ILIDefs fetchParams={{lexUnitId: luId}}/>
-        </li>
+          <Examples fetchParams={{lexUnitId: luId}} displayAs={ExamplesAsDefList} />
+          <WiktionaryDefs fetchParams={{lexUnitId: luId}} displayAs={WiktDefsAsDefList}/>
+          <ILIDefs fetchParams={{lexUnitId: luId}} displayAs={ILIRecordsAsDefList}/>
+        </ListItem>
     );
 }
 
@@ -95,7 +101,7 @@ function LexUnitsAsList(props) {
     return (
         <DataList data={props.data}
                   ordered={props.ordered}
-                  className='lexunits-container'
+                  extras='lexunits-container'
                   displayItemAs={props.unitsDisplayAs || LexUnitAsListItem} />
     );
 }
@@ -108,7 +114,7 @@ function LexUnitsAsSelect(props) {
     return (
         <DataSelect data={props.data}
                     disabledOption='Select a lexical unit'
-                    className='lexunits-container'
+                    extras='lexunits-container'
                     displayAs={props.unitsDisplayAs || LexUnitAsOption} />
     );
 }
@@ -125,11 +131,11 @@ function LexUnitsAsTable(props) {
     const RowComponent = props.unitsDisplayAs || LexUnitAsTableRow;
     
     return (
-        <DataTable className='lexunits-container'
-                   data={props.data}
+        <DataTable data={props.data}
                    fieldMap={fieldMap}
                    displayFields={displayFields}
                    displayRowAs={RowComponent}
+                   extras='lexunits-container' 
         />
     );
 }
@@ -139,10 +145,8 @@ function LexUnitsAsTable(props) {
 //   fetchParams :: { synsetId: ... }
 //   displayAs :: Component to render a list of lex units
 //   unitsDisplayAs (optional) :: Component to render each lex unit
-var LexUnitsContainer = makeDisplayableContainer('LexUnitsContainer');
-LexUnitsContainer = connectWithApi(selectLexUnits,
-                                   lexUnitsActions.fetchActions
-                                  )(LexUnitsContainer);
+var LexUnitsContainer = dataContainerFor('LexUnits', selectLexUnits);
+LexUnitsContainer = connectWithApi(lexUnitsActions.fetchActions)(LexUnitsContainer);
 
 
 export { LexUnitsContainer,

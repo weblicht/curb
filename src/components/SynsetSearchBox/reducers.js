@@ -30,8 +30,6 @@ function searchBoxInnerReducer(state = searchBoxInnerState, action) {
         return state.merge({ error: action.error });
     }
     case actionTypes.SYNSET_SEARCH_SUBMITTED: {
-        // once a search is submitted, the current search term becomes
-        // the most recent search term
         return state.merge({
             mostRecentSearchTerm: state.currentSearchTerm,
             currentSearchTerm: ''
@@ -39,7 +37,7 @@ function searchBoxInnerReducer(state = searchBoxInnerState, action) {
     }
     case actionTypes.SYNSET_SEARCH_RESULTS_RETURNED: {
         return state.merge({
-            synsets: action.data.synsets, // TODO: do we really need a copy of these results here?
+            synsets: action.data.synsets,
             error: action.data.length === 0 ? 'No synsets found.' : ''
         })
     }
@@ -48,9 +46,9 @@ function searchBoxInnerReducer(state = searchBoxInnerState, action) {
     }
 }
 
-// manages overall search boxes state by their ids:
-const byIdReducer = makeByIdReducer(searchBoxInnerReducer,
-                                    actionTypes);
+// manage overall search boxes, results, and history state by their ids:
+const searchBoxesById = makeByIdReducer(searchBoxInnerReducer,
+                                        actionTypes);
 
-export { byIdReducer as synsetSearchBoxes };        
+export { searchBoxesById as synsetSearchBoxes };        
 

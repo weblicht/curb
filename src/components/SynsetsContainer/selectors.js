@@ -11,4 +11,14 @@ export function selectSynsets(id, globalState) {
     }
 
 }
-    
+
+export function selectSynsetsForSearchBox(globalState, ownProps) {
+    try {
+        return globalState.synsetSearchBoxes.byId[ownProps.source].synsets || [];
+    } catch (e) {
+        // TypeError if one of the properties in the middle is not
+        // defined yet
+        return [];
+    }
+
+}   

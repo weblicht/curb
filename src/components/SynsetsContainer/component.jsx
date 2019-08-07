@@ -2,9 +2,15 @@
 // Definition of SynsetsContainer component
 
 import { registerSource } from './actions';
-import { selectSynsets } from './selectors';
-import { asDataContainer } from '../DataContainer/component';
-import { DataTable, DataTableRow, Delimited, DataList, DataSelect, makeDisplayableContainer } from '../GenericDisplay/component';
+import { selectSynsetsForSearchBox } from './selectors';
+import { dataContainerFor } from '../DataContainer/component';
+import { DataTable,
+         DataTableRow,
+         Delimited,
+         DataList,
+         DataSelect,
+         ListItem,
+         makeDisplayableContainer } from '../GenericDisplay/component';
 import { withNullAsString } from '../../helpers';
 
 import React from 'react';
@@ -47,9 +53,9 @@ function WordCategory(props) {
 function SynsetAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
-        <li key={props.data.id} className="synset-detail">
+        <ListItem key={props.data.id} extras="synset-detail">
           <Delimited data={props.data.orthForms} />
-        </li>
+        </ListItem>
     );
 }
 
@@ -77,7 +83,7 @@ function SynsetAsOption(props) {
 function SynsetAsTableRow(props) {
     const displayFields = props.displayFields || SYNSET_ALL_FIELDS;
     return (
-        <tr key={props.data.id} id={props.data.id} className='synset-detail'>
+        <tr key={props.data.id} id={props.data.id}>
 
         {displayFields.map(
             function (field) {
@@ -117,7 +123,7 @@ function SynsetsAsList(props) {
     return (
         <DataList data={props.data}
                   ordered={props.ordered}
-                  className="synsets-container"
+                  extras="synsets-container"
                   displayItemAs={props.unitsDisplayAs || SynsetAsListItem}/>
     );
 }
@@ -129,7 +135,7 @@ function SynsetsAsList(props) {
 function SynsetsAsSelect(props) {
     return (
         <DataSelect data={props.data}
-                    className="synsets-container"
+                    extras="synsets-container"
                     disabledOption="Select a synset"
                     displayItemAs={props.unitsDisplayAs || SynsetAsOption}/> 
     );
@@ -147,7 +153,7 @@ function SynsetsAsTable(props) {
     const displayFields = props.displayFields ;
     return (
         <DataTable data={props.data}
-                   className="synsets-container"
+                   extras="synsets-container"
                    fieldMap={props.fieldMap || SYNSET_FIELD_MAP}
                    displayFields={props.displayFields || SYNSET_ALL_FIELDS}
                    displayRowAs={props.unitsDisplayAs || SynsetAsTableRow}
@@ -156,36 +162,10 @@ function SynsetsAsTable(props) {
 }
     
 
-class SynsetsContainer extends React.Component {
-    constructor(props){
-        super(props);
-        this.props.register();
-        
-    }
-
-    render() {
-        if (typeof this.props.displayAs === 'function') {
-            const Renderer = this.props.displayAs;
-            return (<Renderer {...this.props} />);
-        } else {
-            return null;
-        }
-    }
-}
+const SynsetsContainer = dataContainerFor('Synsets', selectSynsetsForSearchBox);
 
 
-function mapStateToProps (state, ownProps) {
-    return { data: selectSynsets(ownProps.id, state) };
-}
 
-function mapDispatchToProps (dispatch, ownProps) {
-    return {
-        register: () => dispatch(registerSource(ownProps.id, ownProps.source)),
-        //updateIgnoreCase: () => dispatch(updateIgnoreCase(ownProps.id)),
-    };
-}
-
-SynsetsContainer = connect(mapStateToProps, mapDispatchToProps)(SynsetsContainer);
 export { SynsetsContainer,
          SynsetsAsList,
          SynsetsAsSelect,

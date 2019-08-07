@@ -5,30 +5,18 @@ import { connect } from 'react-redux';
 // backend API and the redux store
 //
 // params:
-//   selector: a selector function for whatever data that should be
-//     made available on the 'data' prop of the wrapped component.  It
-//     should accept globalState and ownProps as arguments.  It should
-//     return *undefined* if and only if the data is not yet in the store,
-//     indicating that it should be retrieved from the API. (By
-//     contrast, if the data is present in the store but *empty*, the
-//     selector should return some other empty-but-trueish-value, such
-//     as [] or {}.)
 //   fetchActions: an object containing API action creators for fetching, e.g. as
 //     returned by makeApiActions.
-//   innerMSTP (optional): 
-//   innerMDTP (optional): 
-//      mapStateToProps and mapDispatchToProps functions to pass
-//      through to redux's connect
 // 
 // Returns a function with which to wrap a component.  Thus, you can use it very much
 // like redux's connect() function:
 // ConnectedSomeComponent = connectWithApi(selector, fetchActions)(SomeComponent);
-export function connectWithApi(selector,
-                               fetchActions,
-                               innerMSTP, innerMDTP) {
+export function connectWithApi(fetchActions) {
     // TODO: again, there's room to expand here to other REST methods
     // In that case we want not just fetchActions, but a whole API actions object
+
     function wrap(Component) {
+        // TODO: this can now probably be refactored to be a pure function component
         return class APIWrapper extends React.Component {
 
             constructor(props) {
@@ -45,38 +33,22 @@ export function connectWithApi(selector,
             }
 
             render() {
-                // don't render when we don't yet have data:
-                if (this.props.data === undefined) {
-                    return null;
-                } else {
-                    return (
-                        <Component data={this.props.data} {...this.props}/>
-                    );
-                }
+                return (
+                    <Component data={this.props.data} {...this.props}/>
+                );
             }
-        }
+        };
     }
     
-    function mapStateToProps(globalState, ownProps) {
-        // TODO: it's too easy to mess up the selector and break this.
-        // Should at least figure out a way to report better errors.
-        return {
-            data: selector(globalState, ownProps),
-            ...innerMSTP ? innerMSTP(globalState, ownProps) : undefined
-        };
-    };
-
     function mapDispatchToProps(dispatch, ownProps) {
         return {
             // for now, user must supply fetchParams 
-            fetchData: () => dispatch(
-                fetchActions.doFetch(ownProps.fetchParams)),
-            ...innerMDTP ? innerMDTP(dispatch, ownProps) : undefined
+            fetchData: () => dispatch(fetchActions.doFetch(ownProps.fetchParams)),
         };
     };
 
     return function(Component) {
-        const Connected = connect(mapStateToProps, mapDispatchToProps)(wrap(Component));
+        const Connected = connect(undefined, mapDispatchToProps)(wrap(Component));
         Connected.displayName = (Component.displayName || Component.name || 'Component') + 'WithApi';
 
         return Connected;
