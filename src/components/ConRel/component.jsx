@@ -1,6 +1,7 @@
 import { conRelsActions } from './actions';
 import { selectConRels } from './selectors';
-import { DataList, DataTable, makeDisplayableContainer } from '../GenericDisplay/component';
+import { DataList, DataTable } from '../GenericDisplay/component';
+import { dataContainerFor } from '../DataContainer/component';
 import { connectWithApi } from '../APIWrapper';
 
 import React from 'react';
@@ -25,8 +26,6 @@ function ConRelAsTableRow(props) {
     // TODO: what is a sensible default to provide here?
     return null;
 }
-
-const ConRelDetail = makeDisplayableContainer('ConRelDetail');
 
 // props:
 //   data :: [ Object ], the conrels
@@ -60,8 +59,8 @@ function ConRelsAsTable(props) {
 
 // props:
 //   fetchParams :: { synsetId: ... }
-var ConRelsContainer = makeDisplayableContainer('ConRelsContainer');
-ConRelsContainer = connectWithApi(selectConRels, conRelsActions.fetchActions)(ConRelsContainer);
+var ConRelsContainer = dataContainerFor('ConRels', selectConRels);
+ConRelsContainer = connectWithApi(conRelsActions.fetchActions)(ConRelsContainer);
 
 export { ConRelsContainer,
          ConRelsAsList
