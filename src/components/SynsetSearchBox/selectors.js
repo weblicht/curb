@@ -26,11 +26,4 @@ export function searchBoxState(id, globalState) {
     }
 }
 
-export function synsets(id, globalState) {
-    try {
-        return globalState.synsetSearchBoxes.byId[id].synsets;
-    } catch (e) {
-        return [];
-    }
-}
-    
+   
