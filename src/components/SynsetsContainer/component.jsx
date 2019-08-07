@@ -2,8 +2,8 @@
 // Definition of SynsetsContainer component
 
 import { registerSource } from './actions';
-import { selectSynsets } from './selectors';
-import { asDataContainer } from '../DataContainer/component';
+import { selectSynsetsForSearchBox } from './selectors';
+import { dataContainerFor } from '../DataContainer/component';
 import { DataTable,
          DataTableRow,
          Delimited,
@@ -162,36 +162,10 @@ function SynsetsAsTable(props) {
 }
     
 
-class SynsetsContainer extends React.Component {
-    constructor(props){
-        super(props);
-        this.props.register();
-        
-    }
-
-    render() {
-        if (typeof this.props.displayAs === 'function') {
-            const Renderer = this.props.displayAs;
-            return (<Renderer {...this.props} />);
-        } else {
-            return null;
-        }
-    }
-}
+const SynsetsContainer = dataContainerFor('Synsets', selectSynsetsForSearchBox);
 
 
-function mapStateToProps (state, ownProps) {
-    return { data: selectSynsets(ownProps.id, state) };
-}
 
-function mapDispatchToProps (dispatch, ownProps) {
-    return {
-        register: () => dispatch(registerSource(ownProps.id, ownProps.source)),
-        //updateIgnoreCase: () => dispatch(updateIgnoreCase(ownProps.id)),
-    };
-}
-
-SynsetsContainer = connect(mapStateToProps, mapDispatchToProps)(SynsetsContainer);
 export { SynsetsContainer,
          SynsetsAsList,
          SynsetsAsSelect,
