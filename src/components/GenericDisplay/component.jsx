@@ -193,6 +193,73 @@ export function DataSelect(props) {
 }
 
 // props:
+//    data :: [ Object ]
+//       Normally, these should be the objects in some data container.
+//       Exactly one object should have .chosen == True.  The first item
+//       will be chosen by default.
+//    itemToTabId :: Object -> String, a function mapping data objects to unique identifiers
+//    itemToTabText :: Object -> String, a function mapping data objects to tab button text
+//    choose, callback to choose tab for an item given its (tab) Id
+//       Normally this should be the .choose prop of a DataContainer
+//    displayItemAs, component to display an item as tab pane content
+//
+export function DataTabbedPanes(props) {
+    if (!(props.data && props.data.length)) return null;
+
+    const ItemRenderer = props.displayItemAs;
+
+    var chosenSeen = false;
+    const dataWithTabs = props.data.map(
+        item => {
+            chosenSeen = chosenSeen || item.chosen;
+            const tabId = props.itemToTabId(item);
+            const tabRef = "#" + tabId;
+            const tabName = tabId + "-tab";
+            return { tabId, tabRef, tabName, ...item };
+        });
+
+    function activateTab(e) {
+        e.preventDefault();
+        const tabId = e.target.getAttribute('data-id');
+        props.choose(tabId);
+    }
+
+    return (
+        <>
+          <List ordered={false} className="nav nav-tabs">
+            {dataWithTabs.map(
+                (item, idx) => 
+                    <ListItem key={item.id} className="nav-item">
+                      <a className={classNames("nav-link", { active: chosenSeen ? item.chosen : idx === 0 })}
+                         data-id={item.tabId}
+                         href={item.tabRef}
+                         role="tab"
+                         aria-controls={item.tabId}
+                         aria-selected={item.selected}
+                         onClick={activateTab}
+                      >
+                        {props.itemToTabText(item)} 
+                      </a>
+                    </ListItem>
+                
+            )}
+          </List>
+          <div className="tab-content">
+            {dataWithTabs.map(
+                (item, idx) =>
+                    (<div className={classNames("tab-pane", { active: chosenSeen ? item.chosen : idx === 0 })}
+                          data-id={item.tabId}
+                          role="tabpanel"
+                          aria-labelledby={item.tabName}>
+                       <ItemRenderer data={item} />
+                     </div>) 
+            )}
+          </div>
+        </>
+    );
+}
+
+// props:
 //   fieldMap :: [ [String, String] ], array mapping data field names to display names
 //   displayFields :: [ String ], array of data fields to be displayed
 //     This should be a subset of the keys in fieldMap.
@@ -362,7 +429,7 @@ export function ListItem(props) {
         </li>
     );
 }
-   
+
 // HOC that abstracts the logic for data container components.   
 // params:
 //    name :: String, a name for the container type 

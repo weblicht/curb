@@ -17,6 +17,9 @@ individual items, generate an HTML list of that data
 `DataSelect`: given an array of data objects and a component to render
 individual options, generate an HTML select for the data
 
+`DataTabbedPanes`: given an array of data objects and formatting
+information, generate a tab pane view, with one tab per data object
+
 `DataTable`: given an array of data objects and formatting information,
 generate an HTML table to display that data
 
