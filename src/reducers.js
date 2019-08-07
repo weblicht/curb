@@ -6,6 +6,9 @@ import { combineReducers } from 'redux';
 export { synsetSearchBoxes } from './components/SynsetSearchBox/reducers';
 export { synsetsContainers } from './components/SynsetsContainer/reducers';
 
+// Data containers
+export { dataContainers } from './components/DataContainer/reducers';
+
 // API
 import { iliDefs } from './components/ILIDefs/reducers';
 import { lexExamples } from './components/LexExamples/reducers';
