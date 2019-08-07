@@ -1,4 +1,5 @@
 import { lexUnitsActions } from './actions';
+import { dataContainerFor } from '../DataContainer/component';
 import { selectLexUnits } from './selectors';
 import { DataTable,
          DataTableRow,
@@ -144,10 +145,8 @@ function LexUnitsAsTable(props) {
 //   fetchParams :: { synsetId: ... }
 //   displayAs :: Component to render a list of lex units
 //   unitsDisplayAs (optional) :: Component to render each lex unit
-var LexUnitsContainer = makeDisplayableContainer('LexUnitsContainer');
-LexUnitsContainer = connectWithApi(selectLexUnits,
-                                   lexUnitsActions.fetchActions
-                                  )(LexUnitsContainer);
+var LexUnitsContainer = dataContainerFor('LexUnits', selectLexUnits);
+LexUnitsContainer = connectWithApi(lexUnitsActions.fetchActions)(LexUnitsContainer);
 
 
 export { LexUnitsContainer,
