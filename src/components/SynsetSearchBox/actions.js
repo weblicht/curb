@@ -66,9 +66,10 @@ export function doSearch(id, term, ignoreCase) {
         const params = { word: term, ignoreCase };
         dispatch(submitSearch(id, params));
         return axios
-        .put(apiPath.find, params) // TODO: why isn't GET allowed by backend?
-        .then(response =>
-              dispatch(receiveResults(id, response.data)),
+        .get(apiPath.find, params)
+        .then(response => {
+            dispatch(receiveResults(id, response.data)); 
+            },
               error => dispatch(updateError(id,
                   // TODO: more generalized error handling? logging?
                   `Failed to retrieve results for "${params.word}".`)) 
