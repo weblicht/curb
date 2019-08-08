@@ -5,8 +5,7 @@ import { DataTable,
          DataTableRow,
          DataList,
          DataSelect,
-         ListItem,
-         makeDisplayableContainer } from '../GenericDisplay/component';
+         ListItem } from '../GenericDisplay/component';
 import { connectWithApi } from '../APIWrapper';
 import { withNullAsString } from '../../helpers';
 
@@ -70,19 +69,6 @@ function LexUnitAsTableRow(props) {
     );
 
 }
-
-// TODO: 
-// present a lexunit in a form for editing
-// function LexUnitAsForm 
-
-// props:
-//   displayAs :: Component to render a lex unit object for display
-const LexUnitDetail = makeDisplayableContainer('LexUnitDetail');
-
-// TODO: there is a hole in the API. We can't at present request lex
-// unit details by ID.  So we need to pass data= directly from a
-// parent, e.g., LexUnitsContainer, and can't wrap LexUnitDetail with
-// connectWithApi().
 
 // Display components for an array of lex unit objects:
 

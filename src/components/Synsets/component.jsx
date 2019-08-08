@@ -8,8 +8,7 @@ import { DataTable,
          Delimited,
          DataList,
          DataSelect,
-         ListItem,
-         makeDisplayableContainer } from '../GenericDisplay/component';
+         ListItem } from '../GenericDisplay/component';
 import { withNullAsString } from '../../helpers';
 
 import React from 'react';
@@ -107,8 +106,6 @@ function SynsetAsTableRow(props) {
         </tr>
     );
 }
-
-const SynsetDetail = makeDisplayableContainer('SynsetDetail');
 
 // Display components for an array of synset objects:
 

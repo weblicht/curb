@@ -448,20 +448,3 @@ export function ListItem(props) {
     );
 }
 
-// HOC that abstracts the logic for data container components.   
-// params:
-//    name :: String, a name for the container type 
-export function makeDisplayableContainer(name) {
-    function DisplayableContainer(props) {
-        if (typeof props.displayAs === 'function') {
-            const Renderer = props.displayAs;
-            return (<Renderer {...props} />);
-        } else {
-            throw new InternalError(`${name} was rendered with an incorrect displayAs prop`);
-        }
-    }
-    DisplayableContainer.displayName = name;
-    return DisplayableContainer;
-}
-
-

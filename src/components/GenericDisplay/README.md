@@ -42,10 +42,6 @@ prop
 
 `ListItem`: display a list item within a list
 
-`makeDisplayableContainer`: a higher-order component that abstracts
-the logic of various other container components (LexUnitsContainer,
-SynsetsContainer, etc.).
-
 `TextInput`: display a text input with a corresponding label
 
 ## Conventions
