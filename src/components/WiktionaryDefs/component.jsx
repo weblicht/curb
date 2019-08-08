@@ -16,8 +16,9 @@ function WiktDefsAsDefList(props) {
     );
 }
 
-var WiktionaryDefs = dataContainerFor('WiktionaryDefs', selectWiktDefs,
-                                     wd => wd.wikiRecordId); // TODO: is this the right id field?? 
-WiktionaryDefs = connectWithApi(wiktDefsActions.fetchActions)(WiktionaryDefs);
-export { WiktionaryDefs, WiktDefsAsDefList };
+var WiktionaryDefsContainer = dataContainerFor('WiktionaryDefs', selectWiktDefs,
+                                               wd => wd.wikiRecordId); // TODO: is this the right id field?? 
+WiktionaryDefsContainer = connectWithApi(wiktDefsActions.fetchActions)(WiktionaryDefsContainer);
+
+export { WiktionaryDefsContainer, WiktDefsAsDefList };
 
