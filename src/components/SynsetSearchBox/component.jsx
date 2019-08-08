@@ -2,7 +2,8 @@
 // Definition of SynsetSearchBox component
 
 import { doSearch, updateSearchTerm, updateIgnoreCase } from './actions';
-import { searchBoxState } from './selectors';
+import { searchBoxState, selectSynsetsForSearchBox } from './selectors';
+import { dataContainerFor } from '../DataContainer/component';
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -83,3 +84,9 @@ function mapDispatchToProps (dispatch, ownProps) {
 
 SynsetSearchBox = connect(mapStateToProps, mapDispatchToProps)(SynsetSearchBox);
 export { SynsetSearchBox };
+
+// props:
+//   source :: String, the .id of the corresponding SynsetSearchBox
+const SynsetSearchResults = dataContainerFor('SynsetSearchResults', selectSynsetsForSearchBox);
+
+export { SynsetSearchResults };

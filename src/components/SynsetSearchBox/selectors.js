@@ -25,5 +25,14 @@ export function searchBoxState(id, globalState) {
         return globalState.synsetSearchBoxes.byId[id];
     }
 }
-
    
+export function selectSynsetsForSearchBox(globalState, ownProps) {
+    try {
+        return globalState.synsetSearchBoxes.byId[ownProps.source].synsets || [];
+    } catch (e) {
+        // TypeError if one of the properties in the middle is not
+        // defined yet
+        return [];
+    }
+
+}

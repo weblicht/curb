@@ -1,24 +1,8 @@
 // SynsetsContainer/selectors.js
 // Data selectors for SynsetsContainer state
 
-export function selectSynsets(id, globalState) {
-    try {
-        return globalState.synsetsContainers.byId[id].records || [];
-    } catch (e) {
-        // TypeError if one of the properties in the middle is not
-        // defined yet
-        return [];
-    }
-
+export function selectSynsets(globalState, ownProps) {
+    // implementation here depends on backend API changes that are not ready yet
+    return undefined;
 }
-
-export function selectSynsetsForSearchBox(globalState, ownProps) {
-    try {
-        return globalState.synsetSearchBoxes.byId[ownProps.source].synsets || [];
-    } catch (e) {
-        // TypeError if one of the properties in the middle is not
-        // defined yet
-        return [];
-    }
-
-}   
+   

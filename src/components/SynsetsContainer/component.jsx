@@ -2,7 +2,7 @@
 // Definition of SynsetsContainer component
 
 import { registerSource } from './actions';
-import { selectSynsetsForSearchBox } from './selectors';
+import { selectSynsets } from './selectors';
 import { dataContainerFor } from '../DataContainer/component';
 import { DataTable,
          DataTableRow,
@@ -162,7 +162,7 @@ function SynsetsAsTable(props) {
 }
     
 
-const SynsetsContainer = dataContainerFor('Synsets', selectSynsetsForSearchBox);
+const SynsetsContainer = dataContainerFor('Synsets', selectSynsets);
 
 
 
