@@ -3,71 +3,41 @@
 
 import { doSearch, updateSearchTerm, updateIgnoreCase } from './actions';
 import { searchBoxState, selectSynsetsForSearchBox } from './selectors';
+import { Button, Checkbox, TextInput, Card } from '../GenericDisplay/component';
 import { dataContainerFor } from '../DataContainer/component';
 
 import React from 'react';
 import { connect } from 'react-redux';
 
-class SynsetSearchBox extends React.Component {
-    constructor(props){
-        super(props);
-        
-        this.handleOnSearchTermChange = this.handleOnSearchTermChange.bind(this);
-        this.handleToggleCheckIgnoreCase = this.handleToggleCheckIgnoreCase.bind(this); 
-        this.onSubmit = this.onSubmit.bind(this);
+function SynsetSearchBox(props) {
+    function onSearchTermChange (e) {
+        props.updateSearchTerm(e.target.value);
     }
 
-    handleOnSearchTermChange (e) {
-        this.props.updateSearchTerm(e.target.value);
-    }
-
-    handleToggleCheckIgnoreCase () {
-        this.props.updateIgnoreCase();
-    }
-
-    onSubmit (e) {
+    function onSubmit (e) {
         e.preventDefault();
-        this.props.doSearch(this.props.currentSearchTerm, this.props.ignoreCase);
+        props.doSearch(props.currentSearchTerm, props.ignoreCase);
     }
 
-    render() {
-        return ( 
-            <div className="d-none d-md-block">
-                <div className="card" style={{
-                    margin: "auto",
-                    float: "none",
-                    marginBottom: "10px",
-                    marginTop: "10px"
-                }}>
-                   <div className="card-body">
-                       <form className="form-inline" onSubmit={this.onSubmit}>
-                           { this.props.error && <p className="search-term-form__error">{this.props.error}</p> }
-                            <div className="form-group mx-sm-3 mb-10">
-                                <input
-                                    className="form-control"
-                                    type="text"
-                                    placeholder={this.props.mostRecentSearchTerm || "Enter a Word or Id"}
-                                    value={this.props.currentSearchTerm}
-                                    onChange={this.handleOnSearchTermChange}
-                                    autoFocus={true}
-                               />
-                            </div>
-                            <div className="btn-group mr-2" role="group">
-                                <button type="button" className="btn btn-primary" onClick={this.onSubmit}>Find</button>
-                            </div>
-                            <div className="form-check mx-sm-3 mb-10">
-                              <input type="checkbox"
-                                     className="form-check-input"
-                                     checked={this.props.ignoreCase}
-                                     onChange={this.handleToggleCheckIgnoreCase} />
-                                <label className="form-check-label" htmlFor="ignoreCase">ignore case</label>                                                                        
-                            </div>
-                       </form>
-                   </div>
-                </div>
-            </div>                           
-        )
-    }
+    return ( 
+        <Card>
+          <form className="form-inline" onSubmit={onSubmit}>
+            <TextInput id="searchTerm" label="Search for"
+                       value={props.currentSearchTerm}
+                       onChange={onSearchTermChange}
+                       autoFocus={true}
+                       placeholder="Enter a word or Synset Id"
+                       extras="mx-sm-3 mb-10"
+            />
+            <Button text="Find" onClick={onSubmit} extras="btn-primary mr-2"/>
+            <Checkbox id="ignoreCase" label="ignore case"
+                      checked={props.ignoreCase}
+                      onChange={props.updateIgnoreCase}
+                      extras="ml-sm-3"
+            />
+          </form>
+        </Card>
+    );
 }
 
 function mapStateToProps (state, ownProps) {
