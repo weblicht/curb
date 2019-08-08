@@ -164,30 +164,48 @@ export function DataList(props) {
 }
 
 // props:
+//   id :: String
+//   label :: String
 //   data :: [ Object ]
-//   displayItemAs :: Object -> HTML list item,
+//   choose, callback to choose an item given its unique identifier
+//       Normally this should be the .choose prop of a DataContainer
+//   displayItemAs :: Object -> HTML option or option group,
 //     a component to display a single data object as an option in the select
+//     Note: The option's value attribute should be an identifier to pass to choose
 //   disabledOption (optional) :: String,
 //     a message to use as an initial, disabled option in the select
-//   ordered (optional) :: Bool
-//   className (optional) :: String
+//   className (optional), defaults to 'form-control' 
+//   extras (optional)
+//   itemClassName (optional), passed to item formatting component as className
+//   itemExtras (optional), passed to item formatting component as extras
+//   labelClassName (optional),  defaults to 'sr-only'
+//   labelExtras (optional), extra classes for label 
 export function DataSelect(props) {
-    // TODO: this component might belong somewhere else. It's not
-    // purely a display component; it has to be hooked up to actions
-    // for selecting the various options.
-
     if (!(props.data && props.data.length)) return null;
     // TODO: is there any way to provide a sensible default, or must
     // the user always pass a custom component to render the options?
     const ItemComponent = props.displayItemAs;
+
+    function chooseItem(e) {
+        const itemId = e.target.value;
+        props.choose(itemId);
+    }
  
     return (
-        <select className={props.className}>
-          {props.disabledOption && <option value="none" disabled={true}>{props.disabledOption}</option>}
-          {props.data.map(
-              item => <ItemComponent {...props} data={item} />
-          )}
-        </select>
+        <React.Fragment>
+          <label className={classNames('sr-only' || props.labelClassName, props.labelExtras)}
+                 htmlFor={props.id}>
+            {props.label}
+          </label>
+          <select name={props.id}
+                  className={withDefault('form-control', props)}
+                  onChange={chooseItem}>
+            {props.disabledOption && <option value="none" disabled={true}>{props.disabledOption}</option>}
+            {props.data.map(
+                item => <ItemComponent data={item} className={props.itemClassName} extras={props.itemExtras} />
+            )}
+          </select>
+        </React.Fragment>
     );
 
 }
@@ -445,4 +463,5 @@ export function makeDisplayableContainer(name) {
     DisplayableContainer.displayName = name;
     return DisplayableContainer;
 }
+
 
