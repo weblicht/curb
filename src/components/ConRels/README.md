@@ -1,4 +1,4 @@
-# ConRel
+# ConRels
 
 ## Components defined here
 
