@@ -65,8 +65,7 @@ function SynsetAsOption(props) {
     return (
         // TODO: what's the best data to display to disambiguate between synsets with the same orthforms?
         <option key={props.data.id} value={props.data.id}>
-          <WordClass data={props.data.wordClass}/>:
-          <Delimited data={props.data.orthForms} />
+          {props.data.wordClass.wordClass}: {props.data.orthForms.join(', ')} 
         </option>
     );
 }
@@ -129,12 +128,18 @@ function SynsetsAsList(props) {
 }
 
 // props:
+//   id :: String, a name for the select element
 //   data :: [ Object ], the synsets
+//   choose :: Synset ID -> Action
+//      Normally this should be the .choose prop of the data container being
+//      displayed as a select element 
 //   unitsDisplayAs (optional) :: Component to render a synset as an option
 //      Defaults to SynsetAsOption
 function SynsetsAsSelect(props) {
     return (
         <DataSelect data={props.data}
+                    id={props.id}
+                    choose={props.choose} 
                     extras="synsets-container"
                     disabledOption="Select a synset"
                     displayItemAs={props.unitsDisplayAs || SynsetAsOption}/> 
