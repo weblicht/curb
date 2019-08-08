@@ -1,6 +1,6 @@
-export function selectIliDefs(globalState, props) {
+export function selectIliRecs(globalState, props) {
     try {
-        const selected = globalState.apiData.iliDefs.byLexUnitId[props.fetchParams.lexUnitId] || [];
+        const selected = globalState.apiData.iliRecs.byLexUnitId[props.fetchParams.lexUnitId] || [];
         return selected;
     } catch (e) {
         // if one of the properties in the middle is not defined yet,

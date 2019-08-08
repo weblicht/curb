@@ -1,5 +1,5 @@
 import { iliActions } from './actions';
-import { selectIliDefs } from './selectors';
+import { selectIliRecs } from './selectors';
 import { DefList } from '../GenericDisplay/component';
 import { dataContainerFor } from '../DataContainer/component';
 import { connectWithApi } from '../APIWrapper';
@@ -14,10 +14,11 @@ function ILIRecordsAsDefList(props) {
     return ( <DefList className="ili" terms={terms} defs={defs} /> );
 }
 
-var ILIRecords = dataContainerFor('ILIRecords', selectIliDefs,
-                                 ilirec => ilirec.iliId);
-ILIRecords = connectWithApi(iliActions.fetchActions)(ILIRecords);
-export { ILIRecords as ILIDefs, ILIRecordsAsDefList }; // TODO: complete renaming
+var ILIRecordsContainer = dataContainerFor('ILIRecords', selectIliRecs,
+                                           ilirec => ilirec.iliId);
+ILIRecordsContainer = connectWithApi(iliActions.fetchActions)(ILIRecordsContainer);
+
+export { ILIRecordsContainer, ILIRecordsAsDefList }; 
 
 
 
