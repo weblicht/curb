@@ -1,5 +1,5 @@
-// SynsetSearchBox/actions.js
-// Action types and creators for SynsetSearchBox
+// SynsetSearch/actions.js
+// Action types and creators for synset searches
 import { actionTypesFromStrings } from '../../helpers';
 import { apiPath } from '../../constants';
 

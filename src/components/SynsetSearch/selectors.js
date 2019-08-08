@@ -1,4 +1,4 @@
-// SynsetSearchBox/selectors.js
+// SynsetSearch/selectors.js
 // Data selectors for SynsetSearchBox state
 
 import { defaultSearchBoxState } from './reducers';

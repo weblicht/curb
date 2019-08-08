@@ -1,5 +1,4 @@
-// SynsetSearchBox/component.jsx
-// Definition of SynsetSearchBox component
+// SynsetSearch/component.jsx
 
 import { doSearch, updateSearchTerm, updateIgnoreCase } from './actions';
 import { searchBoxState, selectSynsetsForSearchBox } from './selectors';
