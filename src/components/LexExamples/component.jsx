@@ -18,5 +18,6 @@ function ExamplesAsDefList(props) {
 
 var ExamplesContainer = dataContainerFor('Examples', selectExamples);
 ExamplesContainer = connectWithApi(examplesActions.fetchActions)(ExamplesContainer);
-export { ExamplesContainer as Examples, ExamplesAsDefList }; // TODO: finish renaming
+
+export { ExamplesContainer, ExamplesAsDefList }; 
 
