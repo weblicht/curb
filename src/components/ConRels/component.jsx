@@ -30,13 +30,13 @@ function ConRelAsTableRow(props) {
 // props:
 //   data :: [ Object ], the conrels
 //   ordered :: Bool, whether the list should be ordered
-//   unitsDisplayAs (optional) :: Component to render a ConRel as a list item
+//   displayItemAs (optional) :: Component to render a ConRel as a list item
 //      Defaults to ConRelAsListItem
 function ConRelsAsList(props) {
     return (
         <DataList data={props.data}
                   ordered={props.ordered}
-                  displayItemAs={props.unitsDisplayAs || ConRelAsListItem} />
+                  displayItemAs={props.displayItemAs || ConRelAsListItem} />
     );
 }
 
@@ -44,7 +44,7 @@ function ConRelsAsList(props) {
 //   data :: [ Object ], the conrels
 //   fieldMap (optional) :: [ [String, String] ], maps ConRel field names to their display names
 //   displayFields (optional) :: [ String ], the field names to be displayed
-//   unitsDisplayAs (optional) :: Component to render a ConRel as a table row
+//   displayItemAs (optional) :: Component to render a ConRel as a table row
 //      Defaults to ConRelAsTableRow
 function ConRelsAsTable(props) {
     return (
@@ -52,7 +52,7 @@ function ConRelsAsTable(props) {
                    className='conrels-container'
                    fieldMap={props.fieldMap || CON_REL_FIELD_MAP}
                    displayFields={props.displayFields || CON_REL_ALL_FIELDS}
-                   displayRowAs={props.unitsDisplayAs || ConRelAsTableRow}
+                   displayItemAs={props.displayItemAs || ConRelAsTableRow}
         />
     );
 }

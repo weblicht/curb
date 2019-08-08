@@ -115,14 +115,14 @@ const SynsetDetail = makeDisplayableContainer('SynsetDetail');
 // props:
 //   data :: [ Object ], the synsets
 //   ordered (optional) :: Bool, whether the list should be ordered or unordered
-//   unitsDisplayAs (optional) :: Component to render a synset as a list item
+//   displayItemAs (optional) :: Component to render a synset as a list item
 //      Defaults to SynsetAsListItem
 function SynsetsAsList(props) {
     return (
         <DataList data={props.data}
                   ordered={props.ordered}
                   extras="synsets-container"
-                  displayItemAs={props.unitsDisplayAs || SynsetAsListItem}/>
+                  displayItemAs={props.displayItemAs || SynsetAsListItem}/>
     );
 }
 
@@ -132,7 +132,7 @@ function SynsetsAsList(props) {
 //   choose :: Synset ID -> Action
 //      Normally this should be the .choose prop of the data container being
 //      displayed as a select element 
-//   unitsDisplayAs (optional) :: Component to render a synset as an option
+//   displayItemAs (optional) :: Component to render a synset as an option
 //      Defaults to SynsetAsOption
 function SynsetsAsSelect(props) {
     return (
@@ -141,7 +141,7 @@ function SynsetsAsSelect(props) {
                     choose={props.choose} 
                     extras="synsets-container"
                     disabledOption="Select a synset"
-                    displayItemAs={props.unitsDisplayAs || SynsetAsOption}/> 
+                    displayItemAs={props.displayItemAs || SynsetAsOption}/> 
     );
 }
 
@@ -150,7 +150,7 @@ function SynsetsAsSelect(props) {
 //   data :: [ Object ], the synsets
 //   fieldMap (optional) :: [ [String, String] ], maps synset field names to their display names
 //   displayFields (optional) :: [ String ], the field names to be displayed
-//   unitsDisplayAs (optional) :: Component to render a synset as a table row
+//   displayItemAs (optional) :: Component to render a synset as a table row
 //      Defaults to SynsetAsTableRow
 function SynsetsAsTable(props) {
     const fieldMap = props.fieldMap ;
@@ -160,7 +160,7 @@ function SynsetsAsTable(props) {
                    extras="synsets-container"
                    fieldMap={props.fieldMap || SYNSET_FIELD_MAP}
                    displayFields={props.displayFields || SYNSET_ALL_FIELDS}
-                   displayRowAs={props.unitsDisplayAs || SynsetAsTableRow}
+                   displayItemAs={props.displayItemAs || SynsetAsTableRow}
         />
     );
 }

@@ -321,7 +321,7 @@ export function DataTableRow(props) {
 //   fieldMap :: [ [String, String] ], array mapping data field names to display names
 //   displayFields :: [ String ], array of data fields to be displayed
 //     This should be a subset of the keys in fieldMap.
-//   displayRowAs (optional) :: Object -> HTML table row,
+//   displayItemAs (optional) :: Object -> HTML table row,
 //      a component to display a single data object as a table row.
 //      Defaults to DataTableRow.
 //   className (optional), defaults to 'table'
@@ -331,7 +331,7 @@ export function DataTableRow(props) {
 export function DataTable(props) {
     if (!(props.data && props.data.length)) return null;
 
-    const RowComponent = props.displayRowAs || DataTableRow;
+    const RowComponent = props.displayItemAs || DataTableRow;
 
     return (
         <table className={withDefault('table', props)}>

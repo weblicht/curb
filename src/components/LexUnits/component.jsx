@@ -89,27 +89,27 @@ const LexUnitDetail = makeDisplayableContainer('LexUnitDetail');
 // props:
 //   data :: [ Object ], the lex units 
 //   orderd :: Bool, whether or not to display the 
-//   unitsDisplayAs (optional) :: Component to render a lexunit as a list item
+//   displayItemAs (optional) :: Component to render a lexunit as a list item
 //     Defaults to LexUnitAsListItem.
 function LexUnitsAsList(props) {
     return (
         <DataList data={props.data}
                   ordered={props.ordered}
                   extras='lexunits-container'
-                  displayItemAs={props.unitsDisplayAs || LexUnitAsListItem} />
+                  displayItemAs={props.displayItemAs || LexUnitAsListItem} />
     );
 }
                                  
 // props:
 //   data :: [ Object ], the lex units 
-//   unitsDisplayAs (optional) :: Component to render a lexunit as an option
+//   displayItemAs (optional) :: Component to render a lexunit as an option
 //     Defaults to LexUnitAsOption
 function LexUnitsAsSelect(props) {
     return (
         <DataSelect data={props.data}
                     disabledOption='Select a lexical unit'
                     extras='lexunits-container'
-                    displayAs={props.unitsDisplayAs || LexUnitAsOption} />
+                    displayAs={props.displayItemAs || LexUnitAsOption} />
     );
 }
 
@@ -117,18 +117,18 @@ function LexUnitsAsSelect(props) {
 //   data :: [ Object ], the lex units 
 //   fieldMap
 //   displayFields 
-//   unitsDisplayAs (optional) :: Component to render a lexunit as a table row
+//   displayItemAs (optional) :: Component to render a lexunit as a table row
 //     Defaults to LexUnitAsTableRow
 function LexUnitsAsTable(props) {
     const fieldMap = props.fieldMap || LU_FIELD_MAP;
     const displayFields = props.displayFields || LU_ALL_FIELDS;
-    const RowComponent = props.unitsDisplayAs || LexUnitAsTableRow;
+    const RowComponent = props.displayItemAs || LexUnitAsTableRow;
     
     return (
         <DataTable data={props.data}
                    fieldMap={fieldMap}
                    displayFields={displayFields}
-                   displayRowAs={RowComponent}
+                   displayItemAs={RowComponent}
                    extras='lexunits-container' 
         />
     );
@@ -138,7 +138,7 @@ function LexUnitsAsTable(props) {
 // props:
 //   fetchParams :: { synsetId: ... }
 //   displayAs :: Component to render a list of lex units
-//   unitsDisplayAs (optional) :: Component to render each lex unit
+//   displayItemAs (optional) :: Component to render each lex unit
 var LexUnitsContainer = dataContainerFor('LexUnits', selectLexUnits);
 LexUnitsContainer = connectWithApi(lexUnitsActions.fetchActions)(LexUnitsContainer);
 
