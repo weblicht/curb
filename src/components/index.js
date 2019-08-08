@@ -6,3 +6,4 @@ export * from './LexUnits/component';
 export * from './LexExamples/component';
 export * from './ILIRecords/component';
 export * from './WiktionaryDefs/component';
+export * from './DataContainer/component';
