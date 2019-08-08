@@ -4,19 +4,19 @@ This is a library which provides a variety of abstractions for
 implementing the following pattern:
 
   1. Fetching data objects from a backend API into the Redux store
-     (see [APIWrapper](./tree/master/src/components/APIWrapper))
-  2. Selecting data objects from the store into a container (see [DataContainer](./tree/master/src/components/DataContainer))
-  3. Rendering the data in a container into a UI (see [GenericDisplay](./tree/master/src/components/GenericDisplay))
+     (see [APIWrapper](./src/components/APIWrapper))
+  2. Selecting data objects from the store into a container (see [DataContainer](./src/components/DataContainer))
+  3. Rendering the data in a container into a UI (see [GenericDisplay](./src/components/GenericDisplay))
 
 It also implements this pattern for the different types of data
 objects in the GermaNet API, namely
 
-  - synsets (see [Synset](./tree/master/src/components/Synset))
-  - conceptual relations (see [ConRel](./tree/master/src/components/ConRel))
-  - lexical units (see [LexUnit](./tree/master/src/components/LexUnit))
-  - examples for lexical items (see [LexExamples](./tree/master/src/components/LexExamples))
-  - Interlingual Index records (see [ILIRecords](./tree/master/src/components/ILIRecords))
-  - Wiktionary definitions (see [WiktionaryDefs](./tree/master/src/components/WiktionaryDefs))
+  - synsets (see [Synset](./src/components/Synset))
+  - conceptual relations (see [ConRel](./src/components/ConRel))
+  - lexical units (see [LexUnit](./src/components/LexUnit))
+  - examples for lexical items (see [LexExamples](./src/components/LexExamples))
+  - Interlingual Index records (see [ILIRecords](./src/components/ILIRecords))
+  - Wiktionary definitions (see [WiktionaryDefs](./src/components/WiktionaryDefs))
 
 Thus, applications using this library can focus on just providing the
 code needed to render GermaNet data for their own specific use case,
@@ -34,10 +34,10 @@ should have the following NPM packages installed:
   - react-redux
   - seamless-immutable
   
-These are listed as *peer dependencies* in the
-[package.json](./tree/master/) file.  This means that this package
-relies on them, but does not bundle them itself.  This is because
-consuming applications (for instance, any project based on the
+These are listed as *peer dependencies* in the `package.json` file.
+This means that this package relies on them, but does not bundle them
+itself.  This is because consuming applications (for instance, any
+project based on the
 [reactprojecttemplate](https://weblicht.sfs.uni-tuebingen.de/gitlab/clarind/misc/reactprojecttemplate)
 repository) are likely to depend on these packages already.
 
@@ -107,10 +107,10 @@ will also be present:
  
 In addition, there are several other files that contain code shared
 across the library:
-  - [errors.js](./tree/master/src/): assorted error classes and
+  - [errors.js](./src/): assorted error classes and
     handling functions
-  - [helpers.js](./tree/master/src/): assorted common utility
+  - [helpers.js](./src/): assorted common utility
     functions
-  - [validation.js](./tree/master/src/): validation functions for user
+  - [validation.js](./src/): validation functions for user
     input
 
