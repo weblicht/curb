@@ -1,7 +1,6 @@
-// SynsetsContainer/component.jsx
-// Definition of SynsetsContainer component
+// Synsets/component.jsx
+// Definitions of synset data container and display components 
 
-import { registerSource } from './actions';
 import { selectSynsets } from './selectors';
 import { dataContainerFor } from '../DataContainer/component';
 import { DataTable,
