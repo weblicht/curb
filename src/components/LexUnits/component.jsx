@@ -7,9 +7,6 @@ import { DataTable,
          DataSelect,
          ListItem,
          makeDisplayableContainer } from '../GenericDisplay/component';
-import { WiktionaryDefs, WiktDefsAsDefList } from '../WiktionaryDefs/component';
-import { ILIDefs, ILIRecordsAsDefList } from '../ILIDefs/component';
-import { Examples, ExamplesAsDefList } from '../LexExamples/component';
 import { connectWithApi } from '../APIWrapper';
 import { withNullAsString } from '../../helpers';
 
@@ -56,9 +53,6 @@ function LexUnitAsListItem(props) {
     return (
         <ListItem key={luId} extras="lexunit-detail">
           {props.data.orthForm}
-          <Examples fetchParams={{lexUnitId: luId}} displayAs={ExamplesAsDefList} />
-          <WiktionaryDefs fetchParams={{lexUnitId: luId}} displayAs={WiktDefsAsDefList}/>
-          <ILIDefs fetchParams={{lexUnitId: luId}} displayAs={ILIRecordsAsDefList}/>
         </ListItem>
     );
 }
