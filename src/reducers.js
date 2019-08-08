@@ -11,7 +11,7 @@ export { dataContainers } from './components/DataContainer/reducers';
 // API
 import { iliDefs } from './components/ILIDefs/reducers';
 import { lexExamples } from './components/LexExamples/reducers';
-import { lexUnits } from './components/LexUnit/reducers';
+import { lexUnits } from './components/LexUnits/reducers';
 import { wiktDefs } from './components/WiktionaryDefs/reducers';
 
 // a reducer to handle every component that's connected with the API:
