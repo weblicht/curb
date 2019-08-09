@@ -113,17 +113,13 @@ function LexUnitsAsSelect(props) {
 //     Data container control props (.choose, etc.), if given, will be passed on
 //     to this component.
 function LexUnitsAsTable(props) {
-    const fieldMap = props.fieldMap || LU_FIELD_MAP;
-    const displayFields = props.displayFields || LU_ALL_FIELDS;
-    const RowComponent = props.displayItemAs || LexUnitAsTableRow;
-    
     return (
         <DataTable data={props.data} idFor={props.idFor}
                    choose={props.choose} unchoose={props.unchoose}
                    select={props.select} unselect={props.unselect}
-                   fieldMap={fieldMap}
-                   displayFields={displayFields}
-                   displayItemAs={RowComponent}
+                   fieldMap={props.fieldMap || LU_FIELD_MAP}
+                   displayFields={props.displayFields || LU_ALL_FIELDS}
+                   displayItemAs={props.displayItemAs || LexUnitAsTableRow}
                    extras='lexunits-container' 
         />
     );
