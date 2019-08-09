@@ -152,16 +152,18 @@ function SynsetsAsSelect(props) {
 //   fieldMap (optional) :: [ [String, String] ], maps synset field names to their display names
 //   displayFields (optional) :: [ String ], the field names to be displayed
 //   displayItemAs (optional) :: Component to render a synset as a table row
-//      Defaults to SynsetAsTableRow
+//      Defaults to SynsetAsTableRow.
+//      Data container control props (.choose, etc.), if given, will be passed on
+//      to this component.
 function SynsetsAsTable(props) {
-    const fieldMap = props.fieldMap ;
-    const displayFields = props.displayFields ;
     return (
-        <DataTable data={props.data}
-                   extras="synsets-container"
+        <DataTable data={props.data} idFor={props.idFor}
+                   choose={props.choose} unchoose={props.unchoose}
+                   select={props.select} unselect={props.unselect}
                    fieldMap={props.fieldMap || SYNSET_FIELD_MAP}
                    displayFields={props.displayFields || SYNSET_ALL_FIELDS}
                    displayItemAs={props.displayItemAs || SynsetAsTableRow}
+                   extras="synsets-container"
         />
     );
 }

@@ -308,14 +308,18 @@ export function DataTableHeaders(props) {
 
 // props:
 //   displayFields :: [ String ] 
-//   data :: Object, with at least the following properties:
-//     .id :: an identifier
-//     all the properties listed in displayFields
+//   data :: DataObject, with at least all the properties listed in displayFields
+//   idFor :: DataObject -> identifier
+//   className (optional), defaults to 'table-active' if data object is .chosen or .selected 
+//   extras (optional), extra classes for tr element
 export function DataTableRow(props) {
+    const active = props.data.chosen || props.data.selected;
     return (
         // Bootstrap doesn't really provide any classes for table
         // *rows* so we leave out styling information for now
-        <tr key={props.data.id}>
+        <tr key={props.idFor(props.data)}
+            className={classNames({'table-active': active} || props.className,
+                                  props.extras)}>
               {props.displayFields.map(
                   (field) => <td>{ withNullAsString(props.data[field]) }</td>
               )}
@@ -331,6 +335,8 @@ export function DataTableRow(props) {
 //   displayItemAs (optional) :: Object -> HTML table row,
 //      a component to display a single data object as a table row.
 //      Defaults to DataTableRow.
+//      Data container control props (.choose, etc.), if given, will be passed on
+//      to this component.
 //   className (optional), defaults to 'table'
 //   extras (optional), extra classes for table element
 //   headClassName (optional), className for thead element
@@ -349,7 +355,10 @@ export function DataTable(props) {
           />
           <tbody>
             {props.data.map(
-                row => <RowComponent data={row} displayFields={props.displayFields}/>
+                row => <RowComponent data={row} idFor={props.idFor}
+                                     choose={props.choose} unchoose={props.unchoose}
+                                     select={props.select} unselect={props.unselect}
+                                     displayFields={props.displayFields}/>
             )}
           </tbody>
         </table>

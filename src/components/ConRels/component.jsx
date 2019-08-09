@@ -50,13 +50,17 @@ function ConRelsAsList(props) {
 //   displayFields (optional) :: [ String ], the field names to be displayed
 //   displayItemAs (optional) :: Component to render a ConRel as a table row
 //      Defaults to ConRelAsTableRow
+//      Data container control props (.choose, etc.), if given, will be passed on
+//      to this component.
 function ConRelsAsTable(props) {
     return (
-        <DataTable data={props.data}
-                   className='conrels-container'
+        <DataTable data={props.data} idFor={props.idFor}
+                   choose={props.choose} unchoose={props.unchoose}
+                   select={props.select} unselect={props.unselect}
                    fieldMap={props.fieldMap || CON_REL_FIELD_MAP}
                    displayFields={props.displayFields || CON_REL_ALL_FIELDS}
                    displayItemAs={props.displayItemAs || ConRelAsTableRow}
+                   extras='conrels-container'
         />
     );
 }
