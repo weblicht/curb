@@ -3,8 +3,9 @@
 import { actionTypesFromStrings } from '../../helpers';
 
 export const actionTypes = actionTypesFromStrings([
-    'DATA_CONTAINER_CHOOSE_UNIQUELY',
-    'DATA_CONTAINER_SELECT',
+    'DATA_CONTAINER_CHOOSE', // i.e., uniquely
+    'DATA_CONTAINER_UNCHOOSE',
+    'DATA_CONTAINER_SELECT', // i.e., possibly multiple selections
     'DATA_CONTAINER_UNSELECT',
 ])
 
@@ -14,7 +15,16 @@ export const actionTypes = actionTypesFromStrings([
 export function makeActionsForContainer(containerId) {
 
     function choose(itemId) {
-        return { type: actionTypes.DATA_CONTAINER_CHOOSE_UNIQUELY,
+        return { type: actionTypes.DATA_CONTAINER_CHOOSE,
+                 id: containerId,
+                 itemId
+               };
+    }
+
+    // an itemId is not really necessary for unchoosing, but we accept
+    // it for the sake of uniformity:
+    function unchoose(itemId) {
+        return { type: actionTypes.DATA_CONTAINER_UNCHOOSE,
                  id: containerId,
                  itemId
                };
@@ -36,6 +46,7 @@ export function makeActionsForContainer(containerId) {
     
     return {
         choose,
+        unchoose,
         select,
         unselect
     }

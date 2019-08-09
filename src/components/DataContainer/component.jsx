@@ -76,6 +76,7 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
             const actions = makeActionsForContainer(ownProps.id);
             return {
                 choose: itemId => dispatch(actions.choose(itemId)),
+                unchoose: itemId => dispatch(actions.unchoose(itemId)),
                 select: itemId => dispatch(actions.select(itemId)),
                 unselect: itemId => dispatch(actions.unselect(itemId)), 
             };

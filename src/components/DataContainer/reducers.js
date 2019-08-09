@@ -17,9 +17,15 @@ const dataContainerPrivState = SI({
 function dataContainerPrivReducer(state = dataContainerPrivState, action) {
     switch (action.type) {
 
-    case actionTypes.DATA_CONTAINER_CHOOSE_UNIQUELY: {
+    case actionTypes.DATA_CONTAINER_CHOOSE: {
         return state.merge({
             chosenItemId: action.itemId
+        });
+    }
+
+    case actionTypes.DATA_CONTAINER_UNCHOOSE: {
+        return state.merge({
+            chosenItemId: undefined
         });
     }
 
