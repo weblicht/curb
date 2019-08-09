@@ -58,10 +58,11 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
     // depend on a container ID, so we only add these props if a
     // container ID was supplied.
      function mapStateToProps(globalState, ownProps) {
-         // TODO: allow passing data as a prop from a higher component?
-         // TODO: dataSelector should be allowed to be given as a prop(??), to allow *instances* to have different data selection logic
-         //   at present, the only need I have for this would be to select synsets from the search box or from the apidata tree.
-         //   but maybe that could be solved if I simply do the right thing and load the search result data into the apidata tree.
+         // TODO: allow passing data as a prop from a higher
+         // component?  or allow selector to specified by the
+         // instance, instead of in the component definition?  This
+         // will be important if we ever need containers of the same
+         // type whose data comes from different places
          const data = dataSelector(globalState, ownProps);
          if (ownProps.id) {
              return {
@@ -91,4 +92,3 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
     DataContainer.displayName = (name || 'Unnamed') + 'Container';
     return connect(mapStateToProps, mapDispatchToProps)(DataContainer);
 }
-
