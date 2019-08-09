@@ -40,10 +40,12 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
         );
 
         if (typeof props.displayAs === 'function') {
-            // avoid passing container id to renderer so it doesn't get
-            // propagated to other containers down the tree:
             const Renderer = props.displayAs;
-            return (<Renderer {...props} id={undefined} data={dataWithMetadata} />);
+            return (
+                // We avoid passing container id to renderer so it doesn't get
+                // propagated to other containers down the tree:
+                <Renderer {...props} id={undefined} data={dataWithMetadata} />
+            );
         } else {
             throw new InternalError('Data container was rendered with an incorrect displayAs prop');
         }
@@ -85,10 +87,7 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
         }
     }
 
-
-    const Connected = connect(mapStateToProps, mapDispatchToProps)(DataContainer);
-    Connected.displayName = (name || 'Unnamed') + 'Container';
-
-    return Connected;
+    DataContainer.displayName = (name || 'Unnamed') + 'Container';
+    return connect(mapStateToProps, mapDispatchToProps)(DataContainer);
 }
 
