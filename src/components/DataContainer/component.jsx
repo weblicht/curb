@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 //      By default, this function works like: item => item.id
 export function dataContainerFor(name, dataSelector, idFromItem) {
 
-    const idFrom = idFromItem || function (item) {
+    const idFor = idFromItem || function (item) {
         const id = item.id;
         if (id === undefined) {
             const msg = 'Data container default idFromItem function got item without a .id';
@@ -34,8 +34,8 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
         
         const dataWithMetadata = props.data.map(
             item => ({ ...item,
-                       chosen: props.chosenItemId === idFrom(item),
-                       selected: props.selectItemIds ? props.selectedItemIds.includes(idFrom(item)) : false,
+                       chosen: props.chosenItemId === idFor(item),
+                       selected: props.selectItemIds ? props.selectedItemIds.includes(idFor(item)) : false,
                      })
         );
 
@@ -66,6 +66,7 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
          if (ownProps.id) {
              return {
                  data,
+                 idFor,
                  ...selectContainerState(globalState, ownProps)
              };
          } else {

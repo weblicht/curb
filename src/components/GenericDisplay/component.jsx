@@ -144,11 +144,14 @@ export function CardHeader(props) {
 //   displayItemAs (optional) :: Object -> HTML list item,
 //     a component to display a single object as an item in the list;
 //     defaults to ListItem
+//     All data container control props (.choose, .select, etc.) will also
+//     be passed on to this component if they are given.
 //   ordered (optional) :: Bool
 //   className (optional)
 //   extras (optional)
 //   itemClassName (optional), passed to item formatting component as className
 //   itemExtras (optional), passed to item formatting component as extras
+//   
 export function DataList(props) {
     if (!(props.data && props.data.length)) return null;
 
@@ -156,7 +159,11 @@ export function DataList(props) {
     return (
         <List ordered={props.ordered} className={props.className} extras={props.extras}>
           {props.data.map(
-              item => <ItemComponent data={item} className={props.itemClassName} extras={props.itemExtras}/>
+              item => <ItemComponent data={item}
+                                     idFor={props.idFor}
+                                     choose={props.choose} unchoose={props.unchoose}
+                                     select={props.select} unselect={props.unselect}
+                                     className={props.itemClassName} extras={props.itemExtras}/>
           )}
         </List>
     );

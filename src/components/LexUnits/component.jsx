@@ -77,10 +77,15 @@ function LexUnitAsTableRow(props) {
 //   orderd :: Bool, whether or not to display the 
 //   displayItemAs (optional) :: Component to render a lexunit as a list item
 //     Defaults to LexUnitAsListItem.
+//     Data container control props (.choose, etc.), if given, will be passed on
+//     to this component.
+
 function LexUnitsAsList(props) {
     return (
         <DataList data={props.data}
                   ordered={props.ordered}
+                  choose={props.choose} unchoose={props.unchoose}
+                  select={props.select} unselect={props.unselect}
                   extras='lexunits-container'
                   displayItemAs={props.displayItemAs || LexUnitAsListItem} />
     );

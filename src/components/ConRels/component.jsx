@@ -32,10 +32,14 @@ function ConRelAsTableRow(props) {
 //   ordered :: Bool, whether the list should be ordered
 //   displayItemAs (optional) :: Component to render a ConRel as a list item
 //      Defaults to ConRelAsListItem
+//      Data container control props (.choose, etc.), if given, will be passed on
+//      to this component.
 function ConRelsAsList(props) {
     return (
         <DataList data={props.data}
                   ordered={props.ordered}
+                  choose={props.choose} unchoose={props.unchoose}
+                  select={props.select} unselect={props.unselect}
                   displayItemAs={props.displayItemAs || ConRelAsListItem} />
     );
 }

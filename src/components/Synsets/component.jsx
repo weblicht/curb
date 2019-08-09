@@ -114,10 +114,14 @@ function SynsetAsTableRow(props) {
 //   ordered (optional) :: Bool, whether the list should be ordered or unordered
 //   displayItemAs (optional) :: Component to render a synset as a list item
 //      Defaults to SynsetAsListItem
+//      Data container control props (.choose, etc.), if given, will be passed on
+//      to this component.
 function SynsetsAsList(props) {
     return (
         <DataList data={props.data}
                   ordered={props.ordered}
+                  choose={props.choose} unchoose={props.unchoose}
+                  select={props.select} unselect={props.unselect}
                   extras="synsets-container"
                   displayItemAs={props.displayItemAs || SynsetAsListItem}/>
     );
