@@ -51,7 +51,7 @@ function WordCategory(props) {
 function SynsetAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
-        <ListItem key={props.data.id} extras="synset-detail">
+        <ListItem id={props.data.id} extras="synset-detail">
           <Delimited data={props.data.orthForms} />
         </ListItem>
     );

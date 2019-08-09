@@ -50,7 +50,7 @@ function LexUnitAsListItem(props) {
     const luId = props.data.id;
 
     return (
-        <ListItem key={luId} extras="lexunit-detail">
+        <ListItem id={luId} extras="lexunit-detail">
           {props.data.orthForm}
         </ListItem>
     );

@@ -442,14 +442,17 @@ export function List(props) {
 }
 
 // props:
-//   key :: the key for the list item
-//   data :: Object, the contents of the list item;
-//      if not present, defaults to props.children
+//   id :: a key for the list item
+//   idFor (optional) :: typeof data -> id,
+//      a function to compute the .id from .data if .id is not given  
+//   data (optional) :: Object, the contents of the list item;
+//      defaults to props.children
 //   className (optional), defaults to 'list-group-item'
 //   extras (optional), extra classes for list item
 export function ListItem(props) {
+    const key = props.id || (props.idFor && props.idFor(props.data));
     return (
-        <li key={props.key} className={withDefault('list-group-item', props)}>
+        <li key={key} className={withDefault('list-group-item', props)}>
           {props.data || props.children}
         </li>
     );
