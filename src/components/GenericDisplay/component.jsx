@@ -315,8 +315,6 @@ export function DataTableHeaders(props) {
 export function DataTableRow(props) {
     const active = props.data.chosen || props.data.selected;
     return (
-        // Bootstrap doesn't really provide any classes for table
-        // *rows* so we leave out styling information for now
         <tr key={props.idFor(props.data)}
             className={classNames({'table-active': active} || props.className,
                                   props.extras)}>
@@ -340,7 +338,9 @@ export function DataTableRow(props) {
 //   className (optional), defaults to 'table'
 //   extras (optional), extra classes for table element
 //   headClassName (optional), className for thead element
-//   headClassExtras (optional), extras for thead element
+//   headExtras (optional), extras for thead element
+//   bodyClassName (optional), className for tbody element
+//   bodyExtras (optional), extras for tbody element
 export function DataTable(props) {
     if (!(props.data && props.data.length)) return null;
 
@@ -351,9 +351,9 @@ export function DataTable(props) {
           <DataTableHeaders fieldMap={props.fieldMap}
                             displayFields={props.displayFields}
                             className={props.headClassName}
-                            extras={props.headClassExtras}
+                            extras={props.headExtras}
           />
-          <tbody>
+          <tbody className={classNames(props.bodyClassName, props.bodyExtras)}>
             {props.data.map(
                 row => <RowComponent data={row} idFor={props.idFor}
                                      choose={props.choose} unchoose={props.unchoose}
