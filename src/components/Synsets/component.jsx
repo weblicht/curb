@@ -133,6 +133,8 @@ function SynsetsAsList(props) {
 //   choose :: Synset ID -> Action
 //      Normally this should be the .choose prop of the data container being
 //      displayed as a select element 
+//      Note: other data container props are *not* passed on, since they don't
+//      make sense in the context of a unique-choice <select> element
 //   displayItemAs (optional) :: Component to render a synset as an option
 //      Defaults to SynsetAsOption
 function SynsetsAsSelect(props) {
