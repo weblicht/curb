@@ -222,12 +222,17 @@ export function DataSelect(props) {
 //       Normally, these should be the objects in some data container.
 //       Exactly one object should have .chosen == True.  The first item
 //       will be chosen by default.
-//    itemToTabId :: Object -> String, a function mapping data objects to unique identifiers
-//    itemToTabText :: Object -> String, a function mapping data objects to tab button text
-//    choose, callback to choose tab for an item given its (tab) Id
+//    idFor :: DataObject -> identifier
+//    tabTextFor :: DataObject -> String
+//       Maps a data object to the button text for its tab button
+//    choose, callback to choose tab for an item given its ID
 //       Normally this should be the .choose prop of a DataContainer
 //    displayItemAs, component to display an item as tab pane content
-//
+//    tabsClassName (optional), className for tabs container
+//       Defaults to 'nav-tabs'
+//    tabsExtras (optional), extras for tabs container
+//    paneClassName (optional), className for tab pane divs
+//    paneExtras (optional), extras for tab pane divs
 export function DataTabbedPanes(props) {
     if (!(props.data && props.data.length)) return null;
 
@@ -237,7 +242,7 @@ export function DataTabbedPanes(props) {
     const dataWithTabs = props.data.map(
         item => {
             chosenSeen = chosenSeen || item.chosen;
-            const tabId = props.itemToTabId(item);
+            const tabId = props.idFor(item);
             const tabRef = "#" + tabId;
             const tabName = tabId + "-tab";
             return { tabId, tabRef, tabName, ...item };
@@ -245,39 +250,43 @@ export function DataTabbedPanes(props) {
 
     function activateTab(e) {
         e.preventDefault();
-        const tabId = e.target.getAttribute('data-id');
-        props.choose(tabId);
+        const itemId = e.target.getAttribute('data-id');
+        props.choose(itemId);
     }
 
     return (
         <>
-          <List ordered={false} className="nav nav-tabs">
+          <nav className={classNames("nav", // always required
+                                     "nav-tabs" || props.tabsClassName,
+                                     props.tabsExtras)}>
             {dataWithTabs.map(
                 (item, idx) => 
-                    <ListItem key={item.id} className="nav-item">
-                      <a className={classNames("nav-link", { active: chosenSeen ? item.chosen : idx === 0 })}
-                         data-id={item.tabId}
-                         href={item.tabRef}
-                         role="tab"
-                         aria-controls={item.tabId}
-                         aria-selected={item.selected}
-                         onClick={activateTab}
-                      >
-                        {props.itemToTabText(item)} 
-                      </a>
-                    </ListItem>
+                    <a className={classNames("nav-item nav-link",
+                                             { active: chosenSeen ? item.chosen : idx === 0 })}
+                       id={item.tabName}
+                       data-id={item.tabId}
+                       href={item.tabRef}
+                       role="tab"
+                       aria-controls={item.tabId}
+                       aria-selected={item.selected}
+                       onClick={activateTab}>
+                      {props.tabTextFor(item)} 
+                    </a>
                 
             )}
-          </List>
+          </nav>
           <div className="tab-content">
             {dataWithTabs.map(
                 (item, idx) =>
-                    (<div className={classNames("tab-pane", { active: chosenSeen ? item.chosen : idx === 0 })}
-                          data-id={item.tabId}
-                          role="tabpanel"
-                          aria-labelledby={item.tabName}>
-                       <ItemRenderer data={item} />
-                     </div>) 
+                    <div className={classNames("tab-pane" || props.paneClassName,
+                                               { active: chosenSeen ? item.chosen : idx === 0 },
+                                               props.paneExtras
+                                              )}
+                         data-id={item.tabId}
+                         role="tabpanel"
+                         aria-labelledby={item.tabName}>
+                      <ItemRenderer data={item} />
+                    </div> 
             )}
           </div>
         </>
