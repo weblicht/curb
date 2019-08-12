@@ -159,8 +159,7 @@ export function DataList(props) {
     return (
         <List ordered={props.ordered} className={props.className} extras={props.extras}>
           {props.data.map(
-              item => <ItemComponent data={item}
-                                     idFor={props.idFor}
+              item => <ItemComponent data={item} idFor={props.idFor}
                                      choose={props.choose} unchoose={props.unchoose}
                                      select={props.select} unselect={props.unselect}
                                      className={props.itemClassName} extras={props.itemExtras}/>
