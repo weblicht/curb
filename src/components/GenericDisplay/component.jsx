@@ -173,48 +173,32 @@ export function DataList(props) {
 // props:
 //   id :: String
 //   label :: String
-//   data :: [ Object ]
-//   choose, callback to choose an item given its unique identifier
-//       Normally this should be the .choose prop of a DataContainer
+//   data :: [ DataObject ]
+//   choose :: String -> (anything), callback to choose an item given its
+//       unique identifier.
 //   displayItemAs :: Object -> HTML option or option group,
 //     a component to display a single data object as an option in the select
-//     Note: The option's value attribute should be an identifier to pass to choose
+//     Note: The option's value attribute should be a String to pass to
+//     the choose prop
 //   disabledOption (optional) :: String,
 //     a message to use as an initial, disabled option in the select
-//   className (optional), defaults to 'form-control' 
-//   extras (optional)
-//   itemClassName (optional), passed to item formatting component as className
-//   itemExtras (optional), passed to item formatting component as extras
-//   labelClassName (optional),  defaults to 'sr-only'
-//   labelExtras (optional), extra classes for label 
+//
+//   Style props for Select (className, extras, labelClassName, labelExtras), if
+//     given, will be passed on to Select component
 export function DataSelect(props) {
     if (!(props.data && props.data.length)) return null;
-    // TODO: is there any way to provide a sensible default, or must
-    // the user always pass a custom component to render the options?
     const ItemComponent = props.displayItemAs;
 
-    function chooseItem(e) {
-        const itemId = e.target.value;
-        props.choose(itemId);
-    }
- 
     return (
-        <React.Fragment>
-          <label className={classNames('sr-only' || props.labelClassName, props.labelExtras)}
-                 htmlFor={props.id}>
-            {props.label}
-          </label>
-          <select name={props.id}
-                  className={withDefault('form-control', props)}
-                  onChange={chooseItem}>
-            {props.disabledOption && <option value="none" disabled={true}>{props.disabledOption}</option>}
-            {props.data.map(
-                item => <ItemComponent data={item} className={props.itemClassName} extras={props.itemExtras} />
-            )}
-          </select>
-        </React.Fragment>
+        <Select id={props.id} label={props.label}
+                choose={props.choose}
+                className={props.className} extras={props.extras}
+                labelClassName={props.labelClassName}
+                labelExtras={props.labelExtras}>
+          {props.disabledOption && <option value="none" selected disabled>{props.disabledOption}</option>}
+          {props.data.map(item => <ItemComponent data={item}/>)}
+        </Select>
     );
-
 }
 
 // props:
@@ -440,6 +424,39 @@ export function ListItem(props) {
         <li key={key} className={withDefault('list-group-item', props)}>
           {props.data || props.children}
         </li>
+    );
+}
+
+// props:
+//   id :: String
+//   label :: String
+//   data (optional) :: [ Object ]
+//     The options to be displayed in the select element.
+//     Defaults to props.children.
+//   choose :: (String) -> (anything), a callback to call with an item value
+//     when that item is selected
+//   className (optional), defaults to 'custom-select' 
+//   extras (optional), extra classes for select
+//   labelClassName (optional),  defaults to 'sr-only'
+//   labelExtras (optional), extra classes for label 
+export function Select(props) {
+    function chooseItem(e) {
+        const itemId = e.target.value;
+        props.choose(itemId);
+    }
+ 
+    return (
+        <>
+          <label className={classNames('sr-only' || props.labelClassName, props.labelExtras)}
+                 htmlFor={props.id}>
+            {props.label}
+          </label>
+          <select name={props.id}
+                  className={withDefault('custom-select', props)}
+                  onChange={chooseItem}>
+            {props.data || props.children}
+          </select>
+        </>
     );
 }
 

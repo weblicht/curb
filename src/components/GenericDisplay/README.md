@@ -42,6 +42,8 @@ prop
 
 `ListItem`: display a list item within a list
 
+`Select`: display an HTML select element
+
 `TabbedPanes`: given an array of objects representing tabs and panes
 and formatting information, generate a tab pane view
 
