@@ -218,78 +218,45 @@ export function DataSelect(props) {
 }
 
 // props:
-//    data :: [ Object ]
-//       Normally, these should be the objects in some data container.
-//       Exactly one object should have .chosen == True.  The first item
-//       will be chosen by default.
-//    idFor :: DataObject -> identifier
-//    tabTextFor :: DataObject -> String
-//       Maps a data object to the button text for its tab button
-//    choose, callback to choose tab for an item given its ID
-//       Normally this should be the .choose prop of a DataContainer
-//    displayItemAs, component to display an item as tab pane content
-//    tabsClassName (optional), className for tabs container
-//       Defaults to 'nav-tabs'
-//    tabsExtras (optional), extras for tabs container
-//    paneClassName (optional), className for tab pane divs
-//    paneExtras (optional), extras for tab pane divs
+//   data :: [ DataObject ]
+//      Normally, these should be the objects in some data container.
+//      Exactly one object should have .chosen == True.  If none does,
+//      the first item will be chosen by default.
+//   choose :: String -> (anything), callback to choose tab for an item given its ID
+//      Normally this should be the .choose prop of a DataContainer
+//   idFor :: DataObject -> identifier
+//   buttonTextFor :: DataObject -> String
+//      Maps a data object to the button text for its tab button
+//   displayItemAs, component to display an item as tab pane content
+//   className (optional, currently ignored)
+//   extras (optional, currently ignored)
+//   itemClassName (optional), passed to item formatting component as className
+//   itemExtras (optional), passed to item formatting component as extras
+//
+//   TabbedPanes style props (tabsClassName, tabsExtras, paneClassName, paneExtras),
+//      if given, will be passed on to TabbedPanes component.
 export function DataTabbedPanes(props) {
     if (!(props.data && props.data.length)) return null;
 
     const ItemRenderer = props.displayItemAs;
 
-    var chosenSeen = false;
-    const dataWithTabs = props.data.map(
-        item => {
-            chosenSeen = chosenSeen || item.chosen;
-            const tabId = props.idFor(item);
-            const tabRef = "#" + tabId;
-            const tabName = tabId + "-tab";
-            return { tabId, tabRef, tabName, ...item };
-        });
-
-    function activateTab(e) {
-        e.preventDefault();
-        const itemId = e.target.getAttribute('data-id');
-        props.choose(itemId);
-    }
+    const chosenSeen = props.data.some(d => d.chosen);
+    const tabData = props.data.map(
+        (item, idx) => ({
+            id: props.idFor(item),
+            chosen: chosenSeen ? item.chosen : idx == 0,
+            buttonText: props.buttonTextFor(item),
+            content: (<ItemRenderer data={item} className={props.itemClassName} extras={props.itemExtras}/>)
+        })
+    );
 
     return (
-        <>
-          <nav className={classNames("nav", // always required
-                                     "nav-tabs" || props.tabsClassName,
-                                     props.tabsExtras)}>
-            {dataWithTabs.map(
-                (item, idx) => 
-                    <a className={classNames("nav-item nav-link",
-                                             { active: chosenSeen ? item.chosen : idx === 0 })}
-                       id={item.tabName}
-                       data-id={item.tabId}
-                       href={item.tabRef}
-                       role="tab"
-                       aria-controls={item.tabId}
-                       aria-selected={item.selected}
-                       onClick={activateTab}>
-                      {props.tabTextFor(item)} 
-                    </a>
-                
-            )}
-          </nav>
-          <div className="tab-content">
-            {dataWithTabs.map(
-                (item, idx) =>
-                    <div className={classNames("tab-pane" || props.paneClassName,
-                                               { active: chosenSeen ? item.chosen : idx === 0 },
-                                               props.paneExtras
-                                              )}
-                         data-id={item.tabId}
-                         role="tabpanel"
-                         aria-labelledby={item.tabName}>
-                      <ItemRenderer data={item} />
-                    </div> 
-            )}
-          </div>
-        </>
+        <TabbedPanes data={tabData} 
+                     choose={props.choose}
+                     tabsClassName={props.tabsClassName}
+                     tabsExtras={props.tabExtras}
+                     paneClassName={props.paneClassName}
+                     paneExtras={props.paneExtras}/>
     );
 }
 
@@ -473,6 +440,78 @@ export function ListItem(props) {
         <li key={key} className={withDefault('list-group-item', props)}>
           {props.data || props.children}
         </li>
+    );
+}
+
+// props:
+//    data :: [ Object ]
+//       These objects represent the tabs to be displayed.
+//       The objects should have the following fields:
+//          id :: String, an identifier for the tab and its associated pane
+//          chosen :: Bool, whether the tab is chosen (i.e., open)
+//          buttonText ::  String, the text for the tab button
+//          buttonExtras, extra classes for the tab button
+//          content :: the rendered content to be placed in the tab pane
+//          contentExtras, extra classes for the tab pane
+//       It is the caller's responsibility to ensure that exactly one object
+//       has .chosen === true.  No tab will be chosen by default.
+//    choose :: String -> (anything), a callback to call with the tab ID
+//       when a tab button is clicked
+//    tabsClassName (optional), className for tab buttons container
+//       Defaults to 'nav-tabs'. See Bootstrap documentation for other useful options: 
+//       https://getbootstrap.com/docs/4.0/components/navs/
+//    tabsExtras (optional), extras for tabs container
+//    paneClassName (optional), className for each tab pane div
+//    paneExtras (optional), extras for each tab pane div
+export function TabbedPanes(props) {
+    if (!(props.data && props.data.length)) return null;
+
+    function activateTab(e) {
+        e.preventDefault();
+        const itemId = e.target.getAttribute('data-id');
+        props.choose(itemId);
+    }
+
+    return (
+        <>
+          <nav className={classNames("nav", // always required
+                                     "nav-tabs" || props.tabsClassName,
+                                     props.tabsExtras)}>
+            {props.data.map(
+                item => 
+                    <a className={classNames("nav-item nav-link",
+                                             { active: item.chosen },
+                                             item.buttonExtras
+                                            )}
+                       id={item.id + "-tab"}
+                       data-id={item.id}
+                       href={"#" + item.id}
+                       role="tab"
+                       aria-controls={item.id + '-pane'}
+                       aria-selected={item.chosen}
+                       onClick={activateTab}>
+                      {item.buttonText} 
+                    </a>
+                
+            )}
+          </nav>
+          <div className="tab-content">
+            {props.data.map(
+                item =>
+                    <div className={classNames("tab-pane" || props.paneClassName,
+                                               { active: item.chosen },
+                                               props.paneExtras,
+                                               item.contentExtras
+                                              )}
+                         id={item.id + '-pane'}
+                         data-id={item.id}
+                         role="tabpanel"
+                         aria-labelledby={item.id + "-tab"}>
+                      {item.content}
+                    </div> 
+            )}
+          </div>
+        </>
     );
 }
 
