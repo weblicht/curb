@@ -56,20 +56,6 @@ function LexUnitAsListItem(props) {
     );
 }
 
-// props:
-//   data :: Object, a lex unit
-//   displayFields :: [ String ], a list of field names in the lex unit object to display
-function LexUnitAsTableRow(props) {
-    // display all data fields by default:
-    const displayFields = props.displayFields || LU_ALL_FIELDS;
-
-    return (
-        <DataTableRow data={props.data} displayFields={displayFields}
-                      className="lexunit-detail" />
-    );
-
-}
-
 // Display components for an array of lex unit objects:
 
 // props:
@@ -79,7 +65,6 @@ function LexUnitAsTableRow(props) {
 //     Defaults to LexUnitAsListItem.
 //     Data container control props (.choose, etc.), if given, will be passed on
 //     to this component.
-
 function LexUnitsAsList(props) {
     return (
         <DataList data={props.data} idFor={props.idFor}
@@ -109,7 +94,6 @@ function LexUnitsAsSelect(props) {
 //   fieldMap
 //   displayFields 
 //   displayItemAs (optional) :: Component to render a lexunit as a table row
-//     Defaults to LexUnitAsTableRow
 //     Data container control props (.choose, etc.), if given, will be passed on
 //     to this component.
 function LexUnitsAsTable(props) {
@@ -119,7 +103,7 @@ function LexUnitsAsTable(props) {
                    select={props.select} unselect={props.unselect}
                    fieldMap={props.fieldMap || LU_FIELD_MAP}
                    displayFields={props.displayFields || LU_ALL_FIELDS}
-                   displayItemAs={props.displayItemAs || LexUnitAsTableRow}
+                   displayItemAs={props.displayItemAs}
                    extras='lexunits-container' 
         />
     );
