@@ -82,10 +82,10 @@ function LexUnitAsTableRow(props) {
 
 function LexUnitsAsList(props) {
     return (
-        <DataList data={props.data}
-                  ordered={props.ordered}
+        <DataList data={props.data} idFor={props.idFor}
                   choose={props.choose} unchoose={props.unchoose}
                   select={props.select} unselect={props.unselect}
+                  ordered={props.ordered}
                   extras='lexunits-container'
                   displayItemAs={props.displayItemAs || LexUnitAsListItem} />
     );
