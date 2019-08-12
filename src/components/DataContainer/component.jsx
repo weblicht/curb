@@ -71,7 +71,7 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
                  ...selectContainerState(globalState, ownProps)
              };
          } else {
-             return { data };
+             return { data, idFor };
          }
     };
 
