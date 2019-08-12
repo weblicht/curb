@@ -8,37 +8,32 @@ import { connect } from 'react-redux';
 //   fetchActions: an object containing API action creators for fetching, e.g. as
 //     returned by makeApiActions.
 // 
-// Returns a function with which to wrap a component.  Thus, you can use it very much
-// like redux's connect() function:
-// ConnectedSomeComponent = connectWithApi(selector, fetchActions)(SomeComponent);
-export function connectWithApi(fetchActions) {
+// ConnectedSomeComponent = connectWithApi(SomeComponent, fetchActions);
+export function connectWithApi(Component, fetchActions) {
     // TODO: again, there's room to expand here to other REST methods
     // In that case we want not just fetchActions, but a whole API actions object
 
-    function wrap(Component) {
-        // TODO: this can now probably be refactored to be a pure function component
-        return class APIWrapper extends React.Component {
+    class APIWrapper extends React.Component {
 
-            constructor(props) {
-                super(props);
+        constructor(props) {
+            super(props);
+        }
+        
+        // TODO: for some applications we will actually want to
+        // reload the data before every render.  Moreover, that's
+        // simpler.  
+        componentDidMount() {
+            if (this.props.data === undefined) {
+                this.props.fetchData();
             }
+        }
 
-            // TODO: for some applications we will actually want to
-            // reload the data before every render.  Moreover, that's
-            // simpler.  
-            componentDidMount() {
-                if (this.props.data === undefined) {
-                    this.props.fetchData();
-                }
-            }
-
-            render() {
-                return (
-                    <Component data={this.props.data} {...this.props}/>
-                );
-            }
-        };
-    }
+        render() {
+            return (
+                <Component data={this.props.data} {...this.props}/>
+            );
+        }
+    };
     
     function mapDispatchToProps(dispatch, ownProps) {
         return {
@@ -47,12 +42,10 @@ export function connectWithApi(fetchActions) {
         };
     };
 
-    return function(Component) {
-        const Connected = connect(undefined, mapDispatchToProps)(wrap(Component));
-        Connected.displayName = (Component.displayName || Component.name || 'Component') + 'WithApi';
+    const Connected = connect(undefined, mapDispatchToProps)(APIWrapper);
+    Connected.displayName = (Component.displayName || Component.name || 'Component') + 'WithApi';
 
-        return Connected;
-    };
+    return Connected;
 }
 
 // Here's a draft version of connectWithApi that uses react's internal

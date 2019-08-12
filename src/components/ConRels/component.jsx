@@ -68,7 +68,7 @@ function ConRelsAsTable(props) {
 // props:
 //   fetchParams :: { synsetId: ... }
 var ConRelsContainer = dataContainerFor('ConRels', selectConRels);
-ConRelsContainer = connectWithApi(conRelsActions.fetchActions)(ConRelsContainer);
+ConRelsContainer = connectWithApi(ConRelsContainer, conRelsActions.fetchActions);
 
 export { ConRelsContainer,
          ConRelsAsList

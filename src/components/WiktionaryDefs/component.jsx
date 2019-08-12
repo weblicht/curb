@@ -93,10 +93,9 @@ function WiktDefsAsTable(props) {
 //   fetchParams :: { lexUnitId: ... }
 var WiktionaryDefsContainer = dataContainerFor('WiktionaryDefs', selectWiktDefs,
                                                wd => wd.wikiRecordId); // TODO: is this the right id field?? 
-WiktionaryDefsContainer = connectWithApi(wiktDefsActions.fetchActions)(WiktionaryDefsContainer);
+WiktionaryDefsContainer = connectWithApi(WiktionaryDefsContainer, wiktDefsActions.fetchActions);
 
 export { WiktionaryDefsContainer,
          WiktDefsAsDefList,
          WiktDefsAsList,
          WiktDefsAsTable };
-

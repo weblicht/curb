@@ -115,7 +115,7 @@ function LexUnitsAsTable(props) {
 //   displayAs :: Component to render a list of lex units
 //   displayItemAs (optional) :: Component to render each lex unit
 var LexUnitsContainer = dataContainerFor('LexUnits', selectLexUnits);
-LexUnitsContainer = connectWithApi(lexUnitsActions.fetchActions)(LexUnitsContainer);
+LexUnitsContainer = connectWithApi(LexUnitsContainer, lexUnitsActions.fetchActions);
 
 
 export { LexUnitsContainer,
