@@ -11,9 +11,9 @@ implementing the following pattern:
 It also implements this pattern for the different types of data
 objects in the GermaNet API, namely
 
-  - synsets (see [Synset](./src/components/Synset))
-  - conceptual relations (see [ConRel](./src/components/ConRel))
-  - lexical units (see [LexUnit](./src/components/LexUnit))
+  - synsets (see [Synsets](./src/components/Synset))
+  - conceptual relations (see [ConRels](./src/components/ConRels))
+  - lexical units (see [LexUnits](./src/components/LexUnits))
   - examples for lexical items (see [LexExamples](./src/components/LexExamples))
   - Interlingual Index records (see [ILIRecords](./src/components/ILIRecords))
   - Wiktionary definitions (see [WiktionaryDefs](./src/components/WiktionaryDefs))
@@ -62,7 +62,7 @@ npm install path/to/this/repo
 To make the library useful, you will need to install several reducers
 from this library into your root Redux reducer:
 ```
-import { reducers } from 'germanet-common'
+import { reducers } from 'germanet-common';
 
 const { synsetSearchBoxes, dataContainers, apiData } = reducers; // e.g.
 
@@ -77,12 +77,12 @@ const rootReducer = {
 
 Then you can import the components and use them in your own code:
 ```
-import { components } from 'germanet-common'
+import { components } from 'germanet-common';
 
 const { LexUnitsContainer, LexUnitsAsList } = components; // e.g.
 
 ...
-<LexUnitsContainer data={someData} displayAs={LexUnitsAsList} />
+<LexUnitsContainer fetchData={{ synsetId: someId}} displayAs={LexUnitsAsList} />
 
 ```
 
@@ -94,17 +94,25 @@ component, or a set of related components, together with any functions
 needed to manage their state via Redux.  Every grouping thus consists
 of a directory under `src/components` with at least these files:
 
-  - `README.md`: documentation specific to the component 
-  - `component.jsx`: the definition of the component (or components)
+  - `README.md`: documentation specific to the component(s) 
+  - `component.jsx`: the definition of the component(s)
 
 If the component has local state managed by Redux, the following files
 will also be present:
 
   - `actions.js`: Redux actions for the component(s)
   - `reducers.js`: Redux reducers for managing the component's state
-  - `selectors.js`: Redux selectors which map the Redux state
+  - `selectors.js`: Redux selectors which map the Redux state to the
+    component's props
+    
+In some cases (notably `DataContainer` and `APIWrapper`), the
+component is a higher-order component. In that case, the directory
+structure follows the same pattern, but the associated actions,
+reducers, and selectors are also higher order.  For example, in
+APIWrapper's `actions.js`, instead of direct definitions of action
+creators, there is a `makeApiActions` function that *returns* action
+creators.
 
- 
 In addition, there are several other files that contain code shared
 across the library:
   - [errors.js](./src/): assorted error classes and
