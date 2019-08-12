@@ -1,6 +1,6 @@
 import { conRelsActions } from './actions';
 import { selectConRels } from './selectors';
-import { DataList, DataTable } from '../GenericDisplay/component';
+import { DataList, DataTable, ListItem } from '../GenericDisplay/component';
 import { dataContainerFor } from '../DataContainer/component';
 import { connectWithApi } from '../APIWrapper';
 
@@ -18,14 +18,15 @@ const CON_REL_FIELD_MAP = [
 const CON_REL_ALL_FIELDS = CON_REL_FIELD_MAP.map( entry => entry[0] );
 
 function ConRelAsListItem(props) {
-    // TODO: what is a sensible default to provide here?
-    return null; 
+    // TODO: is there a more sensible default to provide here?
+    const relDisplay = props.data.conRelType.replace('_', ' ');
+    return (
+        <ListItem id={props.data.id}>
+          {`Synset ${props.data.originatingSynsetId} ${relDisplay} Synset ${props.data.relatedSynsetId}`}
+        </ListItem>
+    ); 
 }
 
-function ConRelAsTableRow(props) {
-    // TODO: what is a sensible default to provide here?
-    return null;
-}
 
 // props:
 //   data :: [ Object ], the conrels
@@ -49,7 +50,6 @@ function ConRelsAsList(props) {
 //   fieldMap (optional) :: [ [String, String] ], maps ConRel field names to their display names
 //   displayFields (optional) :: [ String ], the field names to be displayed
 //   displayItemAs (optional) :: Component to render a ConRel as a table row
-//      Defaults to ConRelAsTableRow
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
 function ConRelsAsTable(props) {
@@ -59,7 +59,7 @@ function ConRelsAsTable(props) {
                    select={props.select} unselect={props.unselect}
                    fieldMap={props.fieldMap || CON_REL_FIELD_MAP}
                    displayFields={props.displayFields || CON_REL_ALL_FIELDS}
-                   displayItemAs={props.displayItemAs || ConRelAsTableRow}
+                   displayItemAs={props.displayItemAs}
                    extras='conrels-container'
         />
     );
