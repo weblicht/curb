@@ -97,7 +97,6 @@ selecting data objects inside it, you *must* give it an `id` prop that
 is unique for the entire application.  This is because the state for
 each data container is managed in Redux using its `id`.
 
-<a id="control-props"></a>
 If an `id` is specified, the container will automatically receive
 these additional *control* props:
 
