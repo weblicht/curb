@@ -7,13 +7,13 @@ for conceptual relations.
 
 A conceptual relation object contains the following fields:
 
-    - `id`
-    - `conRelType`
-    - `allOrthForms`
-    - `numHyponyms`
-    - `canBeDeleted`
-    - `originatingSynsetId`
-    - `relatedSynsetId`
+  - `id`
+  - `conRelType`
+  - `allOrthForms`
+  - `numHyponyms`
+  - `canBeDeleted`
+  - `originatingSynsetId`
+  - `relatedSynsetId`
 
 **Note**: this is not exactly the shape of the data which is currently
 returned by the backend; it is reshaped a little bit for clarity.  See
@@ -34,7 +34,7 @@ The required fetch parameters look like: `{ synsetId: someId }`.
 `ConRelsAsTable`: renders a set of conceptual relations as a table 
 
 These components accept, and pass on, [data container control
-props](../DataContainer#control-props) for choosing and selecting data.
+props](../DataContainer#user-content-selecting-and-choosing-data-objects) for choosing and selecting data.
 
 ### Example
 
