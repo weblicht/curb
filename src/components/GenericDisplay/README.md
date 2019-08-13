@@ -62,13 +62,14 @@ There are a few conventions to be aware of when using these components.
      useful props interface.
 
    - Higher-level generic components are intended to provide a generic
-     interface for rendering datasets (e.g. `DataTable`), and
-     generally have names starting with 'Data'.
+     interface for rendering data in a [data
+     container](../DataContainer) (e.g. `DataTable`), and have names
+     starting with 'Data'.
 
 1. Data.  As elsewhere in this library, data to be displayed is
    generally passed as either an object or an array on the `data`
-   prop.  In a few exceptional cases (`Button`, `ListItem`) it is also
-   possible to pass the data as the component's children, for
+   prop.  In a few exceptional cases (e.g. `Button`, `ListItem`) it is
+   also possible to pass the data as the component's children, for
    convenience and flexibility.
 
 1. Styling.  The components here by default use the class names from
