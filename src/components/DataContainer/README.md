@@ -1,29 +1,145 @@
 # DataContainer
 
-A data container manages and displays a set of data objects.  This
-means it handles:
+A 'data container' is a component that acts as a container for a set
+of *data objects*.  A data object is simply a Javascript object
+representing a particular unit of data, such as a particular synset or
+lexical unit.
 
-  - pulling data objects out of the Redux store into an array
-  - keeping track of various state concerning those objects, e.g.,
-    whether they have been selected by the user in the UI
-  - rendering the data objects in some way that makes sense for them,
-    e.g. as a table or form control
+A data container handles three functions:
+
+  1. pulling data objects out of the Redux store into an array. This
+     is achieved via a *selector function* that maps the entire Redux
+     state to an array of data objects.
+  2. keeping track of state concerning those objects, e.g., whether
+     they have been selected by the user in the UI.  This state is
+     managed via Redux: data containers have a standard set of
+     actions, and a reducer to handle them.
+  3. rendering the data objects in some way that makes sense for them,
+     e.g. as a table or form control.  This is achieved by passing a
+     *rendering component* as a prop to the data container.
 
 ## Component
 
-props:
-  - id
-  - data
-  - displayAs
+The `DataContainer` component is implemented as a higher-order
+component called `dataContainerFor`.  This function accepts three
+arguments:
+
+  - a name for the type of data in the container
+  - a selector selector function for that data, 
+  - a function mapping each object in the container to its unique ID
+  
+The third argument is optional; if not supplied, it will default to a
+function that looks for an `.id` field on data objects.
+
+`dataContainerFor` returns a component that you can instantiate to be
+a container for a certain type of data.  You call it like this:
+
+```
+import { components } from 'germanet-common';
+const { dataContainerFor } = components;
+
+const SynsetsContainer = dataContainerFor('Synsets', selectSynsets);
+```
+
+The returned component (`SynsetsContainer`, in the example above) will accept props:
+
+  - `data`: the array of data objects in the container
+  - `displayAs`: a component to render the data in this container
+  - `id`: an identifier for the container
+  - `idFor`: a function that maps a data object in the container to
+    its unique identifier
+  
+The `idFor` prop will be automatically supplied, and the `data` will
+automatically be loaded into the container by the selector function
+from the Redux store when the container is rendered.  You must pass
+`displayAs` and `id` yourself.
+
+So in this example, you could instantiate `SynsetContainer` like so:
+
+``` 
+<SynsetsContainer id="searchResults" displayAs={SynsetsAsList} />
+``` 
+
+where `SynsetsAsList` is a component that renders an array of
+synsets as an HTML list.
 
 ## Conventions
 
-There are two senses in which one object in a set can be 'selected':
+### Selector functions
+
+The data objects in a data container are loaded into its `data` prop
+from the Redux store by the selector function.  This function should
+accept two arguments:
+
+  1. `globalState`, the global state in the Redux store
+  2. `ownProps`, the props of the data container component instance
+  
+It should return an array of data objects.  If the data is not yet in
+the Redux store (e.g., if it has not yet been fetched from the API),
+the selection function should return `undefined`.
+
+### "Selecting" and "Choosing" data objects
+
+In a user interface, there are two senses in which an object in a
+data container can be 'selected' by the user:
   
   1. it might be part of a subset of those objects selected from among
-     the total set. This is here known as *selecting* one or more
-     objects, which can also be *unselected* (think: checkboxes).
+     the total set in the container. This is here known as *selecting*
+     one or more objects, which can also be *unselected* (think:
+     checkboxes).
   2. it might be selected to the exclusion of any other object in the
-     set. This is here known as *choosing* an object (think: radio
-     buttons).
-     
+     container. This is here known as *choosing* an object (think:
+     radio buttons).  No more than one object in a container can be
+     chosen, although a chosen object can be unchosen.
+ 
+**Important**: if you want your data container to support choosing and
+selecting data objects inside it, you *must* give it an `id` prop that
+is unique for the entire application.  This is because the state for
+each data container is managed in Redux using its `id`.
+
+If an `id` is specified, the container will automatically receive
+these additional props:
+
+  - `choose`
+  - `unchoose`
+  - `select`
+  - `unselect`
+
+These are callbacks that accept an item ID, and emit a Redux action to
+indicate that a particular item in the container has been (un)chosen
+or (un)selected.  They will be passed on to the rendering component.
+
+In addition, the data objects in the `data` prop will have Boolean
+`.selected` and `.chosen` properties, which you can test for when
+rendering them in the UI.
+
+(The `id` prop can be left off.  This is to support creating data
+containers in contexts where you might not be able to choose a unique
+id, such as when creating a data container programmatically as a child
+of another component.  But in that case the container cannot support
+choosing and selecting actions.)
+
+### Rendering data in a container 
+
+When instantiating a data container, you must supply a component as
+the value of its `displayAs` prop.  This component is responsible for
+rendering the data in a suitable way.
+
+The rendering component will inherit all the data and control props
+from the data container, i.e., `data`, `idFor`, and
+`choose`/`unchoose`, `select`/`unselect` (if the container has an
+`id`).
+
+The advantage of having a separate `displayAs` component is that it
+separates the logic of retrieving the data and managing the data
+container's state from the logic required to render the data in the
+UI.  This makes it easy to render the same type of data in different
+ways in different parts of an application, just by writing different
+rendering components.
+
+Several components in the [GenericDisplay](../GenericDisplay)
+directory are designed to work well with data containers, and make it
+easy to write the rendering component for a data container.  Their
+names start with 'Data' (e.g., `DataTable`).  These components make
+use of the data container control props if they are given, and pass
+them on to their children.
