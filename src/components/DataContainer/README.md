@@ -97,15 +97,16 @@ selecting data objects inside it, you *must* give it an `id` prop that
 is unique for the entire application.  This is because the state for
 each data container is managed in Redux using its `id`.
 
+<a id="control-props"></a>
 If an `id` is specified, the container will automatically receive
-these additional props:
+these additional *control* props:
 
   - `choose`
   - `unchoose`
   - `select`
   - `unselect`
 
-These are callbacks that accept an item ID, and emit a Redux action to
+These are callbacks that accept an item ID, and dispatch a Redux action to
 indicate that a particular item in the container has been (un)chosen
 or (un)selected.  They will be passed on to the rendering component.
 
