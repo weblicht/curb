@@ -14,6 +14,7 @@ objects in the GermaNet API, namely
   - synsets (see [Synsets](./src/components/Synset))
   - conceptual relations (see [ConRels](./src/components/ConRels))
   - lexical units (see [LexUnits](./src/components/LexUnits))
+  - lexical relations (see [LexRels](./src/components/LexRels))
   - examples for lexical items (see [LexExamples](./src/components/LexExamples))
   - Interlingual Index records (see [ILIRecords](./src/components/ILIRecords))
   - Wiktionary definitions (see [WiktionaryDefs](./src/components/WiktionaryDefs))
