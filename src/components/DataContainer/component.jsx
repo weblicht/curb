@@ -35,7 +35,7 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
         const dataWithMetadata = props.data.map(
             item => ({ ...item,
                        chosen: props.chosenItemId === idFor(item),
-                       selected: props.selectItemIds ? props.selectedItemIds.includes(idFor(item)) : false,
+                       selected: props.selectedItemIds ? props.selectedItemIds.includes(idFor(item)) : false,
                      })
         );
 
