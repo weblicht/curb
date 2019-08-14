@@ -12,6 +12,7 @@ export { dataContainers } from './components/DataContainer/reducers';
 import { conRels } from './components/ConRels/reducers';
 import { iliRecs } from './components/ILIRecords/reducers';
 import { lexExamples } from './components/LexExamples/reducers';
+import { lexRels } from './components/LexRels/reducers';
 import { lexUnits } from './components/LexUnits/reducers';
 import { wiktDefs } from './components/WiktionaryDefs/reducers';
 
@@ -20,6 +21,7 @@ const fullAPIReducer = combineReducers({
     conRels,
     iliRecs,
     lexExamples,
+    lexRels,
     lexUnits,
     wiktDefs,
 })
