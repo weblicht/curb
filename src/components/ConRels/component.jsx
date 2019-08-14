@@ -41,7 +41,9 @@ function ConRelsAsList(props) {
                   ordered={props.ordered}
                   choose={props.choose} unchoose={props.unchoose}
                   select={props.select} unselect={props.unselect}
-                  displayItemAs={props.displayItemAs || ConRelAsListItem} />
+                  displayItemAs={props.displayItemAs || ConRelAsListItem}
+                  extras='conrels-container'
+        />
     );
 }
 
