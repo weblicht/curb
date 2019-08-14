@@ -8,8 +8,9 @@ lexical unit.
 A data container handles three functions:
 
   1. pulling data objects out of the Redux store into an array. This
-     is achieved via a *selector function* that maps the entire Redux
-     state to an array of data objects.
+     is achieved via a [selector
+     function](https://medium.com/@matthew.holman/what-is-a-redux-selector-a517acee1fe8)
+     that maps the entire Redux state to an array of data objects.
   2. keeping track of state concerning those objects, e.g., whether
      they have been selected by the user in the UI.  This state is
      managed via Redux: data containers have a standard set of
@@ -25,7 +26,7 @@ component called `dataContainerFor`.  This function accepts three
 arguments:
 
   - a name for the type of data in the container
-  - a selector selector function for that data, 
+  - a Redux selector function for that data, 
   - a function mapping each object in the container to its unique ID
   
 The third argument is optional; if not supplied, it will default to a
@@ -54,7 +55,7 @@ automatically be loaded into the container by the selector function
 from the Redux store when the container is rendered.  You must pass
 `displayAs` and `id` yourself.
 
-So in this example, you could instantiate `SynsetContainer` like so:
+So in this example, you could instantiate `SynsetsContainer` like so:
 
 ``` 
 <SynsetsContainer id="searchResults" displayAs={SynsetsAsList} />
@@ -81,7 +82,7 @@ the selection function should return `undefined`.
 ### "Selecting" and "Choosing" data objects
 
 In a user interface, there are two senses in which an object in a
-data container can be 'selected' by the user:
+data container can be 'selected'[^1] by the user:
   
   1. it might be part of a subset of those objects selected from among
      the total set in the container. This is here known as *selecting*
@@ -91,6 +92,10 @@ data container can be 'selected' by the user:
      container. This is here known as *choosing* an object (think:
      radio buttons).  No more than one object in a container can be
      chosen, although a chosen object can be unchosen.
+     
+[^1]: Note that these two senses of 'selecting' an object *in a
+    user interface* are both different from the sense in which objects
+    are selected *from the Redux store* by a selector function
  
 **Important**: if you want your data container to support choosing and
 selecting data objects inside it, you *must* give it an `id` prop that
