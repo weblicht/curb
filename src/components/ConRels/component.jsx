@@ -73,6 +73,7 @@ var ConRelsContainer = dataContainerFor('ConRels', selectConRels);
 ConRelsContainer = connectWithApi(ConRelsContainer, conRelsActions.fetchActions);
 
 export { ConRelsContainer,
-         ConRelsAsList
+         ConRelsAsList,
+         ConRelsAsTable
        };
 
