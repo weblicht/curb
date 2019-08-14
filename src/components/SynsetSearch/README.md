@@ -1,27 +1,25 @@
-
 # SynsetSearch
 
-This directory provides components for  form for Germanet Synsets.  It
-manages transforming user input into search parameters, and fetching
-search results from the backend using those parameters, and rendering
-those results.
+This directory provides components for searching for synsets and
+displaying the results of those searches.
 
 ## Components defined here
 
 ### SynsetSearchBox
 
 Displays a simple search form for synsets, including a text input, a
-submit button, and a checkbox for ignoring case
+submit button, and a checkbox for ignoring case.
 
-The **id** prop is required and must be unique on the page, since it
-is used to control the state of the form.
+The `id` prop is required and must be unique in the application, since
+it is used to track the state of the form in Redux.
 
 ### SynsetSearchResults
 
-A data container for the synsets returned when a search is submitted.
+A [data container](../DataContainer) for the synsets returned when a
+search is submitted.
 
-The **source*** prop is required and must be the same as the **id**
-for the corresponding search box.
+The `source` prop is required and must be the same as the `id` for the
+corresponding search box.
 
 ### Example
 
