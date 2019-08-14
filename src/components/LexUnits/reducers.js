@@ -1,7 +1,5 @@
 import { lexUnitsActions, iliActions, examplesActions } from './actions';
 import { makeSimpleApiReducer } from '../APIWrapper';
-import { combineReducers } from 'redux';
-import SI from 'seamless-immutable';
 
 // TODO: this is somewhat badly shaped. Ideally we would request
 // lexunit details by their ID, and could use makeByIdReducer to add
