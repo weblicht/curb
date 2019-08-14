@@ -123,19 +123,11 @@ choosing and selecting actions.)
 
 When instantiating a data container, you must supply a component as
 the value of its `displayAs` prop.  This component is responsible for
-rendering the data in a suitable way.
+rendering the data container in a suitable way.
 
-The rendering component will inherit all the data and control props
-from the data container, i.e., `data`, `idFor`, and
-`choose`/`unchoose`, `select`/`unselect` (if the container has an
-`id`).
-
-The advantage of having a separate `displayAs` component is that it
-separates the logic of retrieving the data and managing the data
-container's state from the logic required to render the data in the
-UI.  This makes it easy to render the same type of data in different
-ways in different parts of an application, just by writing different
-rendering components.
+The rendering component will receive all the props from the data
+container (except `id`), including the data and, if the container has
+an `id`, the control props.
 
 Several components in the [GenericDisplay](../GenericDisplay)
 directory are designed to work well with data containers, and make it
@@ -143,3 +135,106 @@ easy to write the rendering component for a data container.  Their
 names start with 'Data' (e.g., `DataTable`).  These components make
 use of the data container control props if they are given, and pass
 them on to their children.
+
+Here is an example of how to write a `displayAs` component for a data
+container.  Suppose we have a data container containing synset objects
+that we want to display. Here is a definition of a component that
+renders the synsets in the container as an ordered list of checkboxes,
+where toggling a checkbox will toggle the highlighting of the item in
+the list:
+```
+import { components } from 'germanet-common';
+const { Checkbox, List, ListItem } = components;
+
+function SynsetsAsHighlightableList(props) {
+    if (!(props.data && props.data.length)) return null;
+
+    function toggle(synset) {
+        if (synset.selected) {
+            props.unselect(synset.id);
+        } else {
+            props.select(synset.id);
+        }
+    }
+
+    return (
+        <List ordered={true}>
+          {props.data.map(
+              synset =>
+                  <ListItem extras={ {active: synset.selected} }>
+                    <Checkbox id={"select-synset-" + synset.id}
+                              label={synset.orthForms.join(', ')}
+                              checked={synset.selected}
+                              onChange={e => toggle(synset)} />
+                  </ListItem>
+          )}
+        </List>
+    );
+}
+
+// ...
+<SynsetsContainer id="highlightable-synsets"
+                  displayAs={SysetsAsHighlightableList} />
+
+``` 
+
+Notice:
+
+  - the use of the `select` and `unselect` control props in the
+    `toggle` function to select and unselect synsets in the data
+    container when the checkbox is clicked
+  - the use of the `selected` property on the synset data objects to
+    set the `active` class on the list item, which highlights the list
+    item via CSS, as well as the `checked` attribute on the checkbox
+
+For illustration purposes, the whole list is constructed here
+directly, by looping over the synsets in the `data`.  But you can
+avoid writing the boilerplate of the containing list and the loop by
+using the `SynsetsAsList` display component in [Synsets](../Synsets).
+In that case you can reduce this component to one that renders a
+single synset as a list item, passing it as the `displayItemAs` prop
+to the data container, which will pass it on to `SynsetsAsList`.
+Here's what that looks like:
+
+```
+import { components } from 'germanet-common';
+const { Checkbox, ListItem, SynsetsAsList } = components;
+
+function HighlightableSynset(props) {
+
+    const synset = props.data;
+
+    function toggle(e) {
+        if (synset.selected) {
+            props.unselect(synset.id);
+        } else {
+            props.select(synset.id);
+        }
+    }
+
+    return (
+        <ListItem extras={ {active: synset.selected} }>
+          <Checkbox id={"select-synset-" + synset.id}
+                    label={synset.orthForms.join(', ')}
+                    checked={synset.selected}
+                    onChange={toggle} />
+        </ListItem>
+    );
+}
+
+// ...
+<SynsetsContainer id="highlightable-synsets"
+                  displayAs={SynsetsAsList}
+                  displayItemAs={HighlightableSynset} />
+
+```
+
+This is a general pattern that the data containers defined in this
+library conform to: if all you need to customize is how individual
+data objects are rendered *within* an HTML container like a table or
+list, you can just pass a custom component for `displayItemAs`, using
+a more generic component provided by the library for the data
+container's `displayAs` prop.  Data containers thus make it easy to define
+*just the portion of the rendering which is specific to your
+application*.
+
