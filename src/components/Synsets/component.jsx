@@ -31,7 +31,7 @@ const SYNSET_ALL_FIELDS = SYNSET_FIELD_MAP.map(entry => entry[0]);
 // Display components for individual synsets:
 
 // props:
-//   data :: Object containing a .wordClass field 
+//   data :: DataObject containing a .wordClass field 
 function WordClass(props) {
     return (
         <span className="wordClass">{props.data.wordClass}</span>
@@ -39,7 +39,7 @@ function WordClass(props) {
 }
 
 // props:
-//   data :: Object containing a .wordCategory field 
+//   data :: DataObject containing a .wordCategory field 
 function WordCategory(props) {
     return (
         <span className="wordCategory">{props.data.wordCategory}</span>
@@ -47,7 +47,7 @@ function WordCategory(props) {
 }
 
 // props:
-//    data :: Object, a synset
+//    data :: DataObject, a synset
 function SynsetAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
@@ -58,7 +58,7 @@ function SynsetAsListItem(props) {
 }
 
 // props:
-//    data :: Object, a synset
+//    data :: DataObject, a synset
 function SynsetAsOption(props) {
     return (
         // TODO: what's the best data to display to disambiguate between synsets with the same orthforms?
@@ -69,7 +69,7 @@ function SynsetAsOption(props) {
 }
 
 // props:
-//    data :: Object, a synset
+//    data :: DataObject, a synset
 //    displayFields :: [ String ], a list of data fields to render
 // TODO: it *may* eventually be worth adding an additional generic
 // abstraction for data tables that allows specifying a
@@ -110,7 +110,7 @@ function SynsetAsTableRow(props) {
 // Display components for an array of synset objects:
 
 // props:
-//   data :: [ Object ], the synsets
+//   data :: [ DataObject ], the synsets
 //   ordered (optional) :: Bool, whether the list should be ordered or unordered
 //   displayItemAs (optional) :: Component to render a synset as a list item
 //      Defaults to SynsetAsListItem
@@ -129,7 +129,7 @@ function SynsetsAsList(props) {
 
 // props:
 //   id :: String, a name for the select element
-//   data :: [ Object ], the synsets
+//   data :: [ DataObject ], the synsets
 //   choose :: Synset ID -> Action
 //      Normally this should be the .choose prop of the data container being
 //      displayed as a select element 
@@ -150,7 +150,7 @@ function SynsetsAsSelect(props) {
 
 
 // props:
-//   data :: [ Object ], the synsets
+//   data :: [ DataObject ], the synsets
 //   fieldMap (optional) :: [ [String, String] ], maps synset field names to their display names
 //   displayFields (optional) :: [ String ], the field names to be displayed
 //   displayItemAs (optional) :: Component to render a synset as a table row

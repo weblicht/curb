@@ -29,7 +29,7 @@ function ConRelAsListItem(props) {
 
 
 // props:
-//   data :: [ Object ], the conrels
+//   data :: [ DataObject ], the conrels
 //   ordered :: Bool, whether the list should be ordered
 //   displayItemAs (optional) :: Component to render a ConRel as a list item
 //      Defaults to ConRelAsListItem
@@ -46,7 +46,7 @@ function ConRelsAsList(props) {
 }
 
 // props:
-//   data :: [ Object ], the conrels
+//   data :: [ DataObject ], the conrels
 //   fieldMap (optional) :: [ [String, String] ], maps ConRel field names to their display names
 //   displayFields (optional) :: [ String ], the field names to be displayed
 //   displayItemAs (optional) :: Component to render a ConRel as a table row
