@@ -1,5 +1,4 @@
 import { conRelsActions } from './actions';
-import { makeSimpleApiReducer } from '../APIWrapper/reducers';
 
 import SI from 'seamless-immutable';
 
