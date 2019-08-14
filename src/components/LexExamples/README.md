@@ -1,8 +1,43 @@
 # LexExamples
 
+This directory defines a data container and various display components
+for examples for lexical units.
+
+## Data object
+
+An example object contains the following fields:
+
+  - `exampleId`
+  - `text`
+  - `frameType`
+
 ## Components defined here
 
-`Examples`: a simple component to display example records for a
-particular lexical unit.  Actions, reducers, and selectors are also
-defined to transparently load this data for a particular Lex Unit via
-the API.
+### Container
+
+`ExamplesContainer`: a data container for example objects.
+These objects are fetched via the API by lexical unit ID.
+The required fetch parameters look like: `{ lexUnitId: someId }`.
+
+### Display components
+
+`ExamplesAsDefList`: renders a set of examples as a
+definition list 
+
+`ExamplesAsList`: renders a set of examples as a list 
+
+`ExamplesAsTable`: renders a set of examples as a table 
+
+These components accept, and pass on, [data container control
+props](../DataContainer#user-content-selecting-and-choosing-data-objects) for choosing and selecting data.
+
+### Example
+
+```
+import { components } from 'germanet-common';
+const { ExamplesContainer, ExamplesAsDefList } = components;
+
+<ExamplesContainer id='theExamples'
+                   fetchParams={{ lexUnitId: someLexUnit.id }}
+                   displayAs={ExamplesAsDefList}/>
+```

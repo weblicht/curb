@@ -1,26 +1,56 @@
-# SynsetsContainer
+# Synsets
 
-This component manages a list of synsets that come from some data
-source.  The data source might be a list of search results, or it
-might be a page-worth of synsets from the entire underlying database,
-or something else.   
+This directory defines a data container and various display components
+for synsets.
 
-## Component
+## Data object
 
-Goal: want to write
-```html
-<SynsetsContainer id="some-id" source="source-id">
+A synset object contains the following fields:
+
+  - `id`
+  - `wordCategory`
+  - `wordClass`
+  - `orthForms`
+  - `paraphrase`
+  - `wiktionaryParaphrases`
+  - `comment`
+
+## Components defined here
+
+### Container
+
+`SynsetsContainer`: a data container for synset objects.
+
+These objects are *not* yet fetched by an ID via the API.  Instead,
+they are returned as results from a search.  See the
+[SynsetSearch](../SynsetSearch) components.
+
+### Display components
+
+`SynsetsAsList`: renders a set of synsets as a list 
+
+`SynsetsAsSelect`: renders a set of synsets as a select control
+
+`SynsetsAsTable`: renders a set of synsets as a table 
+
+
+These components accept, and pass on, [data container control
+props](../DataContainer#user-content-selecting-and-choosing-data-objects) for choosing and selecting data.
+
+
+There are two additional display components for dealing with
+subobjects on synset objects:
+
+`WordCategory`: renders a synset's word category
+
+`WordClass`: renders a synset's word class
+
+They are provided for convenience.  Pass the entire synset to these
+components as the `data` prop.
+
+### Example
+
 ```
-and have that (paired with an appropriate reducer) suffice to update
-the list of synsets managed by this component.
-
-props:
-  - id
-  - source
-  - synsets
-  - selectedSynset(s?)
-  - displayAs: table | none
-
-## Reducer
-
-## Selectors
+import { components } from 'germanet-common';
+const { SynsetsContainer, SynsetsAsTable } = components;
+```

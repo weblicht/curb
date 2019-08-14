@@ -7,7 +7,7 @@ import axios from 'axios';
 // interacting with data via an API
 // params:
 //   prefix :: String : used to name action types
-//   endpoints :: { get: URL, ... } : object mapping REST names to endpoint URLs
+//   endpoints :: { get: URL, ... } : object mapping HTTP method names to endpoint URLs
 //   paramsTransformer (optional) :: params -> Object : a function
 //     that transforms API request params into action object
 //     fields. The results of paramsTransformer(params) will be
