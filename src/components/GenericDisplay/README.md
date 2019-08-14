@@ -53,8 +53,10 @@ and formatting information, generate a tab pane view
 
 There are a few conventions to be aware of when using these components.
 
-1. There is a distinction between lower-level and higher-level generic
-   components.
+### Higher and lower level components
+
+There is a distinction between lower-level and higher-level generic
+components.
 
    - Lower-level generic components are short wrappers around raw HTML
      elements (e.g. `Button`), and generally have a similar name to the
@@ -66,16 +68,20 @@ There are a few conventions to be aware of when using these components.
      container](../DataContainer) (e.g. `DataTable`), and have names
      starting with 'Data'.
 
-1. Data.  As elsewhere in this library, data to be displayed is
-   generally passed as either an object or an array on the `data`
-   prop.  In a few exceptional cases (e.g. `Button`, `ListItem`) it is
-   also possible to pass the data as the component's children, for
-   convenience and flexibility.
+### Data flow
 
-1. Styling.  The components here by default use the class names from
-   [Bootstrap CSS (version 4.3)](https://getbootstrap.com/docs/4.3/layout/overview/).
-   The following convention allows callers to override and extend
-   these defaults:
+As elsewhere in this library, data to be displayed is generally passed
+as either an object or an array on the `data` prop.  In a few
+exceptional cases (e.g. `Button`, `ListItem`) it is also possible to
+pass the data as the component's children, for convenience and
+flexibility.
+
+### Styling
+
+The components here by default use the class names from [Bootstrap CSS
+(version 4.3)](https://getbootstrap.com/docs/4.3/layout/overview/).
+The following convention allows callers to override and extend these
+defaults:
 
    - the `className` prop, if provided, will *replace* the default
      Bootstrap class assumed by the library.  So pass `className` if
@@ -86,12 +92,11 @@ There are a few conventions to be aware of when using these components.
      So pass `extras` if you need to add in things like spacing or
      display utilities without modifying the main style class.
 
-   These two props are combined via the `classNames` function from
-   the [classnames](https://www.npmjs.com/package/classnames) library,
-   so any valid argument for that function is a valid value for these
-   props.
+These two props are combined via the `classNames` function from the
+[classnames](https://www.npmjs.com/package/classnames) library, so any
+valid argument for that function is a valid value for these props.
      
-   On some components, there are also corresponding props to pass as
-   `className` and `extras` to associated or contained components,
-   such as for the label on a `Checkbox`.
+On some components, there are also corresponding props to pass as
+`className` and `extras` to associated or contained components, such
+as for the label on a `Checkbox`.
    
