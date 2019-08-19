@@ -63,10 +63,10 @@ export function doSearch(id, term, ignoreCase) {
             return;
         }
 
-        const params = { word: term, ignoreCase };
+        const params = { word: term, ignoreCase }
+        const config = { params };
         dispatch(submitSearch(id, params));
-        return axios
-        .get(apiPath.find, params)
+        return axios.get(apiPath.find, config)
         .then(response => {
             dispatch(receiveResults(id, response.data)); 
             },

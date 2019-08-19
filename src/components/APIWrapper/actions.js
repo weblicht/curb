@@ -50,9 +50,10 @@ export function makeApiActions(prefix, endpoints,
 
     function doFetch(params) {
         return function (dispatch) {
+            const config = { params };
             dispatch(fetchRequested(params));
 
-            return axios.get(endpoints.get, params).then(
+            return axios.get(endpoints.get, config).then(
                 response => dispatch(fetchReturned(params, response.data)),
                 err => dispatch(fetchError(params, err)));
         }
