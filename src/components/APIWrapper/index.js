@@ -1,5 +1,4 @@
-import { connectWithApi } from './component';
-import { makeApiActions } from './actions';
-import { makeSimpleApiReducer } from './reducers';
+export { connectWithApi, connectWithApiQuery } from './component';
+export { makeApiActions, makeQueryActions } from './actions';
+export { makeSimpleApiReducer } from './reducers';
 
-export { connectWithApi, makeApiActions, makeSimpleApiReducer };
