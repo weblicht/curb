@@ -13,7 +13,7 @@ export function lexRels(state = SI({}), action) {
         // to make the request). Thus, we reshape it a bit here for
         // clarity.
         const originatingId = action.params.lexUnitId;
-        const lexRelsData = action.data.lexRels.map(
+        const lexRelsData = action.data.data.map(
             lr => SI(lr).merge({
                 id: lr.lexRelId,
                 originatingLexUnitId: originatingId,

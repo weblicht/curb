@@ -37,7 +37,7 @@ function searchBoxInnerReducer(state = searchBoxInnerState, action) {
     }
     case actionTypes.SYNSET_SEARCH_RESULTS_RETURNED: {
         return state.merge({
-            synsets: action.data.synsets,
+            synsets: action.data.data,
             error: action.data.length === 0 ? 'No synsets found.' : ''
         })
     }

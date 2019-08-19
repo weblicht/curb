@@ -25,11 +25,7 @@ export function makeSimpleApiReducer(apiActionTypes, statePath, idParam) {
         if (action.type in apiActionTypes &&
             action.type.endsWith('_RETURNED')) {
 
-            // ugly hack to unpack the actual data from the wrapper
-            // object until backend response objects are normalized:
-            const names = Object.getOwnPropertyNames(action.data);
-            const name = names.length === 1? names[0] : 'TOO_MANY_PROPERTIES_ON_RESPONSE';
-            var data = action.data[name];
+            var data = action.data.data;
 
             // add a back-reference to the lookup identifier into the
             // data; this is in general useful for display.
