@@ -54,7 +54,7 @@ function validateSearchTerm(term) {
 }
 
 export function doSearch(id, term, ignoreCase) {
-    return function (dispatch, getState) {
+    return function (dispatch) {
 
         try {
             validateSearchTerm(term);
