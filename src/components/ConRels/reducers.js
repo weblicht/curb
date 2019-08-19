@@ -13,7 +13,7 @@ export function conRels(state = SI({}), action) {
         // to make the request). Thus, we reshape it a bit here for
         // clarity.
         const originatingId = action.params.synsetId;
-        const conRelsData = action.data.data.map(
+        const conRelsData = action.data.map(
             cr => SI(cr).merge({
                 id: cr.conRelId,
                 originatingSynsetId: originatingId,

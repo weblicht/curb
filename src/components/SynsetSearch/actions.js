@@ -68,7 +68,7 @@ export function doSearch(id, term, ignoreCase) {
         dispatch(submitSearch(id, params));
         return axios.get(apiPath.find, config)
         .then(response => {
-            dispatch(receiveResults(id, response.data)); 
+            dispatch(receiveResults(id, response.data.data)); 
             },
               error => dispatch(updateError(id,
                   // TODO: more generalized error handling? logging?

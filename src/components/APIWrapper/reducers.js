@@ -25,7 +25,7 @@ export function makeSimpleApiReducer(apiActionTypes, statePath, idParam) {
         if (action.type in apiActionTypes &&
             action.type.endsWith('_RETURNED')) {
 
-            var data = action.data.data;
+            var data = action.data;
 
             // add a back-reference to the lookup identifier into the
             // data; this is in general useful for display.

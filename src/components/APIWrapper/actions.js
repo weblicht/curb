@@ -54,7 +54,7 @@ export function makeApiActions(prefix, endpoints,
             dispatch(fetchRequested(params));
 
             return axios.get(endpoints.get, config).then(
-                response => dispatch(fetchReturned(params, response.data)),
+                response => dispatch(fetchReturned(params, response.data.data)),
                 err => dispatch(fetchError(params, err)));
         }
     }
