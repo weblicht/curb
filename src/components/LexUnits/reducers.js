@@ -1,4 +1,4 @@
-import { lexUnitsActions, iliActions, examplesActions } from './actions';
+import { lexUnitsQueries } from './actions';
 import { makeSimpleApiReducer } from '../APIWrapper';
 
 // TODO: this is somewhat badly shaped. Ideally we would request
@@ -6,6 +6,6 @@ import { makeSimpleApiReducer } from '../APIWrapper';
 // them to the store; but there is currently no endpoint for
 // requesting lexunits by ID, and only an endpoint for requesting
 // multiple lexunits by synset id.
-const lexUnitsActionTypes = lexUnitsActions.actionTypes;
-export const lexUnits = makeSimpleApiReducer(lexUnitsActionTypes, ["bySynsetId"], "synsetId");
+const queryActionTypes = lexUnitsQueries.actionTypes;
+export const lexUnits = makeSimpleApiReducer(queryActionTypes, ["bySynsetId"], "synsetId");
         

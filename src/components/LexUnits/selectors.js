@@ -12,7 +12,7 @@
 
 export function selectLexUnits(globalState, props) {
     try {
-        const selected = globalState.apiData.lexUnits.bySynsetId[props.fetchParams.synsetId] || [];
+        const selected = globalState.apiData.lexUnits.bySynsetId[props.queryParams.synsetId] || [];
         return selected;
     } catch (e) {
         return undefined;
