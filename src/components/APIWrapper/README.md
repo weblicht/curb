@@ -53,7 +53,7 @@ designed with this in mind.
   
 ### URL scheme
 
-Every data type (synsets, lex units, etc.) has a corresponding API
+Every GermaNet data type (synsets, lex units, etc.) has a corresponding API
 endpoint defined in [constants.js](../../constants.js).  Queries that
 should return that data type are made as GET requests to the endpoint
 with query parameters in the URL:
@@ -109,11 +109,15 @@ available to them.  See the code for other details.
 You must also define a reducer to handle these three types of
 actions.  You can use the `makeSimpleApiReducer` function to do this
 if all you want to do is load the returned data into an appropriate
-place in the Redux state.
+place in the Redux state.  This function accepts two arguments:
 
-**Warning**: a better implementation of this function is waiting on
-changes to the backend API, so its interface is not documented here.
-See the code for details.
+  1. an object containing the action types to be handled by the
+     reducer (as returned for example by `makeQueryActions`)
+  2. a string which specifies a property in the request parameters
+     that can be used to identify the request and the returned data
+     objects.  This is normally the name of a property whose value is
+     an identifier for an object related to those being queried from
+     the API, e.g., "lexUnitId".
 
 ## Wrapping a component with an API wrapper
 
@@ -167,18 +171,18 @@ To write a new component that transparently loads data via the API:
      import { lexUnitsQueries } from './actions';
      import { makeSimpleApiReducer } from '../APIWrapper';
 
-     const lexUnitsActionTypes = lexUnitsQueries.actionTypes;
-     export const lexUnits = makeSimpleApiReducer(lexUnitsActionTypes, ["bySynsetId"], "synsetId");
+     const queryActionTypes = lexUnitsQueries.actionTypes;
+     export const lexUnits = makeSimpleApiReducer(queryActionTypes, "synsetId");
      ```
 
-     If you need to write the reducer yourself, keep in mind that this
-     reducer should handle at least three different actions:
-     PREFIX_REQUESTED, PREFIX_RETURNED, and PREFIX_ERROR, where PREFIX
-     is the prefix you passed to makeQueryActions.  Also keep in mind
-     that the request parameters sent to the backend are available as
-     the `params` property on any of the actions defined by
-     `makeQueryActions`, and that the response data will be available on
-     the `data` property of a (successful) response.
+     If you write the reducer yourself, keep in mind that this reducer
+     should handle at least three different actions: PREFIX_REQUESTED,
+     PREFIX_RETURNED, and PREFIX_ERROR, where PREFIX is the prefix you
+     passed to makeQueryActions.  Also keep in mind that the request
+     parameters sent to the backend are available as the `params`
+     property on any of the actions defined by `makeQueryActions`, and
+     that the response data will be available on the `data` property
+     of a (successful) response.
 
   1. Install the reducer as a sub-reducer of the `fullAPIReducer` in the
      top-level [reducers.js](../../reducers.js):
