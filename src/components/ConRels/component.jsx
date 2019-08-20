@@ -1,8 +1,8 @@
-import { conRelsActions } from './actions';
+import { conRelsQueries } from './actions';
 import { selectConRels } from './selectors';
 import { DataList, DataTable, ListItem } from '../GenericDisplay/component';
 import { dataContainerFor } from '../DataContainer/component';
-import { connectWithApi } from '../APIWrapper';
+import { connectWithApiQuery } from '../APIWrapper';
 
 import React from 'react';
 
@@ -70,7 +70,7 @@ function ConRelsAsTable(props) {
 // props:
 //   fetchParams :: { synsetId: ... }
 var ConRelsContainer = dataContainerFor('ConRels', selectConRels);
-ConRelsContainer = connectWithApi(ConRelsContainer, conRelsActions.fetchActions);
+ConRelsContainer = connectWithApiQuery(ConRelsContainer, conRelsQueries.queryActions);
 
 export { ConRelsContainer,
          ConRelsAsList,

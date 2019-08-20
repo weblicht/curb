@@ -1,4 +1,4 @@
-import { iliActions } from './actions';
+import { iliQueries } from './actions';
 import { selectIliRecs } from './selectors';
 import { DataList,
          DataSelect,
@@ -6,7 +6,7 @@ import { DataList,
          DefList,
          ListItem } from '../GenericDisplay/component';
 import { dataContainerFor } from '../DataContainer/component';
-import { connectWithApi } from '../APIWrapper';
+import { connectWithApiQuery } from '../APIWrapper';
 
 import React from 'react';
 
@@ -92,7 +92,7 @@ function ILIRecordsAsTable(props) {
 //   fetchParams :: { lexUnitId: ... }
 var ILIRecordsContainer = dataContainerFor('ILIRecords', selectIliRecs,
                                            ilirec => ilirec.iliId);
-ILIRecordsContainer = connectWithApi(ILIRecordsContainer, iliActions.fetchActions);
+ILIRecordsContainer = connectWithApiQuery(ILIRecordsContainer, iliQueries.queryActions);
 
 export { ILIRecordsContainer,
          ILIRecordsAsDefList,

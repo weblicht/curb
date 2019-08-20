@@ -1,5 +1,5 @@
-import { examplesActions } from './actions';
+import { examplesQueries } from './actions';
 import { makeSimpleApiReducer } from '../APIWrapper';
 
-const examplesActionTypes = examplesActions.actionTypes;
-export const lexExamples = makeSimpleApiReducer(examplesActionTypes, ["byLexUnitId"], "lexUnitId");
+const queryActionTypes = examplesQueries.actionTypes;
+export const lexExamples = makeSimpleApiReducer(queryActionTypes, ["byLexUnitId"], "lexUnitId");

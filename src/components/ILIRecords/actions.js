@@ -1,5 +1,4 @@
-import { makeApiActions, actionTypesFromStrings } from '../APIWrapper';
+import { makeQueryActions, actionTypesFromStrings } from '../APIWrapper';
 import { apiPath } from '../../constants';
 
-const iliEndpoints = { get: apiPath.iliRecords };
-export const iliActions = makeApiActions('ILI_RECORDS', iliEndpoints);
+export const iliQueries = makeQueryActions('ILI_RECORDS', apiPath.iliRecords);

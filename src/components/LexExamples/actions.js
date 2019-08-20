@@ -1,6 +1,5 @@
-import { makeApiActions } from '../APIWrapper';
+import { makeQueryActions } from '../APIWrapper';
 import { apiPath } from '../../constants';
 
-const examplesEndpoints = { get: apiPath.examples }
-export const examplesActions = makeApiActions('LEX_EXAMPLES', examplesEndpoints);
+export const examplesQueries = makeQueryActions('LEX_EXAMPLES', apiPath.examples);
 

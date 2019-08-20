@@ -1,6 +1,5 @@
-import { makeApiActions } from '../APIWrapper';
+import { makeQueryActions } from '../APIWrapper';
 import { apiPath } from '../../constants';
 
-const lexRelsEndpoints = { get: apiPath.lexRels }
-export const lexRelsActions = makeApiActions('LEX_RELS', lexRelsEndpoints);
+export const lexRelsQueries = makeQueryActions('LEX_RELS', apiPath.lexRels);
 
