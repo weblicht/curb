@@ -66,7 +66,7 @@ export function doSearch(id, term, ignoreCase) {
         const params = { word: term, ignoreCase }
         const config = { params };
         dispatch(submitSearch(id, params));
-        return axios.get(apiPath.find, config)
+        return axios.get(apiPath.synsets, config)
         .then(response => {
             dispatch(receiveResults(id, response.data.data)); 
             },
