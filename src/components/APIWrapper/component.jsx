@@ -67,7 +67,7 @@ export function connectWithApiQuery(Component, queryActions, propsToParams) {
 
     const makeParams = propsToParams || function (props) {
         if (props.queryParams === undefined) {
-            throw new InternalError('withApiQuery was given neither '
+            throw new InternalError('connectWithApiQuery was given neither '
                                     + 'a propsToParams function nor a queryParams prop');
         }
         return props.queryParams;
