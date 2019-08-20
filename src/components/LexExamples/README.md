@@ -16,8 +16,8 @@ An example object contains the following fields:
 ### Container
 
 `ExamplesContainer`: a data container for example objects.
-These objects are fetched via the API by lexical unit ID.
-The required fetch parameters look like: `{ lexUnitId: someId }`.
+These objects are queried from the API by lexical unit ID.
+The required query parameters look like: `{ lexUnitId: someId }`.
 
 ### Display components
 
@@ -38,6 +38,6 @@ import { components } from 'germanet-common';
 const { ExamplesContainer, ExamplesAsDefList } = components;
 
 <ExamplesContainer id='theExamples'
-                   fetchParams={{ lexUnitId: someLexUnit.id }}
+                   queryParams={{ lexUnitId: someLexUnit.id }}
                    displayAs={ExamplesAsDefList}/>
 ```

@@ -1,6 +1,5 @@
-import { makeApiActions } from '../APIWrapper';
+import { makeQueryActions } from '../APIWrapper';
 import { apiPath } from '../../constants';
 
-const conRelsEndpoints = { get: apiPath.displayconrels }
-export const conRelsActions = makeApiActions('CON_RELS', conRelsEndpoints);
+export const conRelsQueries = makeQueryActions('CON_RELS', apiPath.conRels);
 

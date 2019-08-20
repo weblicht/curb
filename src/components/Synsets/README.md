@@ -21,9 +21,9 @@ A synset object contains the following fields:
 
 `SynsetsContainer`: a data container for synset objects.
 
-These objects are *not* yet fetched by an ID via the API.  Instead,
-they are returned as results from a search.  See the
-[SynsetSearch](../SynsetSearch) components.
+The SynsetsContainer component does *not* yet have an API wrapper.
+Instead, synsets are normally returned as results from a search.  See
+the [SynsetSearch](../SynsetSearch) components.
 
 ### Display components
 

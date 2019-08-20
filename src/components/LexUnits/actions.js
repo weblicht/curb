@@ -1,9 +1,8 @@
-import { makeApiActions } from '../APIWrapper';
+import { makeQueryActions } from '../APIWrapper';
 import { apiPath } from '../../constants';
 import { updateDataFrom } from '../DataContainer/actions';
 
-const lexUnitsEndpoints = { get: apiPath.displaylexunits }
-export const lexUnitsActions = makeApiActions('LEX_UNITS', lexUnitsEndpoints);
+export const lexUnitsQueries = makeQueryActions('LEX_UNITS', apiPath.lexUnits);
 
 
 

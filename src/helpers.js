@@ -21,6 +21,11 @@ export function mergeActionTypes(typesA, typesB) {
     return { ...typesA, ...typesB };
 }
 
+// upperFirst :: String -> String
+export function upperFirst(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 // withNullAsString :: Object -> String
 // params:
 //   data: the data to convert to a string

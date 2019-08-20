@@ -1,4 +1,4 @@
-import { lexUnitsActions } from './actions';
+import { lexUnitsQueries } from './actions';
 import { dataContainerFor } from '../DataContainer/component';
 import { selectLexUnits } from './selectors';
 import { DataTable,
@@ -6,7 +6,7 @@ import { DataTable,
          DataList,
          DataSelect,
          ListItem } from '../GenericDisplay/component';
-import { connectWithApi } from '../APIWrapper';
+import { connectWithApiQuery } from '../APIWrapper';
 import { withNullAsString } from '../../helpers';
 
 import React from 'react';
@@ -111,11 +111,11 @@ function LexUnitsAsTable(props) {
 
 
 // props:
-//   fetchParams :: { synsetId: ... }
+//   queryParams :: { synsetId: ... }
 //   displayAs :: Component to render a list of lex units
 //   displayItemAs (optional) :: Component to render each lex unit
 var LexUnitsContainer = dataContainerFor('LexUnits', selectLexUnits);
-LexUnitsContainer = connectWithApi(LexUnitsContainer, lexUnitsActions.fetchActions);
+LexUnitsContainer = connectWithApiQuery(LexUnitsContainer, lexUnitsQueries.queryActions);
 
 
 export { LexUnitsContainer,

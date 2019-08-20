@@ -1,7 +1,7 @@
-import { iliActions } from './actions';
+import { iliQueries } from './actions';
 import { makeSimpleApiReducer } from '../APIWrapper';
 
-const iliActionTypes = iliActions.actionTypes;
-const iliRecs = makeSimpleApiReducer(iliActionTypes, ["byLexUnitId"], "lexUnitId");
+const queryActionTypes = iliQueries.actionTypes;
+const iliRecs = makeSimpleApiReducer(queryActionTypes, "lexUnitId");
 
 export { iliRecs };

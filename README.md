@@ -83,7 +83,7 @@ import { components } from 'germanet-common';
 const { LexUnitsContainer, LexUnitsAsList } = components; // e.g.
 
 ...
-<LexUnitsContainer fetchData={{ synsetId: someId}} displayAs={LexUnitsAsList} />
+<LexUnitsContainer queryParams={{ synsetId: someId}} displayAs={LexUnitsAsList} />
 
 ```
 
@@ -111,7 +111,7 @@ component is a higher-order component. In that case, the directory
 structure follows the same pattern, but the associated actions,
 reducers, and selectors are also higher order.  For example, in
 APIWrapper's `actions.js`, instead of direct definitions of action
-creators, there is a `makeApiActions` function that *returns* action
+creators, there is a `makeQueryActions` function that *returns* action
 creators.
 
 In addition, there are several other files that contain code shared

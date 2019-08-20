@@ -1,4 +1,4 @@
-import { examplesActions } from './actions';
+import { examplesQueries } from './actions';
 import { selectExamples } from './selectors';
 import { DataList,
          DataSelect,
@@ -6,7 +6,7 @@ import { DataList,
          DefList,
          ListItem } from '../GenericDisplay/component';
 import { dataContainerFor } from '../DataContainer/component';
-import { connectWithApi } from '../APIWrapper';
+import { connectWithApiQuery } from '../APIWrapper';
 
 import React from 'react';
 
@@ -86,9 +86,9 @@ function ExamplesAsTable(props) {
 }
  
 // props:
-//   fetchParams :: { lexUnitId: ... }
-var ExamplesContainer = dataContainerFor('Examples', selectExamples);
-ExamplesContainer = connectWithApi(ExamplesContainer, examplesActions.fetchActions);
+//   queryParams :: { lexUnitId: ... }
+var ExamplesContainer = dataContainerFor('Examples', selectExamples, example => example.exampleId);
+ExamplesContainer = connectWithApiQuery(ExamplesContainer, examplesQueries.queryActions);
 
 export { ExamplesContainer,
          ExamplesAsDefList,

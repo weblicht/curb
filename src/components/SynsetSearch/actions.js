@@ -54,7 +54,7 @@ function validateSearchTerm(term) {
 }
 
 export function doSearch(id, term, ignoreCase) {
-    return function (dispatch, getState) {
+    return function (dispatch) {
 
         try {
             validateSearchTerm(term);
@@ -63,12 +63,12 @@ export function doSearch(id, term, ignoreCase) {
             return;
         }
 
-        const params = { word: term, ignoreCase };
+        const params = { word: term, ignoreCase }
+        const config = { params };
         dispatch(submitSearch(id, params));
-        return axios
-        .get(apiPath.find, params)
+        return axios.get(apiPath.synsets, config)
         .then(response => {
-            dispatch(receiveResults(id, response.data)); 
+            dispatch(receiveResults(id, response.data.data)); 
             },
               error => dispatch(updateError(id,
                   // TODO: more generalized error handling? logging?

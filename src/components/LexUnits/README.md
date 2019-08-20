@@ -24,8 +24,8 @@ A lexical unit object contains the following fields:
 ### Container
 
 `LexUnitsContainer`: a data container for lexical unit objects.
-These objects are fetched via the API by synset ID.
-The required fetch parameters look like: `{ synsetId: someId }`.
+These objects are queried from the API by synset ID.
+The required query parameters look like: `{ synsetId: someId }`.
 
 ### Display components
 
@@ -45,6 +45,6 @@ import { components } from 'germanet-common';
 const { LexUnitsContainer, LexUnitsAsTable } = components;
 
 <LexUnitsContainer id='theLexUnits'
-                   fetchParams={{ synsetId: someSynset.id }}
+                   queryParams={{ synsetId: someSynset.id }}
                    displayAs={LexUnitsAsTable}/>
 ```

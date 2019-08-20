@@ -1,11 +1,11 @@
-import { wiktDefsActions } from './actions';
+import { wiktDefsQueries } from './actions';
 import { selectWiktDefs } from './selectors';
 import { DataList,
          DataSelect,
          DataTable,
          DefList,
          ListItem } from '../GenericDisplay/component';
-import { connectWithApi } from '../APIWrapper';
+import { connectWithApiQuery } from '../APIWrapper';
 import { dataContainerFor } from '../DataContainer/component';
 
 import React from 'react';
@@ -90,10 +90,10 @@ function WiktDefsAsTable(props) {
 
 
 // props:
-//   fetchParams :: { lexUnitId: ... }
+//   queryParams :: { lexUnitId: ... }
 var WiktionaryDefsContainer = dataContainerFor('WiktionaryDefs', selectWiktDefs,
                                                wd => wd.wikiRecordId); // TODO: is this the right id field?? 
-WiktionaryDefsContainer = connectWithApi(WiktionaryDefsContainer, wiktDefsActions.fetchActions);
+WiktionaryDefsContainer = connectWithApiQuery(WiktionaryDefsContainer, wiktDefsQueries.queryActions);
 
 export { WiktionaryDefsContainer,
          WiktDefsAsDefList,

@@ -22,8 +22,8 @@ returned by the backend; it is reshaped a little bit for clarity.  See
 ### Container
 
 `LexRelsContainer`: a data container for lexical relation objects.
-These objects are fetched via the API by the (originating) lexUnit ID.
-The required fetch parameters look like: `{ lexUnitId: someId }`.
+These objects are queried from the API by the (originating) lexUnit ID.
+The required query parameters look like: `{ lexUnitId: someId }`.
 
 ### Display components
 
@@ -41,6 +41,6 @@ import { components } from 'germanet-common';
 const { LexRelsContainer, LexRelsAsTable } = components;
 
 <LexRelsContainer id='theLexRels'
-                  fetchParams={{ lexUnitId: someLexUnit.id }}
+                  queryParams={{ lexUnitId: someLexUnit.id }}
                   displayAs={LexRelsAsTable}/>
 ```

@@ -1,8 +1,8 @@
-import { lexRelsActions } from './actions';
+import { lexRelsQueries } from './actions';
 import { selectLexRels } from './selectors';
 import { DataList, DataTable, ListItem } from '../GenericDisplay/component';
 import { dataContainerFor } from '../DataContainer/component';
-import { connectWithApi } from '../APIWrapper';
+import { connectWithApiQuery } from '../APIWrapper';
 
 import React from 'react';
 
@@ -66,9 +66,9 @@ function LexRelsAsTable(props) {
 }
 
 // props:
-//   fetchParams :: { lexUnitId: ... }
+//   queryParams :: { lexUnitId: ... }
 var LexRelsContainer = dataContainerFor('LexRels', selectLexRels);
-LexRelsContainer = connectWithApi(LexRelsContainer, lexRelsActions.fetchActions);
+LexRelsContainer = connectWithApiQuery(LexRelsContainer, lexRelsQueries.queryActions);
 
 export { LexRelsContainer,
          LexRelsAsList,

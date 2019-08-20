@@ -2,12 +2,11 @@ import { actionTypesFromStrings } from '../../helpers';
 
 import axios from 'axios';
 
-// makeApiActions
-// Makes action types, action creators, and async actions for
-// interacting with data via an API
+// Makes action types and action creators for querying data at an API endpoint
+//
 // params:
 //   prefix :: String : used to name action types
-//   endpoints :: { get: URL, ... } : object mapping HTTP method names to endpoint URLs
+//   endpoint :: String : the URL for the query
 //   paramsTransformer (optional) :: params -> Object : a function
 //     that transforms API request params into action object
 //     fields. The results of paramsTransformer(params) will be
@@ -16,18 +15,18 @@ import axios from 'axios';
 //
 // returns: {
 //   actionTypes: action types object with requested, returned, error types
-//   fetchActions: {
-//     doFetch(params): async action creator that performs complete request/response cycle
+//   queryActions: {
+//     doQuery(params): async action creator that performs complete request/response cycle
 //     requested(params): action creator for request
 //     returned(params, data): action creator for returned data
-//     error(params): action creator for fetch error
+//     error(params): action creator for response error
 //       where params is an object describing (axios) request parameters for the API, e.g.,
 //       { id: some_id } or { lexUnitId: some_id }
 //   }
 // }
-export function makeApiActions(prefix, endpoints,
-                               paramsTransformer = (params) => undefined,
-                              ) {
+export function makeQueryActions(prefix, endpoint,
+                                 paramsTransformer = (params) => undefined,
+                                ) {
 
     const requested = prefix + '_REQUESTED';
     const returned = prefix + '_RETURNED';
@@ -38,37 +37,36 @@ export function makeApiActions(prefix, endpoints,
         errored
     ]);
 
-    function fetchRequested(params) {
+    function queryRequested(params) {
         return { type: actionTypes[requested], params, ...paramsTransformer(params) };
     }
-    function fetchReturned(params, data) {
+    function queryReturned(params, data) {
         return { type: actionTypes[returned], params, ...paramsTransformer(params), data };
     }
-    function fetchError(params, error) {
+    function queryError(params, error) {
         return { type: actionTypes[errored], params, ...paramsTransformer(params), error };
     }
 
-    function doFetch(params) {
+    function doQuery(params) {
         return function (dispatch) {
-            dispatch(fetchRequested(params));
+            const config = { params };
+            dispatch(queryRequested(params));
 
-            return axios.get(endpoints.get, params).then(
-                response => dispatch(fetchReturned(params, response.data)),
-                err => dispatch(fetchError(params, err)));
+            return axios.get(endpoint, config).then(
+                response => dispatch(queryReturned(params, response.data.data)),
+                err => dispatch(queryError(params, err)));
         }
     }
-    // TODO: there is room to expand this to other REST actions; but
-    // at the moment we have no need for that and the API doesn't
-    // support it
 
     return {
         actionTypes,
-        fetchActions: {
-            doFetch,
-            requested: fetchRequested,
-            returned: fetchReturned,
-            error: fetchError,
+        queryActions: {
+            doQuery,
+            requested: queryRequested,
+            returned: queryReturned,
+            error: queryError,
         }
     };
 }
+
 

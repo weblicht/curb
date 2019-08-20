@@ -1,7 +1,7 @@
-import { wiktDefsActions } from './actions';
+import { wiktDefsQueries } from './actions';
 import { makeSimpleApiReducer } from '../APIWrapper';
 
-const wiktDefsActionTypes = wiktDefsActions.actionTypes;
-const wiktDefs = makeSimpleApiReducer(wiktDefsActionTypes, ["byLexUnitId"], "lexUnitId");
+const queryActionTypes = wiktDefsQueries.actionTypes;
+const wiktDefs = makeSimpleApiReducer(queryActionTypes, "lexUnitId");
  
 export { wiktDefs };

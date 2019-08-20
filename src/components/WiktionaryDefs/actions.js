@@ -1,5 +1,4 @@
-import { makeApiActions } from '../APIWrapper';
+import { makeQueryActions } from '../APIWrapper';
 import { apiPath } from '../../constants';
 
-const wiktEndpoints = { get: apiPath.displaywikirecords };
-export const wiktDefsActions = makeApiActions('WIKT_DEFS', wiktEndpoints);
+export const wiktDefsQueries = makeQueryActions('WIKT_DEFS', apiPath.wiktDefs);
