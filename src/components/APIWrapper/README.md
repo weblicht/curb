@@ -10,7 +10,7 @@ An API wrapper is a higher-order component for transparently
 interacting with the backend API for Germanet data.  Given a component
 for rendering some data (typically a
 [DataContainer](../DataContainer)), it returns a component which will
-emit a Redux action to fetch that data from the API when the data is
+emit a Redux action to query that data from the API when the data is
 not yet present.
 
 To wrap a component with an API wrapper, you need to define actions

@@ -111,7 +111,7 @@ function LexUnitsAsTable(props) {
 
 
 // props:
-//   fetchParams :: { synsetId: ... }
+//   queryParams :: { synsetId: ... }
 //   displayAs :: Component to render a list of lex units
 //   displayItemAs (optional) :: Component to render each lex unit
 var LexUnitsContainer = dataContainerFor('LexUnits', selectLexUnits);

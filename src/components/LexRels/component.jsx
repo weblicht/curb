@@ -66,7 +66,7 @@ function LexRelsAsTable(props) {
 }
 
 // props:
-//   fetchParams :: { lexUnitId: ... }
+//   queryParams :: { lexUnitId: ... }
 var LexRelsContainer = dataContainerFor('LexRels', selectLexRels);
 LexRelsContainer = connectWithApiQuery(LexRelsContainer, lexRelsQueries.queryActions);
 

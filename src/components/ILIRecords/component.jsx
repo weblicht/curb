@@ -89,7 +89,7 @@ function ILIRecordsAsTable(props) {
 }
 
 // props:
-//   fetchParams :: { lexUnitId: ... }
+//   queryParams :: { lexUnitId: ... }
 var ILIRecordsContainer = dataContainerFor('ILIRecords', selectIliRecs,
                                            ilirec => ilirec.iliId);
 ILIRecordsContainer = connectWithApiQuery(ILIRecordsContainer, iliQueries.queryActions);

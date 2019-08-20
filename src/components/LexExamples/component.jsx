@@ -86,7 +86,7 @@ function ExamplesAsTable(props) {
 }
  
 // props:
-//   fetchParams :: { lexUnitId: ... }
+//   queryParams :: { lexUnitId: ... }
 var ExamplesContainer = dataContainerFor('Examples', selectExamples, example => example.exampleId);
 ExamplesContainer = connectWithApiQuery(ExamplesContainer, examplesQueries.queryActions);
 

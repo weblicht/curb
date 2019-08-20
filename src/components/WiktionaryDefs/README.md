@@ -20,8 +20,8 @@ An wiktionary definition object contains the following fields:
 ### Container
 
 `WiktionaryDefsContainer`: a data container for Wiktionary definition
-objects.  These objects are fetched via the API by lexical unit ID.
-The required fetch parameters look like: `{ lexUnitId: someId }`.
+objects.  These objects are queried from the API by lexical unit ID.
+The required query parameters look like: `{ lexUnitId: someId }`.
 
 ### Display components
 
@@ -46,6 +46,6 @@ import { components } from 'germanet-common';
 const { WiktionaryDefsContainer, WiktDefsAsDefList } = components;
 
 <WiktionaryDefsContainer id='theWiktionaryDefs'
-                         fetchParams={{ lexUnitId: someLexUnit.id }}
+                         queryParams={{ lexUnitId: someLexUnit.id }}
                          displayAs={WiktDefsAsDefList}/>
 ```

@@ -24,8 +24,8 @@ returned by the backend; it is reshaped a little bit for clarity.  See
 ### Container
 
 `ConRelsContainer`: a data container for conceptual relation objects.
-These objects are fetched via the API by the (originating) synset ID.
-The required fetch parameters look like: `{ synsetId: someId }`.
+These objects are queried from the API by the (originating) synset ID.
+The required query parameters look like: `{ synsetId: someId }`.
 
 ### Display components
 
@@ -43,6 +43,6 @@ import { components } from 'germanet-common';
 const { ConRelsContainer, ConRelsAsTable } = components;
 
 <ConRelsContainer id='theConRels'
-                  fetchParams={{ synsetId: someSynsetId }}
+                  queryParams={{ synsetId: someSynsetId }}
                   displayAs={ConRelsAsTable}/>
 ```
