@@ -13,11 +13,6 @@ for rendering some data (typically a
 emit a Redux action to fetch that data from the API when the data is
 not yet present.
 
-**Note**: at the moment, API wrappers only support *retrieving* data,
-but in the future they might be expanded to support one or more of the
-other CRUD operations (creation, update, and deletion), at which point
-this component may change.
-
 To wrap a component with an API wrapper, you need to define actions
 and reducers which manage the process of retrieving the data from the
 API and loading it into the Redux store.  There are three important
@@ -215,7 +210,7 @@ To write a new component that transparently loads data via the API:
      remember to pass the correct `queryParams` in addition to your
      other props, if you did not pass a `propsToParams` function to connectWithApiQuery.
      ```
-     <LexUnitContainer queryParams={{ synsetId: someId }} .../>
+     <LexUnitsContainer queryParams={{ synsetId: someId }} .../>
      ```
      
      
