@@ -1,39 +1,37 @@
+import { upperFirst } from '../../helpers';
+
 import SI from 'seamless-immutable';
+
 
 // Makes a reducer for the simple but common case where the reducer's
 // job is just to stick some data returned by the API into the state.
 //
 // params:
-//   apiActionTypes :: an action types object describing the API
+//   queryActionTypes :: an action types object describing the API
 //     actions this reducer should handle.  These should look like the
-//     types returned by makeApiActions, i.e., <PREFIX>_RETURNED, etc.
-//   statePath :: [ String ] : array describing the path in the state tree
-//     under which the returned data should be stored
+//     types returned by makeQueryActions, i.e., <PREFIX>_RETURNED, etc.
 //   idParam :: String : the name of the property inside the action's
-//     .params field whose value should be used as the final element
-//     in the state path.  This is normally something like the last
-//     element of statePath minus a "by" prefix.  For example, if
-//     statePath ends with "byLexUnitId", idParam should most likely
-//     be "lexUnitId".
-
-export function makeSimpleApiReducer(apiActionTypes, statePath, idParam) {
+//     .params field whose value should be used to identify the request
+//     and the returned objects.  This is normally something like the name
+//     of an identifying property for a related object, e.g., "lexUnitId".
+export function makeSimpleApiReducer(queryActionTypes, idParam) {
 
     return function reducer(state = SI({}), action) {
-        // TODO: handle errors etc. too
-        // Though before we do that, it probably makes sense to
-        // rethink the shape of the apiActions object
-        if (action.type in apiActionTypes &&
-            action.type.endsWith('_RETURNED')) {
-
-            var data = action.data;
-
-            // add a back-reference to the lookup identifier into the
-            // data; this is in general useful for display.
-            // TODO: this is also an ugly hack and assumes the data is an array.
-            // Can the backend just send us the data with the identifier inside?
-            data.forEach( row => row[idParam] = action.params[idParam] );
-
-            return SI.setIn(state, statePath.concat(action.params[idParam]), data)
+        if (action.type in queryActionTypes) {
+            const requestPath = ['requests', 'for' + upperFirst(idParam), action.params[idParam]];
+            const dataPath = ['by' + upperFirst(idParam), action.params[idParam]];
+            
+            if (action.type.endsWith('_REQUESTED')) {
+                return state.setIn(requestPath, { fetching: true, params: action.params });
+            }
+            if (action.type.endsWith('_RETURNED')) {
+            return state.setIn(requestPath, { fetching: false })
+                        .setIn(dataPath, action.data);
+            }
+            if (action.type.endsWith('_ERROR')) {
+            return state.setIn(requestPath,
+                               { fetching: false, params: action.params, error: action.error });
+            }
         } else {
             return state;
         }

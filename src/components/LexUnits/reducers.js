@@ -7,5 +7,5 @@ import { makeSimpleApiReducer } from '../APIWrapper';
 // requesting lexunits by ID, and only an endpoint for requesting
 // multiple lexunits by synset id.
 const queryActionTypes = lexUnitsQueries.actionTypes;
-export const lexUnits = makeSimpleApiReducer(queryActionTypes, ["bySynsetId"], "synsetId");
+export const lexUnits = makeSimpleApiReducer(queryActionTypes, "synsetId");
         
