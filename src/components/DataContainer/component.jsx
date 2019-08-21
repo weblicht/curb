@@ -1,9 +1,21 @@
 import { makeActionsForContainer } from './actions';
-import { selectContainerState } from './selectors';
 import { InternalError } from '../../errors';
 
 import React from 'react';
 import { connect } from 'react-redux';
+
+// This is a module-global counter used to provide unique IDs to data
+// containers, so that users don't have to provide these ids directly.
+// These IDs are necessary to keep track of internal container state
+// in Redux (e.g., which item is chosen, and which items are
+// selected).  It would theoretically be better to keep this bit of
+// state in the Redux store, but that would add quite a bit more
+// complexity to this already-complex component definition.  Do not
+// touch!
+var _NEXT_CONTAINER_ID = 1;
+function nextContainerId() {
+    return _NEXT_CONTAINER_ID++;
+}
 
 // params:
 //   name :: String, a name to use for the returned component;
@@ -27,7 +39,6 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
         return id;
     };
 
-
     // The component:
     function DataContainer(props) {
         if (props.data === undefined) return null;
@@ -42,53 +53,60 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
         if (typeof props.displayAs === 'function') {
             const Renderer = props.displayAs;
             return (
-                // We avoid passing container id to renderer so it doesn't get
-                // propagated to other containers down the tree:
-                <Renderer {...props} id={undefined} data={dataWithMetadata} />
+                <Renderer {...props} data={dataWithMetadata} />
             );
         } else {
             throw new InternalError('Data container was rendered with an incorrect displayAs prop');
         }
     }
 
-    // we want to allow data containers that don't have their own
-    // unique .id, because they may be instantiated by other
-    // components which may not be in a position to choose an ID for
-    // them.  But the choose/select actions and associated state
-    // depend on a container ID, so we only add these props if a
-    // container ID was supplied.
-     function mapStateToProps(globalState, ownProps) {
-         // TODO: allow passing data as a prop from a higher
-         // component?  or allow selector to specified by the
-         // instance, instead of in the component definition?  This
-         // will be important if we ever need containers of the same
-         // type whose data comes from different places
-         const data = dataSelector(globalState, ownProps);
-         if (ownProps.id) {
-             return {
-                 data,
-                 idFor,
-                 ...selectContainerState(globalState, ownProps)
-             };
-         } else {
-             return { data, idFor };
-         }
-    };
+    DataContainer.displayName = (name || 'Unnamed') + 'Container';
 
-    function mapDispatchToProps (dispatch, ownProps) {
-       if (ownProps.id) {
-            const actions = makeActionsForContainer(ownProps.id);
-            return {
-                choose: itemId => dispatch(actions.choose(itemId)),
-                unchoose: itemId => dispatch(actions.unchoose(itemId)),
-                select: itemId => dispatch(actions.select(itemId)),
-                unselect: itemId => dispatch(actions.unselect(itemId)), 
-            };
-        } else {
-            return {};
+    function selectContainerState(globalState, ownProps) {
+        try {
+            return globalState.dataContainers.byId[ownProps.containerId];
+        } catch (e) {
+            return undefined;
         }
     }
 
-    DataContainer.displayName = (name || 'Unnamed') + 'Container';
-    return connect(mapStateToProps, mapDispatchToProps)(DataContainer);
+    function mapStateToProps(globalState, ownProps) {
+        // TODO: allow passing data as a prop from a higher
+        // component?  or allow selector to specified by the
+        // instance, instead of in the component definition?  This
+        // will be important if we ever need containers of the same
+        // type whose data comes from different places
+        const data = dataSelector(globalState, ownProps);
+        return {
+            data,
+            idFor,
+            ...selectContainerState(globalState, ownProps)
+        };
+    };
+    
+    function mapDispatchToProps(dispatch, ownProps) {
+        const actions = makeActionsForContainer(ownProps.containerId);
+        return {
+            choose: itemId => dispatch(actions.choose(itemId)),
+            unchoose: itemId => dispatch(actions.unchoose(itemId)),
+            select: itemId => dispatch(actions.select(itemId)),
+            unselect: itemId => dispatch(actions.unselect(itemId)), 
+        };
+    }
+
+    const ConnectedContainer = connect(mapStateToProps, mapDispatchToProps)(DataContainer);
+
+    // You may be wondering why this much indirection is necessary.
+    // Explanation: we need to generate the container ID at the time
+    // we *instantiate* a data container. But we also need to make
+    // that ID available to selectContainerState, mapStateToProps, and
+    // mapDispatchToProps, above.  Because of the way react-redux
+    // calls these functions, the only way to do this is to define yet
+    // another HOC that passes the container ID down as a prop to the
+    // ConnectedContainer instance.
+    function DataContainerIdGenerator(props) {
+        const containerId = DataContainer.displayName + nextContainerId().toString();
+        return (<ConnectedContainer {...props} containerId={containerId} />);
+    };
+    return DataContainerIdGenerator;
 }
