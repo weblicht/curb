@@ -1,5 +1,6 @@
 export * from './ConRels/component';
 export * from './DataContainer/component';
+export * from './Frames/component';
 export * from './GenericDisplay/component';
 export * from './ILIRecords/component';
 export * from './LexExamples/component';

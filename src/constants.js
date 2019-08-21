@@ -5,6 +5,7 @@ const urlRoot = "/api"; // window.location.origin;
 export const apiPath = {
     conRels: `${urlRoot}/conrels`,
     examples: `${urlRoot}/examples`,
+    frames: `${urlRoot}/frames`,
     iliRecords: `${urlRoot}/ili_recs`,
     lexUnits: `${urlRoot}/lexunits`,
     lexRels: `${urlRoot}/lexrels`,

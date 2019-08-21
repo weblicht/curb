@@ -11,6 +11,7 @@ export { dataContainers } from './components/DataContainer/reducers';
 // API
 import { conRels } from './components/ConRels/reducers';
 import { iliRecs } from './components/ILIRecords/reducers';
+import { frames } from './components/Frames/reducers';
 import { lexExamples } from './components/LexExamples/reducers';
 import { lexRels } from './components/LexRels/reducers';
 import { lexUnits } from './components/LexUnits/reducers';
@@ -20,6 +21,7 @@ import { wiktDefs } from './components/WiktionaryDefs/reducers';
 const fullAPIReducer = combineReducers({
     conRels,
     iliRecs,
+    frames,
     lexExamples,
     lexRels,
     lexUnits,
