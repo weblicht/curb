@@ -52,8 +52,17 @@ export function makeQueryActions(prefix, endpoint,
             const config = { params };
             dispatch(queryRequested(params));
 
+            function validateResponse(response) {
+                if (!(response.data && response.data.data && Array.isArray(response.data.data))) {
+                    dispatch(queryError(params, 'Server returned a response with no data array'));
+                }
+                else {
+                    dispatch(queryReturned(params, response.data.data));
+                }
+            }
+
             return axios.get(endpoint, config).then(
-                response => dispatch(queryReturned(params, response.data.data)),
+                validateResponse, 
                 err => dispatch(queryError(params, err)));
         }
     }
