@@ -1,3 +1,4 @@
+export * from './Compounds/component';
 export * from './ConRels/component';
 export * from './DataContainer/component';
 export * from './Frames/component';
