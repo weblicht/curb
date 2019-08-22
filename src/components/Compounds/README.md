@@ -11,20 +11,19 @@ A compound object contains the following fields:
   - `lexUnitId`
   - `splits`
   - `head`
-  - `idHead`
-  - `propertyHead`
-  - `mod1`
-  - `categoryMod1`
-  - `propertyMod1`
-  - `idMod1`
-  - `id2Mod1`
-  - `id3Mod1`
-  - `mod2`
-  - `categoryMod2`
-  - `propertyMod2`
-  - `idMod2`
-  - `id2Mod2`
-  - `id3Mod2`
+    - `lemma`
+    - `id`
+    - `property`
+  - `modifier1`
+    - `lemma`
+    - `id`
+    - `property`
+    - `category`
+  - `modifier2`
+    - `lemma`
+    - `id`
+    - `property`
+    - `category`
 
 ## Components defined here
 
@@ -35,6 +34,11 @@ These objects are queried from the API by lexical unit ID.
 The required query parameters look like: `{ lexUnitId: someId }`.
 
 ### Display components
+
+`CompoundAsGrid`: renders a single compound's head and modifier
+objects as a table with lemma, property, and category columns
+
+`CompoundsAsList`: renders a set of compounds as a list
 
 `CompoundsAsTable`: renders a set of compounds as a table 
 
