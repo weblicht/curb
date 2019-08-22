@@ -9,6 +9,7 @@ export { synsetSearchBoxes } from './components/SynsetSearch/reducers';
 export { dataContainers } from './components/DataContainer/reducers';
 
 // API
+import { compounds } from './components/Compounds/reducers';
 import { conRels } from './components/ConRels/reducers';
 import { iliRecs } from './components/ILIRecords/reducers';
 import { frames } from './components/Frames/reducers';
@@ -19,6 +20,7 @@ import { wiktDefs } from './components/WiktionaryDefs/reducers';
 
 // a reducer to handle every component that's connected with the API:
 const fullAPIReducer = combineReducers({
+    compounds,
     conRels,
     iliRecs,
     frames,
