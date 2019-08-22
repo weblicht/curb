@@ -17,9 +17,6 @@ const COMPOUND_FIELD_MAP = [
     ['id', 'Id'], 
     ['lexUnitId', 'LexUnit Id'],  
     ['splits', 'Compound?'], // TODO: reasonable field and display names
-    // 'id' below refers to the id of the lexunit corresponding to the
-    // head or modifier.
-    // the 'root' of the compound, to which modifiers are added:
     ['head', 'Head'], 
     ['modifier1', 'Modifier 1'], 
     ['modifier2', 'Modifier 2'], 
@@ -37,7 +34,7 @@ function ConstituentAsDefList(props) {
 }
 
 // Display components for individual compounds:
-
+//   data :: DataObject, the compound 
 function CompoundAsTableRow(props) {
     const displayFields = props.displayFields || COMPOUND_ALL_FIELDS;
     return (
@@ -123,5 +120,7 @@ CompoundsContainer = connectWithApiQuery(CompoundsContainer, compoundsQueries.qu
 
 export { CompoundsContainer,
          CompoundsAsList,
-         CompoundsAsTable }; 
+         CompoundsAsTable,
+         CompoundAsGrid
+       }; 
 
