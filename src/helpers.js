@@ -30,10 +30,17 @@ export function upperFirst(s) {
 // params:
 //   data: the data to convert to a string
 //   nullString (optional): the string to use for null values
-// Returns data as a string, unless data is null, in which case it returns nullString.
-// This is needed because Object.toString does not work on null.
+// Returns data as a string, unless data is null or undefined, in
+// which case it returns nullString.  This is needed because
+// .toString() raises a TypeError on null or undefined, which have no
+// properties.
 export function withNullAsString(data, nullString = '') {
-    return data !== null ? data.toString() : nullString;
+    if (data == null || data == undefined) {
+        return nullString;
+    }
+    else {
+        return data.toString();
+    }
 }
 
 // makeByIdReducer
