@@ -12,18 +12,22 @@ A compound object contains the following fields:
   - `splits`
   - `head`
     - `lemma`
-    - `id`
     - `property`
+    - `id`
   - `modifier1`
     - `lemma`
-    - `id`
     - `property`
     - `category`
+    - `id`
+    - `id2`
+    - `id3`
   - `modifier2`
     - `lemma`
-    - `id`
     - `property`
     - `category`
+    - `id`
+    - `id2`
+    - `id3`
 
 ## Components defined here
 
