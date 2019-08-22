@@ -16,6 +16,8 @@ objects in the GermaNet API, namely
   - lexical units (see [LexUnits](./src/components/LexUnits))
   - lexical relations (see [LexRels](./src/components/LexRels))
   - examples for lexical items (see [LexExamples](./src/components/LexExamples))
+  - compounds (see [Compounds](./src/components/Compounds))
+  - frames (see [Frames](./src/components/Frames))
   - Interlingual Index records (see [ILIRecords](./src/components/ILIRecords))
   - Wiktionary definitions (see [WiktionaryDefs](./src/components/WiktionaryDefs))
 
