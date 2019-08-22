@@ -51,8 +51,8 @@ export function compounds(state = SI({}), action) {
                     id: c.idMod2,
                     id2: c.id2Mod2,
                     id3: c.id3Mod2,
-                    property: c.propertyMod1,
-                    category: c.categoryMod1
+                    property: c.propertyMod2,
+                    category: c.categoryMod2
                 }
 
             })
