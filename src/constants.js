@@ -7,6 +7,7 @@ export const apiPath = {
     conRels: `${urlRoot}/conrels`,
     examples: `${urlRoot}/examples`,
     frames: `${urlRoot}/frames`,
+    graphs: `${urlRoot}/graphs/by_synset_id`,
     iliRecords: `${urlRoot}/ili_recs`,
     lexUnits: `${urlRoot}/lexunits`,
     lexRels: `${urlRoot}/lexrels`,
