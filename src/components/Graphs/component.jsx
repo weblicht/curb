@@ -100,8 +100,8 @@ class D3Tree2Way extends React.Component {
         // text for the root node
         graph
             .append('text')
-            .text(data.upward.children[0].name) 
-            .attr('class', 'centralText')
+            .text(data.upward.originName) 
+            .attr('class', 'centralText font-weight-bold')
             .attr('x', this.state.centralWidth)
             .attr('y', this.state.centralHeight + 5)
             .attr('text-anchor', 'middle');

@@ -24,17 +24,24 @@ function dataToD3(data) {
     
     const d3data = {
         downward: {
+            id: data.root.id,
+            // we store the label for the root separately, because
+            // 'origin' is needed as the name for the root node in d3
             name: 'origin',
+            originName: labelFor(data.root), 
             direction: 'downward',
             children: data.hyponyms.map(
                 synset => ({
                     name: labelFor(synset),
+                    id: synset.id,
                     children: [] // do not go further down than direct hyponyms
                 })
             )
         },
         upward: {
+            id: data.root.id,
             name: 'origin',
+            originName: labelFor(data.root),
             direction: 'upward',
             children: data.root.hypernyms && data.root.hypernyms.length
                 ? data.root.hypernyms.map(walkHypernyms)
