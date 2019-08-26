@@ -49,10 +49,11 @@ class D3Tree2Way extends React.Component {
             duration: this.props.duration,
             directions: ['upward', 'downward']
         };
+        this.clickToSearch = this.clickToSearch.bind(this);
     }
 
     componentDidMount() {
-        this.createTreeGraph(this.props.data);
+        this.createTreeGraph();
     }
     
     componentDidUpdate(prevProps) {
@@ -69,6 +70,10 @@ class D3Tree2Way extends React.Component {
         }
     }
     
+    clickToSearch(d) {
+        this.props.clickSearch(d.data.id);
+    }
+ 
     createTreeGraph() {
         // user interaction -> zoom and click-drag
         //TODO: event
@@ -95,6 +100,7 @@ class D3Tree2Way extends React.Component {
               .attr('transform',`translate(${this.props.margin.left},${this.props.margin.top})`)
               .attr('class','graph');
         
+        // need a mutable copy of the data for D3:
         const data = this.props.data.asMutable({deep: true});
 
         // text for the root node
@@ -129,20 +135,15 @@ class D3Tree2Way extends React.Component {
         // const t = d3.transition().duration(this.state.duration); //TODO: the link enter transition
         
         function linksInitTween(d) {
-            //define interpolation. d3.interpolate returns a func we call i
-            let i = d3.interpolate(0); //start cond x0, y0, end cond d.x d.y
-            return (t => i(t)); // maps time ticker to the interpolation   
+            return function interpolationAt(tick) {
+                // d3.interpolate(0) returns a function with
+                // start cond x0, y0, end cond d.x d.y
+                d3.interpolate(0)(tick);
+            };
         }
         
         //0b: clicking functions
-        function clickToFold(d) {
-            console.log('1 d: ',d);
-        }
-        
-        function clickToSearch(d) {
-            this.props.clickSearch(d.data.id);
-        }
-        
+       
 
         // 1. update scales (domains) if they rely on our data
         
@@ -200,7 +201,6 @@ class D3Tree2Way extends React.Component {
         nodesEnter.append('circle')
             .attr('r', 1e-6)
             .attr('fill','pink');
-        // .on('click', clickToFold);
 
         nodesEnter
             .append('text')
@@ -215,7 +215,7 @@ class D3Tree2Way extends React.Component {
                 return d.data.name;
             })
             .style('cursor', d => 'pointer')
-            .on('click', clickToSearch);
+            .on('click', this.clickToSearch);
 
         // Transition nodes to their new position.
         //end point for enter nodes transition. x0,y0 -> x,y straight line translation
