@@ -140,9 +140,7 @@ class D3Tree2Way extends React.Component {
         }
         
         function clickToSearch(d) {
-            const ssid = (d.data.name.split(':')[0]);
-            console.log('searching synset: ', ssid);
-            this.props.clickSearch(ssid);
+            this.props.clickSearch(d.data.id);
         }
         
 

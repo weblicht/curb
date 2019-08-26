@@ -11,11 +11,13 @@ function dataToD3(data) {
     function walkHypernyms(synset) {
         if (synset.hypernyms && synset.hypernyms.length === 0) {
             return {
+                id: synset.id,
                 name: labelFor(synset),
                 children: []
             }
         } else {
             return {
+                id: synset.id,
                 name: labelFor(synset),
                 children: synset.hypernyms.map(walkHypernyms) 
             }
