@@ -76,11 +76,18 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
         // instance, instead of in the component definition?  This
         // will be important if we ever need containers of the same
         // type whose data comes from different places
-        const data = dataSelector(globalState, ownProps);
+
+        // give the dataSelector access to the containerState props,
+        // like chosenItemId; this is necessary because additional
+        // data might need to be loaded into the container depending
+        // on the container state.
+        const containerState = selectContainerState(globalState, ownProps);
+        const data = dataSelector(globalState, {...ownProps, ...containerState});
+
         return {
             data,
             idFor,
-            ...selectContainerState(globalState, ownProps)
+            ...containerState
         };
     };
     
