@@ -1,6 +1,13 @@
 export function selectD3Data(globalState, props) {
     try {
-        const selected = globalState.apiData.graphs.bySynsetId[props.synsetId].d3Data || {};
+        // initially, the synset id for the root of the graph is given
+        // as a prop.  After data container actions, the root of the
+        // graph can change.
+        // We need a mutable copy of the data to pass to D3.
+        const rootSynsetId = props.chosenItemId || props.synsetId;
+        const selected = Array.of(globalState.apiData.graphs
+                                  .bySynsetId[rootSynsetId]
+                                  .d3Data.asMutable({deep: true}));
         return selected;
     } catch (e) {
         // if one of the properties in the middle is not defined yet,

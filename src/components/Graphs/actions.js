@@ -19,7 +19,15 @@ function graphError(synsetId, error) {
     return { type: actionTypes.GRAPH_ERROR, synsetId, error };
 }
 
-export function doGraphRetrieval(synsetId) {
+// We can't use makeQueryActions here because fetching a graph is not
+// a query: we expect to get exactly one object back from the API, and
+// need to pass an identifier for it in the URL path, not in the query
+// parameters.  But other than that, fetching graph data is just like
+// doing a query, and this function can be used as the doQuery action
+// creator for an APIWrapper component.
+export function doGraphRetrieval(params) {
+    const synsetId = params.synsetId;
+
     return function (dispatch) {
         dispatch(graphRequested(synsetId));
 

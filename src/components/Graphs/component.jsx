@@ -1,41 +1,14 @@
 import { doGraphRetrieval } from './actions';
 import { selectD3Data } from './selectors';
+import { dataContainerFor } from '../DataContainer/component';
+import { connectWithApiQuery } from '../APIWrapper';
 
 import * as d3 from 'd3';
 import { connect } from 'react-redux';
 import React from 'react';
 
-class Graph extends React.Component {
 
-    componentDidMount() {
-        if (!(this.props.data)) {
-            this.props.retrieveGraph();
-        }
-    }
-    
-    render() {
-        if (!(this.props.data)) return null;
-        
-        return (<D3Tree2Way data={this.props.data}/>);
-    }
-}
-
-function mapStateToProps(globalState, ownProps) {
-    return {
-        data: selectD3Data(globalState, ownProps)
-    };
-}
-
-function mapDispatchToProps(dispatch, ownProps) {
-    return {
-        retrieveGraph: () => dispatch(doGraphRetrieval(ownProps.synsetId))
-    };
-}
-
-Graph = connect(mapStateToProps, mapDispatchToProps)(Graph);
-export { Graph };
-
-class D3Tree2Way extends React.Component {
+class HyperHypoGraph extends React.Component {
     constructor(props) {
         super(props);
         
@@ -49,19 +22,19 @@ class D3Tree2Way extends React.Component {
             duration: this.props.duration,
             directions: ['upward', 'downward']
         };
-        this.clickToSearch = this.clickToSearch.bind(this);
     }
-
+    
     componentDidMount() {
         this.createTreeGraph();
     }
     
+    // TODO: is this really needed?
     componentDidUpdate(prevProps) {
         if (prevProps.data !== this.props.data) {
             this.createTreeGraph();
         }
     }
-
+    
     // tree function to disable right click
     disableRightClick() {
         if (d3.event.button == 2) {
@@ -70,10 +43,7 @@ class D3Tree2Way extends React.Component {
         }
     }
     
-    clickToSearch(d) {
-        this.props.clickSearch(d.data.id);
-    }
- 
+   
     createTreeGraph() {
         // user interaction -> zoom and click-drag
         //TODO: event
@@ -100,8 +70,9 @@ class D3Tree2Way extends React.Component {
               .attr('transform',`translate(${this.props.margin.left},${this.props.margin.top})`)
               .attr('class','graph');
         
-        // need a mutable copy of the data for D3:
-        const data = this.props.data.asMutable({deep: true});
+        // data[0] is the only item in the data container; it is the tree
+        // data for the root node
+        const data = this.props.data[0];
 
         // text for the root node
         graph
@@ -143,7 +114,7 @@ class D3Tree2Way extends React.Component {
         }
         
         //0b: clicking functions
-       
+        
 
         // 1. update scales (domains) if they rely on our data
         
@@ -215,7 +186,11 @@ class D3Tree2Way extends React.Component {
                 return d.data.name;
             })
             .style('cursor', d => 'pointer')
-            .on('click', this.clickToSearch);
+            .on('click', d => {
+                // TODO: probably don't want to fire a query on every click...?
+                this.props.query({ synsetId: d.data.id });
+                this.props.choose(d.data.id);
+            });
 
         // Transition nodes to their new position.
         //end point for enter nodes transition. x0,y0 -> x,y straight line translation
@@ -262,13 +237,34 @@ class D3Tree2Way extends React.Component {
     }
 
     render() {
+        if (!(this.props.data)) return null;
         return <div className="tree-graph" />;
     }
 }
-D3Tree2Way.defaultProps = {
+
+HyperHypoGraph.defaultProps = {
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
     width: 1500,
     height: 1000,
     linkLength: 100,
     duration: 600
 };
+
+// We use a data container here to automatically get access to
+// choosing/selecting functions, even though the array of data will
+// consist of a single object for now.
+function propsToParams(props) {
+    return { synsetId: props.synsetId };
+}
+var GraphsContainer = dataContainerFor('Graphs', selectD3Data,
+                                       tree => tree.upward.id);
+GraphsContainer = connectWithApiQuery(GraphsContainer,
+                                      { doQuery: doGraphRetrieval },
+                                      propsToParams
+                                     );
+
+function Graph(props) {
+    return (<GraphsContainer {...props} displayAs={HyperHypoGraph} />);
+}
+
+export { Graph };
