@@ -33,22 +33,20 @@ export function connectWithApiQuery(Component, queryActions, propsToParams) {
         }
         
         componentDidMount() {
-            if (this.props.data === undefined) {
-                this.props.queryData();
-            }
+            const params = makeParams(this.props);
+            this.props.query(params);
         }
 
         render() {
             return (
-                <Component data={this.props.data} {...this.props}/>
+                <Component {...this.props}/>
             );
         }
     };
     
     function mapDispatchToProps(dispatch, ownProps) {
-        const params = makeParams(ownProps);
         return {
-            queryData: () => dispatch(queryActions.doQuery(params)),
+            query: params => dispatch(queryActions.doQuery(params))
         };
     };
 
