@@ -7,6 +7,129 @@ import * as d3 from 'd3';
 import { connect } from 'react-redux';
 import React from 'react';
 
+// these functions automatically set the viewBox of a graph so that it
+// includes the entire image
+function autoViewBox() {
+    // .getBBox is a browser API on <svg> elements that makes it easy
+    // to compute the size of the box needed to display the element.
+    // It is, however, very finicky; browsers throw an error, or do
+    // the wrong thing, if it is called before the element is actually
+    // rendered by the browser, which does not play well with React's
+    // virtual DOM.  Thus, we need to wrap this in a try/catch block,
+    // and call it on component updates.  'this' is bound by the .attr
+    // selection in resetViewBox.
+    try {
+        const {x, y, width, height} = this.getBBox(); 
+        return [x, y, width, height];
+    } catch(e) {
+        return [0, 0, 0, 0];
+    }
+}
+function resetViewBox(svg) {
+    d3.select(svg).attr("viewBox", autoViewBox);
+}
+
+
+const DEFAULT_WIDTH = 600;
+const DEFAULT_RADIUS = DEFAULT_WIDTH / 2;
+
+function D3RadialTreeGraph(svgNode, data, config) {
+   
+    const radius = config.radius || DEFAULT_RADIUS;
+    const tree = d3.cluster().size([2 * Math.PI, radius - 100]);
+
+    const root = tree(d3.hierarchy(data)
+                      .sort((a, b) => (a.height - b.height) || a.data.name.localeCompare(b.data.name)));
+
+    const svg = d3.select(svgNode)
+          .style("max-width", "100%")
+          .style("max-height", "100%")
+          .style("height", "auto")
+          .style("font", "10px sans-serif")
+          .style("margin", "5px");
+
+    const fullGraph = svg.append("g");
+    
+    const link = fullGraph.append("g") // <g> groups elements in SVG for inheritance of styling
+          .attr("fill", "none")
+          .attr("stroke", "#555")
+          .attr("stroke-opacity", 0.4)
+          .attr("stroke-width", 1.5)
+          .selectAll("path")
+    // root.links returns an array of links for the root node: objects that have nodes as .source and .target properties
+    // .data binds these links to the paths
+          .data(root.links()) 
+    // <path> element is an SVG path. .enter loads the link objects
+    // "If there are fewer nodes than data, the extra data elements form the enter selection, which you can instantiate by appending to the enter selection."
+          .enter().append("path")
+    // the "d" attribute defines the shape of the path
+          .attr("d", d3.linkRadial()
+                .angle(d => d.x)
+                .radius(d => d.y));
+
+    // now, the dom should look like <svg><g><path d=...>...</path>...</g></svg>
+    
+    const node = fullGraph.append("g")
+          .attr("stroke-linejoin", "round")
+          .attr("stroke-width", 3)
+          .selectAll("g")
+          .data(root.descendants().reverse())
+          .enter().append("g")
+          .attr("transform", d => `
+        rotate(${d.x * 180 / Math.PI - 90})
+        translate(${d.y},0)
+      `);
+    
+    node.append("circle")
+        .attr("fill", d => d.children ? "#555" : "#999")
+        .attr("r", 2.5);
+    
+    node.append("text")
+        .attr("dy", "0.31em")
+        .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
+        .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
+        .attr("transform", d => d.x >= Math.PI ? "rotate(180)" : null)
+        .text(d => d.data.name)
+        .filter(d => d.children)
+        .clone(true).lower()
+        .attr("stroke", "white");
+}
+
+export class RadialTreeGraph extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.svgRef = React.createRef();
+    }
+
+    componentDidMount() {
+        // TODO: construct config instead of just passing props?
+        const svg = this.svgRef.current;
+        D3RadialTreeGraph(svg, this.props.data, {...this.props});
+    }
+
+    componentDidUpdate(prevProps) {
+        resetViewBox(this.svgRef.current);
+    }
+
+    render(){
+        return (
+            // TODO: initial size?
+            // 
+            // after long hours of searching and experimenting, I have
+            // learned that the svg element won't display properly unless
+            // at least one of the dimensions is constrained; there's a
+            // good explanation here: https://css-tricks.com/scale-svg/
+            //
+            // For now, I'm just setting a fixed height of 600px so I
+            // can get back to making the actual logic work
+            <svg ref={this.svgRef} viewBox="0 0 100 100" height="600"/>
+        );
+    }
+
+}
+
+
 
 class HyperHypoGraph extends React.Component {
     constructor(props) {
