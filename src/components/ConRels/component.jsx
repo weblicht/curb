@@ -1,7 +1,7 @@
 import { conRelsQueries } from './actions';
-import { selectConRels } from './selectors';
+import { selectConRels, selectHyponymsTree } from './selectors';
 import { DataList, DataTable, ListItem } from '../GenericDisplay/component';
-import { dataContainerFor } from '../DataContainer/component';
+import { dataContainerFor, treeContainerFor } from '../DataContainer/component';
 import { connectWithApiQuery } from '../APIWrapper';
 
 import React from 'react';
@@ -72,8 +72,12 @@ function ConRelsAsTable(props) {
 var ConRelsContainer = dataContainerFor('ConRels', selectConRels);
 ConRelsContainer = connectWithApiQuery(ConRelsContainer, conRelsQueries.queryActions);
 
+var HyponymsTree = treeContainerFor('Hyponyms', selectHyponymsTree);
+HyponymsTree = connectWithApiQuery(HyponymsTree, conRelsQueries.queryActions);
+
 export { ConRelsContainer,
+         HyponymsTree,
          ConRelsAsList,
-         ConRelsAsTable
+         ConRelsAsTable,
        };
 
