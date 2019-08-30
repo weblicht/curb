@@ -17,7 +17,16 @@ function nextContainerId() {
     return _NEXT_CONTAINER_ID++;
 }
 
+const CONTAINER_TYPES = {
+    // props.data is an array (or other iterable) of data objects:
+    ROWS: 'rows', 
+    // props.data is a tree object, with further tree nodes in the
+    // .children property:
+    TREE: 'tree'  
+};
+
 // params:
+//   type :: String, from CONTAINER_TYPES
 //   name :: String, a name to use for the returned component;
 //     'Container' will be appended
 //   dataSelector :: globalState -> ownProps -> [ DataObject ]
@@ -28,8 +37,10 @@ function nextContainerId() {
 //     empty-but-trueish-value, such as [] or {}.)
 //   idFromItem (optional) :: DataObject -> identifier for that object.
 //      By default, this function works like: item => item.id
-export function dataContainerFor(name, dataSelector, idFromItem) {
+function containerFor(type, name, dataSelector, idFromItem) {
 
+    // Helpers for combining data with metadata from container state:
+    
     const idFor = idFromItem || function (item) {
         const id = item.id;
         if (id === undefined) {
@@ -39,16 +50,57 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
         return id;
     };
 
-    // The component:
+    function isSelected(item, props) {
+        if (Array.isArray(props.selectedItemIds)) {
+            return props.selectedItemIds.includes(idFor(item));
+        }
+        return false;
+    }
+
+    function addMetadataToRows(rows, props) {
+        return rows.map(
+            item => ({ ...item,
+                       chosen: props.chosenItemId === idFor(item),
+                       selected: isSelected(item, props),
+                     })
+        );
+    }
+
+    function addMetadataToTree(node, props) {
+        if (!node.children || !node.children.length) {
+            return {
+                ...node,
+                chosen: props.chosenItemId === idFor(node),
+                selected: isSelected(node, props),
+            };
+        } else {
+            return {
+                ...node,
+                chosen: props.chosenItemId === idFor(node),
+                selected: isSelected(node, props),
+                children: node.children.map(child => addMetadataToTree(child, props))
+            };
+        }
+    }
+
+    // The actual component:
+    
     function DataContainer(props) {
         if (props.data === undefined) return null;
         
-        const dataWithMetadata = props.data.map(
-            item => ({ ...item,
-                       chosen: props.chosenItemId === idFor(item),
-                       selected: props.selectedItemIds ? props.selectedItemIds.includes(idFor(item)) : false,
-                     })
-        );
+        var dataWithMetadata;
+        switch (type) {
+        case CONTAINER_TYPES.ROWS: {
+            dataWithMetadata = addMetadataToRows(props.data, props);
+            break;
+        }
+        case CONTAINER_TYPES.TREE: {
+            dataWithMetadata = addMetadataToTree(props.data, props);
+            break;
+        }
+        default:
+            throw new InternalError(`Unknown data container type: ${type}`);
+        }
 
         if (typeof props.displayAs === 'function') {
             const Renderer = props.displayAs;
@@ -59,8 +111,9 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
             throw new InternalError('Data container was rendered with an incorrect displayAs prop');
         }
     }
-
     DataContainer.displayName = (name || 'Unnamed') + 'Container';
+
+    // Connect the container with state from Redux store:
 
     function selectContainerState(globalState, ownProps) {
         try {
@@ -80,7 +133,7 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
         // give the dataSelector access to the containerState props,
         // like chosenItemId; this is necessary because additional
         // data might need to be loaded into the container depending
-        // on the container state.
+        // on the container state, especially in containers for trees.
         const containerState = selectContainerState(globalState, ownProps);
         const data = dataSelector(globalState, {...ownProps, ...containerState});
 
@@ -103,17 +156,32 @@ export function dataContainerFor(name, dataSelector, idFromItem) {
 
     const ConnectedContainer = connect(mapStateToProps, mapDispatchToProps)(DataContainer);
 
-    // You may be wondering why this much indirection is necessary.
+    // Automatically provide the container with an ID:
+    //
+    // (You may be wondering why this much indirection is necessary.
     // Explanation: we need to generate the container ID at the time
     // we *instantiate* a data container. But we also need to make
     // that ID available to selectContainerState, mapStateToProps, and
     // mapDispatchToProps, above.  Because of the way react-redux
     // calls these functions, the only way to do this is to define yet
     // another HOC that passes the container ID down as a prop to the
-    // ConnectedContainer instance.
+    // ConnectedContainer instance.)
     function DataContainerIdGenerator(props) {
         const containerId = DataContainer.displayName + nextContainerId().toString();
         return (<ConnectedContainer {...props} containerId={containerId} />);
     };
+    DataContainerIdGenerator.displayName = DataContainer.displayName + 'WithId';
+    
     return DataContainerIdGenerator;
 }
+
+// Public interfaces for constructing data containers of different types:
+
+export function dataContainerFor(name, dataSelector, idFromItem) {
+    return containerFor(CONTAINER_TYPES.ROWS, name, dataSelector, idFromItem);
+}
+
+export function treeContainerFor(name, dataSelector, idFromItem) {
+    return containerFor(CONTAINER_TYPES.TREE, name, dataSelector, idFromItem);
+}
+
