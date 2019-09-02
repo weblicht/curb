@@ -1,4 +1,5 @@
 import { makeActionsForContainer } from './actions';
+import { dataContainerDefaultState } from './reducers';
 import { InternalError } from '../../errors';
 
 import React from 'react';
@@ -116,10 +117,14 @@ function containerFor(type, name, dataSelector, idFromItem) {
     // Connect the container with state from Redux store:
 
     function selectContainerState(globalState, ownProps) {
+        // we always return dataContainerDefaultState, instead of
+        // undefined, to ensure that we can always read props like
+        // selectedItemIds downstream, even if there is no state for
+        // this component yet in the store:
         try {
-            return globalState.dataContainers.byId[ownProps.containerId];
+            return globalState.dataContainers.byId[ownProps.containerId] || dataContainerDefaultState;
         } catch (e) {
-            return undefined;
+            return dataContainerDefaultState;
         }
     }
 
