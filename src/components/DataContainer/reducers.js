@@ -12,6 +12,8 @@ const dataContainerPrivState = SI({
     selectedItemIds: [],
 });
 
+export { dataContainerPrivState as dataContainerDefaultState };
+
 
 // Manages a private state tree for a data container
 function dataContainerPrivReducer(state = dataContainerPrivState, action) {
