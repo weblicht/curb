@@ -95,6 +95,7 @@ function D3RadialTreeGraph(svgNode, data, config) {
         .attr("stroke", "white");
 }
 
+
 export class RadialTreeGraph extends React.Component {
 
     constructor(props) {
@@ -124,6 +125,137 @@ export class RadialTreeGraph extends React.Component {
             // For now, I'm just setting a fixed height of 600px so I
             // can get back to making the actual logic work
             <svg ref={this.svgRef} viewBox="0 0 100 100" height="600"/>
+        );
+    }
+
+}
+
+function D3VerticalTreeGraph(svgNode, data, config) {
+    var debug;
+    
+    // adapted from https://observablehq.com/@d3/cluster-dendrogram
+    var root = d3.hierarchy(data)
+        .sort((a, b) => (a.height - b.height) || a.data.name.localeCompare(b.data.name));
+    // TODO: I don't really understand how the numbers passed to "size" work.
+    // In at least one example I saw, they should be the same as the width and height of the svg element.
+    // What seems to matter is not their units but their ratio: roughly, the
+    // tree spreads out faster in whichever dimension's number is
+    // bigger.  But this is good enough for now...
+    root = d3.tree().size([1000, 300])(root);
+
+    const svg = d3.select(svgNode)
+          .style("max-width", "100%")
+          .style("height", "auto")
+          //.style("font", "10px sans-serif")
+          .style("padding", "20px")
+          .attr("font-family", "sans-serif")
+          .attr("font-size", 10);
+    
+    function pathKey(d) {
+        // a path is identified by the IDs of its source and target nodes:
+        return `${d.source.data.id}to${d.target.data.id}`;
+    }
+    const links = svg.selectAll("g#links")
+            .attr("fill", "none")
+            .attr("stroke", "#555")
+            .attr("stroke-opacity", 0.4)
+            .attr("stroke-width", 1.5)
+          .selectAll("path")
+            .data(root.links(), pathKey);
+
+    const newLinks = links.enter().append("path")
+          .attr("d", d3.linkVertical()
+                .x(d => d.x)
+                .y(d => d.y))
+          .merge(links);
+    
+    const oldLinks = links.exit().remove();
+    
+    function nodeKey(d) {
+        // a node is identified by the .id of its datum
+        return d.data.id;
+    }
+    const nodes = svg.selectAll("g#nodes")
+          .attr("class", "nodes")
+          .attr("stroke-linejoin", "round")
+          .attr("stroke-width", 3)
+          .selectAll("g")
+          .data(root.descendants(), nodeKey);
+
+    const newNodes = nodes
+          .enter().append("g")
+          .on("click", config.nodeClickHandler)
+          .attr("transform", d => `translate(${d.x},${d.y})`);
+    
+    newNodes.append("circle")
+        .attr("fill", d => d.data.children.length ? "#555" : "#999") // todo: this isn't working
+        .attr("r", 5) ;
+    
+    newNodes.append("text")
+        .attr("dy", "0.35em")
+        .attr("x", d => d.children ? -6 : 6)
+        .attr("text-anchor", d => d.children ? "end" : "start")
+        .text(d => d.data.name)
+        .attr("transform", "rotate(-30)")
+        .clone(true).lower()
+        .attr("stroke", "white");
+
+    newNodes.merge(nodes);
+
+    const oldNodes = nodes.exit().remove();
+
+    // On update, it is important to re-bind the click handler, since
+    // it can depend on the value of the rendering component's props,
+    // and those might have changed
+    const nodesUpdate = nodes
+          .on("click", config.nodeClickHandler)
+    // Transition nodes to their new positions:
+          .transition() 
+          .duration(750)
+          .attr("transform", d => `translate(${d.x},${d.y})`);
+    // Transition links to their new positions:
+    const linksUpdate = links.transition()
+          .duration(750)
+          .attr("d", d3.linkVertical()
+                .x(d => d.x)
+                .y(d => d.y));
+
+}
+
+export class VerticalTreeGraph extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.svgRef = React.createRef();
+    }
+
+    componentDidMount() {
+        // TODO: construct config instead of just passing props?
+        D3VerticalTreeGraph(this.svgRef.current, this.props.data, {...this.props});
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.data !== this.props.data) {
+            D3VerticalTreeGraph(this.svgRef.current, this.props.data, {...this.props});
+        }
+        resetViewBox(this.svgRef.current);
+    }
+
+    render(){
+        return (
+            // TODO: initial size?
+            // 
+            // after long hours of searching and experimenting, I have
+            // learned that the svg element won't display properly unless
+            // at least one of the dimensions is constrained; there's a
+            // good explanation here: https://css-tricks.com/scale-svg/
+            //
+            // For now, I'm just setting a fixed height of 600px so I
+            // can get back to making the actual logic work
+            <svg ref={this.svgRef} viewBox="0 0 100 100" height="600">
+              <g id="links"/>
+              <g id="nodes"/>
+            </svg>
         );
     }
 
