@@ -46,19 +46,19 @@ The returned component (`SynsetsContainer`, in the example above) will accept pr
 
   - `data`: the array of data objects in the container
   - `displayAs`: a component to render the data in this container
-  - `id`: an identifier for the container
+  - `containerId`: an identifier for the container
   - `idFor`: a function that maps a data object in the container to
     its unique identifier
   
 The `idFor` prop will be automatically supplied, and the `data` will
 automatically be loaded into the container by the selector function
 from the Redux store when the container is rendered.  You must pass
-`displayAs` and `id` yourself.
+`displayAs` and `containerId` yourself.
 
 So in this example, you could instantiate `SynsetsContainer` like so:
 
 ``` 
-<SynsetsContainer displayAs={SynsetsAsList} />
+<SynsetsContainer containerId="searchResults" displayAs={SynsetsAsList} />
 ``` 
 
 where `SynsetsAsList` is a component that renders an array of
@@ -97,22 +97,32 @@ data container can be 'selected'[^1] by the user:
     user interface* are both different from the sense in which objects
     are selected *from the Redux store* by a selector function
  
-To support selecting and choosing actions, the container will
-automatically receive these additional *control* props:
+**Important**: if you want your data container to support choosing and
+selecting data objects inside it, you *must* give it a `containerId` prop that
+is unique for the entire application.  This is because the state for
+each data container is managed in Redux using its `containerId`.
+
+If a `containerId` is specified, the container will automatically receive
+these additional *control* props:
 
   - `choose`
   - `unchoose`
   - `select`
   - `unselect`
 
-These are callbacks that accept an item ID, and dispatch a Redux
-action to indicate that a particular item in the container has been
-(un)chosen or (un)selected.  They will be passed on to the rendering
-component.
+These are callbacks that accept an item ID, and dispatch a Redux action to
+indicate that a particular item in the container has been (un)chosen
+or (un)selected.  They will be passed on to the rendering component.
 
 In addition, the data objects in the `data` prop will have Boolean
-`.selected` and `.chosen` properties, which you can test when
+`.selected` and `.chosen` properties, which you can test for when
 rendering them in the UI.
+
+(The `containerId` prop can be left off.  This is to support creating data
+containers in contexts where you might not be able to choose a unique
+id, such as when creating a data container programmatically as a child
+of another component.  But in that case the container cannot support
+choosing and selecting actions.)
 
 ### Rendering data in a container 
 
@@ -121,7 +131,8 @@ the value of its `displayAs` prop.  This component is responsible for
 rendering the data container in a suitable way.
 
 The rendering component will receive all the props from the data
-container, including the data and the control props.
+container (except `containerId`), including the data and, if the container has
+a `containerId`, the control props.
 
 Several components in the [GenericDisplay](../GenericDisplay)
 directory are designed to work well with data containers, and make it
@@ -167,7 +178,8 @@ function SynsetsAsHighlightableList(props) {
 }
 
 // ...
-<SynsetsContainer displayAs={SysetsAsHighlightableList} />
+<SynsetsContainer containerId="highlightable-synsets"
+                  displayAs={SysetsAsHighlightableList} />
 
 ``` 
 
@@ -216,7 +228,8 @@ function HighlightableSynset(props) {
 }
 
 // ...
-<SynsetsContainer displayAs={SynsetsAsList}
+<SynsetsContainer containerId="highlightable-synsets"
+                  displayAs={SynsetsAsList}
                   displayItemAs={HighlightableSynset} />
 
 ```
