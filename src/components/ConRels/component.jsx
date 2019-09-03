@@ -1,6 +1,7 @@
 import { conRelsQueries } from './actions';
 import { selectConRels, selectHyponymsTree } from './selectors';
 import { DataList, DataTable, ListItem } from '../GenericDisplay/component';
+import { VerticalTreeGraph } from '../Graphs/component';
 import { dataContainerFor, treeContainerFor } from '../DataContainer/component';
 import { connectWithApiQuery } from '../APIWrapper';
 
@@ -75,9 +76,27 @@ ConRelsContainer = connectWithApiQuery(ConRelsContainer, conRelsQueries.queryAct
 var HyponymsTree = treeContainerFor('Hyponyms', selectHyponymsTree);
 HyponymsTree = connectWithApiQuery(HyponymsTree, conRelsQueries.queryActions);
 
+// TODO: where's the best place to request data for the tree that we
+// haven't yet fetched but the user has requested?
+function HyponymsGraph(props){
+    function expandOrCollapseNode(d) {
+        const synset = d.data; // the original node, 
+        const synsetId = synset.id;
+        if (synset.selected) {
+            props.unselect(synsetId);
+        } else {
+            props.select(synsetId);
+            props.query({ synsetId });
+        }
+    };
+
+    return (<VerticalTreeGraph {...props} nodeClickHandler={expandOrCollapseNode} />);
+}
+
 export { ConRelsContainer,
          HyponymsTree,
          ConRelsAsList,
          ConRelsAsTable,
+         HyponymsGraph
        };
 
