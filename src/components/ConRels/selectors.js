@@ -15,11 +15,14 @@ export function selectHyponymsTree(globalState, props) {
 
     const rootSynsetId = props.queryParams.synsetId;
 
-    // IDs that the user has selected but we don't yet have data for:
-    var toFetch = [];
-    
     // for a given synsetId and list of orth forms, return a node in
     // the tree representing that synset
+
+    // TODO: somewhere here, we should keep track of a distinction
+    // between data we haven't fetched yet, and data that is
+    // empty. This is important for visualization: we should mark a
+    // difference between a synset that *has* no hyponyms and one that
+    // simply hasn't been expanded.
     function nodeFor(synsetId, orthForms) {
         var children = [];
         // create nodes for children which have been selected by the user.
@@ -31,7 +34,7 @@ export function selectHyponymsTree(globalState, props) {
             
         return ({
             id: synsetId,
-            name: synsetId + ': ' + orthForms.join(', '), //TODO
+            name: synsetId + ': ' + orthForms.join(', '),
             children
         })
 
@@ -42,15 +45,12 @@ export function selectHyponymsTree(globalState, props) {
     // child node, with ID given by the *related* synset ID
     function hyponymsFor(synsetId) {
         try {
-            const conRels = globalState.apiData.conRels.bySynsetId[synsetId] || [];        
-            return conRels.filter(cr => cr.conRelType === 'has_hyponym');
-
+            const conRels = globalState.apiData.conRels.bySynsetId[synsetId];
+            if (Array.isArray(conRels)) {
+                return conRels.filter(cr => cr.conRelType === 'has_hyponym');
+            } 
+            return [];
         } catch (e) {
-
-            if (!toFetch.includes(synsetId)) {
-                toFetch.push(synsetId);
-            }
-            
             return [];
         }
     }
@@ -62,12 +62,6 @@ export function selectHyponymsTree(globalState, props) {
         // the root synset node?  these are not included in the
         // conrels data
         var rootNode = nodeFor(rootSynsetId, []);
-
-        // Pass on the list of data to fetch so we can request the
-        // data at a safe point in the component's lifecycle.  (We
-        // can't do it here, because the selector may run several
-        // times before the component actually mounts.)
-        rootNode.toFetch = toFetch;
 
         return rootNode;
     }
