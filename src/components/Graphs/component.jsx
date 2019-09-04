@@ -7,31 +7,11 @@ import * as d3 from 'd3';
 import { connect } from 'react-redux';
 import React from 'react';
 
-// these functions automatically set the viewBox of a graph so that it
-// includes the entire image
-function autoViewBox() {
-    // .getBBox is a browser API on <svg> elements that makes it easy
-    // to compute the size of the box needed to display the element.
-    // It is, however, very finicky; browsers throw an error, or do
-    // the wrong thing, if it is called before the element is actually
-    // rendered by the browser, which does not play well with React's
-    // virtual DOM.  Thus, we need to wrap this in a try/catch block,
-    // and call it on component updates.  'this' is bound by the .attr
-    // selection in resetViewBox.
-    try {
-        const {x, y, width, height} = this.getBBox(); 
-        return [x, y, width, height];
-    } catch(e) {
-        return [0, 0, 0, 0];
-    }
-}
-function resetViewBox(svg) {
-    d3.select(svg).attr("viewBox", autoViewBox);
-}
-
-
-const DEFAULT_WIDTH = 600;
+const DEFAULT_WIDTH = 1280;
+const DEFAULT_HEIGHT = 800;
+const DEFAULT_MARGIN = 20;
 const DEFAULT_RADIUS = DEFAULT_WIDTH / 2;
+const DEFAULT_TRANSITION_DURATION = 750;
 
 function D3RadialTreeGraph(svgNode, data, config) {
    
@@ -131,19 +111,16 @@ export class RadialTreeGraph extends React.Component {
 }
 
 function D3VerticalTreeGraph(svgNode, data, config) {
-    var debug;
-    
     // adapted from https://observablehq.com/@d3/cluster-dendrogram
     const hier = d3.hierarchy(data);
-    const width = 1280; 
-    const height = 800;
-    const margin = 20;
+    const width = config.width; 
+    const height = config.height;
+    const margin = config.margin;
     const root = d3.tree().size([width - 2 * margin, height - 2 * margin])(hier);
 
     const svg = d3.select(svgNode)
           .style("max-width", "100%")
           .style("height", "auto")
-          //.style("font", "10px sans-serif")
           .style("padding", "20px")
           .attr("font-family", "sans-serif")
           .attr("font-size", 10);
@@ -221,30 +198,33 @@ function D3VerticalTreeGraph(svgNode, data, config) {
           .on("click", config.nodeClickHandler);
 
 
-    // Remove now-hidden nodes and edges, and transition all elements to
-    // their new positions:
+    // Remove now-hidden nodes and edges:
     nodes.exit().remove();
     links.exit().remove();
 
+    // Transition all elements to their new positions:
     function transitionNodes() {
         return nodes.transition() 
-            .duration(750)
+            .duration(config.duration)
             .attr("transform", d => `translate(${d.x},${d.y})`);
     }
 
     function transitionLinks() {
         return links.transition()
-            .duration(750)
+            .duration(config.duration)
             .attr("d", d3.linkVertical()
                   .x(d => d.x)
                   .y(d => d.y));
     }
     function fadeInNewLinks() {
         return links.transition() 
-            .duration(750)
+            .duration(config.duration)
             .attr("stroke", "#555");
     }
+
     transitionNodes();
+    // wait until links are moved to fade in the new links, because
+    // otherwise we see them in the wrong place:
     transitionLinks().on("end", fadeInNewLinks);
 }
 
@@ -267,18 +247,20 @@ export class VerticalTreeGraph extends React.Component {
         //resetViewBox(this.svgRef.current);
     }
 
-    render(){
+    render() {
+        const width = this.props.width;
+        const height = this.props.height;
+        const margin = this.props.margin;
+        // ymin for the viewbox must be at -1 * margin because d3
+        // places the root node at y = 0:
+        const viewBox = `0 ${-1 * margin} ${width} ${height}`;
+        
         return (
-            // TODO: initial size?
-            // 
             // after long hours of searching and experimenting, I have
             // learned that the svg element won't display properly unless
             // at least one of the dimensions is constrained; there's a
             // good explanation here: https://css-tricks.com/scale-svg/
-            //
-            // For now, I'm just setting a fixed height of 600px so I
-            // can get back to making the actual logic work
-            <svg ref={this.svgRef} width="1280" height="800" viewBox="0 -20 1280 800">
+            <svg ref={this.svgRef} width={width} height={height} viewBox={viewBox}>
               <g id="links"/>
               <g id="nodes"/>
             </svg>
@@ -286,6 +268,13 @@ export class VerticalTreeGraph extends React.Component {
     }
 
 }
+VerticalTreeGraph.defaultProps = {
+    margin: DEFAULT_MARGIN,
+    width: DEFAULT_WIDTH,
+    height: DEFAULT_HEIGHT,
+    duration: DEFAULT_TRANSITION_DURATION,
+};
+
 
 
 
