@@ -151,10 +151,19 @@ function D3VerticalTreeGraph(svgNode, data, config) {
           .style("padding", "20px")
           .attr("font-family", "sans-serif")
           .attr("font-size", 10);
-    
+
     function pathKey(d) {
         // a path is identified by the IDs of its source and target nodes:
         return `${d.source.data.id}to${d.target.data.id}`;
+    }
+    function appendNewLinks(enter) {
+        const newLinks = enter.append("path")
+              .attr("d", d3.linkVertical()
+                    .x(d => d.x)
+                    .y(d => d.y))
+              .attr("stroke", "white");
+    
+        return newLinks;
     }
     const links = svg.selectAll("g#links")
             .attr("fill", "none")
@@ -162,31 +171,58 @@ function D3VerticalTreeGraph(svgNode, data, config) {
             .attr("stroke-opacity", 0.4)
             .attr("stroke-width", 1.5)
           .selectAll("path")
-            .data(root.links(), pathKey);
-
-    const newLinks = links.enter().append("path")
-          .attr("d", d3.linkVertical()
-                .x(d => d.x)
-                .y(d => d.y))
-          .merge(links);
-    
-    const oldLinks = links.exit().remove();
+          .data(root.links(), pathKey)
+          .join(
+            enter => appendNewLinks(enter)
+          );
     
     function nodeKey(d) {
         // a node is identified by the .id of its datum
         return d.data.id;
     }
+    function appendNewNodes(enter) {
+        
+        const newNodes = enter.append("g")
+              .on("click", config.nodeClickHandler)
+              .attr("transform", d => {
+                  // start new nodes at the same position as the parent (if they have one) so they 'grow out' during the transition:
+                  const parent = d.ancestors()[1] || d;
+                  return `translate(${parent.x},${parent.y})`;
+              });
+        
+        newNodes.append("circle")
+            .attr("fill", d => d.data.children.length ? "#555" : "#999") // todo: this isn't working
+            .attr("r", 5) ;
+    
+        newNodes.append("text")
+            .attr("dy", "0.35em")
+            .attr("x", d => d.children ? -6 : 6)
+            .attr("text-anchor", d => d.children ? "end" : "start")
+            .text(d => d.data.name)
+            .attr("transform", "rotate(-30)")
+            .clone(true).lower()
+            .attr("stroke", "white");
+
+        return newNodes;
+
+    }
+
     const nodes = svg.selectAll("g#nodes")
           .attr("class", "nodes")
           .attr("stroke-linejoin", "round")
           .attr("stroke-width", 3)
           .selectAll("g")
-          .data(root.descendants(), nodeKey);
+        .data(root.descendants(), nodeKey)
+        .join(
+            enter => appendNewNodes(enter)
+            // TODO: update selection should re-color expanded nodes
+        )
+           // it is important to re-bind the click handler for /all/ nodes, since
+           // it can depend on the value of the rendering component's props,
+           // and those might have changed
+          .on("click", config.nodeClickHandler);
 
-    const newNodes = nodes
-          .enter().append("g")
-          .on("click", config.nodeClickHandler)
-          .attr("transform", d => `translate(${d.x},${d.y})`);
+
     
     newNodes.append("circle")
         .attr("fill", d => d.data.children.length ? "#555" : "#999") // todo: this isn't working
