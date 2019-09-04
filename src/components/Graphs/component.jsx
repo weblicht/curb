@@ -223,39 +223,43 @@ function D3VerticalTreeGraph(svgNode, data, config) {
           .on("click", config.nodeClickHandler);
 
 
+    // Remove hidden nodes and edges, and transition all elements to their new positions:
+    nodes.exit().remove();
+    links.exit().remove();
+
+    const duration = config.duration || 750;
     
-    newNodes.append("circle")
-        .attr("fill", d => d.data.children.length ? "#555" : "#999") // todo: this isn't working
-        .attr("r", 5) ;
-    
-    newNodes.append("text")
-        .attr("dy", "0.35em")
-        .attr("x", d => d.children ? -6 : 6)
-        .attr("text-anchor", d => d.children ? "end" : "start")
-        .text(d => d.data.name)
-        .attr("transform", "rotate(-30)")
-        .clone(true).lower()
-        .attr("stroke", "white");
+    //svg.transition().duration(duration).attr("viewBox", autoViewBox);
+    svg.attr("viewBox", autoViewBox);
 
-    newNodes.merge(nodes);
+    function transitionNodes() {
+        return nodes.transition() 
+            .duration(750)
+            .attr("transform", d => `translate(${d.x},${d.y})`);
+    }
 
-    const oldNodes = nodes.exit().remove();
+    function transitionLinks() {
+        return links.transition()
+            .duration(750)
+            .attr("d", d3.linkVertical()
+                  .x(d => d.x)
+                  .y(d => d.y));
+    }
+    function fadeInNewLinks() {
+        return links.transition() 
+            .duration(750)
+            .attr("stroke", "#555");
+    }
+    function zoomViewBox() {
+        return svg.transition()
+            .duration(750)
+            .attr("viewBox", autoViewBox);
+    }
+    transitionNodes();
+    transitionLinks().on("end", fadeInNewLinks, zoomViewBox);
 
-    // On update, it is important to re-bind the click handler, since
-    // it can depend on the value of the rendering component's props,
-    // and those might have changed
-    const nodesUpdate = nodes
-          .on("click", config.nodeClickHandler)
-    // Transition nodes to their new positions:
-          .transition() 
-          .duration(750)
-          .attr("transform", d => `translate(${d.x},${d.y})`);
-    // Transition links to their new positions:
-    const linksUpdate = links.transition()
-          .duration(750)
-          .attr("d", d3.linkVertical()
-                .x(d => d.x)
-                .y(d => d.y));
+    // immediately kick off the re-sizing of the viewable area
+
 
 }
 
@@ -275,7 +279,7 @@ export class VerticalTreeGraph extends React.Component {
         if (prevProps.data !== this.props.data) {
             D3VerticalTreeGraph(this.svgRef.current, this.props.data, {...this.props});
         }
-        resetViewBox(this.svgRef.current);
+        //resetViewBox(this.svgRef.current);
     }
 
     render(){
@@ -289,7 +293,7 @@ export class VerticalTreeGraph extends React.Component {
             //
             // For now, I'm just setting a fixed height of 600px so I
             // can get back to making the actual logic work
-            <svg ref={this.svgRef} viewBox="0 0 100 100" height="600">
+            <svg ref={this.svgRef} height="600">
               <g id="links"/>
               <g id="nodes"/>
             </svg>
