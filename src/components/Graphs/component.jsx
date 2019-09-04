@@ -134,15 +134,11 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     var debug;
     
     // adapted from https://observablehq.com/@d3/cluster-dendrogram
-    var hier = d3.hierarchy(data);
-    // TODO: I don't really understand how the numbers passed to "size" work.
-    // In at least one example I saw, they should be the same as the width and height of the svg element.
-    // What seems to matter is not their units but their ratio: roughly, the
-    // tree spreads out faster in whichever dimension's number is
-    // bigger.  But this is good enough for now...
-    //root = d3.tree().size([1000, 300])(root);
-    var deepest = hier.descendants().slice(-1)[0];
-    var root = d3.tree().size([1000, 100 * deepest.depth])(hier);
+    const hier = d3.hierarchy(data);
+    const width = 1280; 
+    const height = 800;
+    const margin = 20;
+    const root = d3.tree().size([width - 2 * margin, height - 2 * margin])(hier);
 
     const svg = d3.select(svgNode)
           .style("max-width", "100%")
@@ -185,7 +181,9 @@ function D3VerticalTreeGraph(svgNode, data, config) {
         const newNodes = enter.append("g")
               .on("click", config.nodeClickHandler)
               .attr("transform", d => {
-                  // start new nodes at the same position as the parent (if they have one) so they 'grow out' during the transition:
+                  // start new nodes at the same position as the
+                  // parent (if they have one) so they 'grow out'
+                  // during the transition:
                   const parent = d.ancestors()[1] || d;
                   return `translate(${parent.x},${parent.y})`;
               });
@@ -223,14 +221,10 @@ function D3VerticalTreeGraph(svgNode, data, config) {
           .on("click", config.nodeClickHandler);
 
 
-    // Remove hidden nodes and edges, and transition all elements to their new positions:
+    // Remove now-hidden nodes and edges, and transition all elements to
+    // their new positions:
     nodes.exit().remove();
     links.exit().remove();
-
-    const duration = config.duration || 750;
-    
-    //svg.transition().duration(duration).attr("viewBox", autoViewBox);
-    svg.attr("viewBox", autoViewBox);
 
     function transitionNodes() {
         return nodes.transition() 
@@ -250,17 +244,8 @@ function D3VerticalTreeGraph(svgNode, data, config) {
             .duration(750)
             .attr("stroke", "#555");
     }
-    function zoomViewBox() {
-        return svg.transition()
-            .duration(750)
-            .attr("viewBox", autoViewBox);
-    }
     transitionNodes();
-    transitionLinks().on("end", fadeInNewLinks, zoomViewBox);
-
-    // immediately kick off the re-sizing of the viewable area
-
-
+    transitionLinks().on("end", fadeInNewLinks);
 }
 
 export class VerticalTreeGraph extends React.Component {
@@ -293,7 +278,7 @@ export class VerticalTreeGraph extends React.Component {
             //
             // For now, I'm just setting a fixed height of 600px so I
             // can get back to making the actual logic work
-            <svg ref={this.svgRef} height="600">
+            <svg ref={this.svgRef} width="1280" height="800" viewBox="0 -20 1280 800">
               <g id="links"/>
               <g id="nodes"/>
             </svg>
