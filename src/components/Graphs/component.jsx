@@ -134,14 +134,15 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     var debug;
     
     // adapted from https://observablehq.com/@d3/cluster-dendrogram
-    var root = d3.hierarchy(data)
-        .sort((a, b) => (a.height - b.height) || a.data.name.localeCompare(b.data.name));
+    var hier = d3.hierarchy(data);
     // TODO: I don't really understand how the numbers passed to "size" work.
     // In at least one example I saw, they should be the same as the width and height of the svg element.
     // What seems to matter is not their units but their ratio: roughly, the
     // tree spreads out faster in whichever dimension's number is
     // bigger.  But this is good enough for now...
-    root = d3.tree().size([1000, 300])(root);
+    //root = d3.tree().size([1000, 300])(root);
+    var deepest = hier.descendants().slice(-1)[0];
+    var root = d3.tree().size([1000, 100 * deepest.depth])(hier);
 
     const svg = d3.select(svgNode)
           .style("max-width", "100%")
