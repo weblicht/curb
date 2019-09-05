@@ -23,12 +23,22 @@ const DEFAULT_NODE_COLORS = {
     unselected: 'gray',
     selected: 'green',
     unchosen: '',
-    chosen: '' 
+    chosen: '',
+    root: 'pink'
 };
+const DEFAULT_NODE_CLASS = 'node';
 const DEFAULT_NODE_CONFIG = {
     radius: DEFAULT_NODE_RADIUS,
     colors: DEFAULT_NODE_COLORS,
-}
+    class: DEFAULT_NODE_CLASS
+};
+
+// Links:
+const DEFAULT_LINK_CLASS = 'link';
+const DEFAULT_LINK_CONFIG = {
+    class: DEFAULT_LINK_CLASS
+};
+
 
 function D3RadialTreeGraph(svgNode, data, config) {
    
@@ -131,14 +141,16 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     // adapted from https://observablehq.com/@d3/cluster-dendrogram
     const hier = d3.hierarchy(data);
     const width = config.width; 
-    const height = config.height;
+    const flipScalar = (config.flip ? -1 : 1);
+    const height = config.height * flipScalar;
     const margin = config.margin;
-    const root = d3.tree().size([width - 2 * margin, height - 2 * margin])(hier);
+    const root = d3.tree().size([width - 2 * margin, height - 2 * margin * flipScalar])(hier);
 
     const svg = d3.select(svgNode)
           .style("max-width", "100%")
           .style("height", "auto")
           .style("padding", "20px")
+          .style("overflow", "visible")
           .attr("font-family", "sans-serif")
           .attr("font-size", 10);
 
@@ -148,6 +160,7 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     }
     function appendNewLinks(enter) {
         const newLinks = enter.append("path")
+              .attr("class", config.links.class)
               .attr("d", d3.linkVertical()
                     .x(d => d.x)
                     .y(d => d.y))
@@ -160,11 +173,40 @@ function D3VerticalTreeGraph(svgNode, data, config) {
             .attr("stroke", "#555")
             .attr("stroke-opacity", 0.4)
             .attr("stroke-width", 1.5)
-          .selectAll("path")
+          .selectAll(`.${config.links.class}`)
           .data(root.links(), pathKey)
           .join(
             enter => appendNewLinks(enter)
           );
+    
+    // we handle the root node separately, to allow drawing multiple
+    // trees with the same root, coloring the root separately, etc.
+    function appendRootNode(enter) {
+        const rootNode = enter.append("g")
+              .attr("id", "root")
+              .attr("transform", d => `translate(${d.x},${d.y})`);
+
+        // root gets a special color:
+        rootNode.append("circle")
+            .attr("r", config.nodes.radius)
+            .attr("fill", config.nodes.colors.root);
+    
+        // root text is drawn flat and to the right
+        rootNode.append("text") 
+            .attr("x", 6)
+            .attr("text-anchor", "start")
+            .text(d => d.data.name)
+            .clone(true).lower()
+            .attr("stroke", "white");
+
+        return rootNode;
+    }
+    const rootNode = svg
+          .selectAll("g#nodes")
+          .selectAll("g#root")
+          .data([root], nodeKey)
+          .join( enter => appendRootNode(enter));
+    // TODO: root node click handler?
     
     function nodeKey(d) {
         // a node is identified by the .id of its datum
@@ -174,6 +216,7 @@ function D3VerticalTreeGraph(svgNode, data, config) {
         
         const newNodes = enter.append("g")
               .on("click", config.nodeClickHandler)
+              .attr("class", config.nodes.class)
               .attr("transform", d => {
                   // start new nodes at the same position as the
                   // parent (if they have one) so they 'grow out'
@@ -187,8 +230,8 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     
         newNodes.append("text")
             .attr("dy", "0.35em")
-            .attr("x", d => d.children ? -6 : 6)
-            .attr("text-anchor", d => d.children ? "end" : "start")
+            .attr("x", flipScalar * 6)
+            .attr("text-anchor", config.flip ? "end" : "start")
             .text(d => d.data.name)
             .attr("transform", "rotate(-30)")
             .clone(true).lower()
@@ -202,8 +245,8 @@ function D3VerticalTreeGraph(svgNode, data, config) {
           .attr("class", "nodes")
           .attr("stroke-linejoin", "round")
           .attr("stroke-width", 3)
-          .selectAll("g")
-        .data(root.descendants(), nodeKey)
+          .selectAll(`.${config.nodes.class}`)
+        .data(root.descendants().slice(1), nodeKey)
         .join(
             enter => appendNewNodes(enter)
         );
@@ -273,11 +316,11 @@ export class VerticalTreeGraph extends React.Component {
 
     render() {
         const width = this.props.width;
+        const flipScalar = this.props.flip ? -1 : 1;
         const height = this.props.height;
         const margin = this.props.margin;
-        // ymin for the viewbox must be at -1 * margin because d3
-        // places the root node at y = 0:
-        const viewBox = `0 ${-1 * margin} ${width} ${height}`;
+        const ymin = (this.props.flip? flipScalar * height : 0) + (-1 * flipScalar * margin);
+        const viewBox = `0 ${ymin} ${width} ${height}`;
         
         return (
             // after long hours of searching and experimenting, I have
@@ -298,6 +341,72 @@ VerticalTreeGraph.defaultProps = {
     height: DEFAULT_HEIGHT,
     duration: DEFAULT_TRANSITION_DURATION,
     nodes: DEFAULT_NODE_CONFIG,
+};
+
+export class VerticalDoubleTreeGraph extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.svgRef = React.createRef();
+        this.drawTrees = this.drawTrees.bind(this);
+    }
+
+    drawTrees() {
+        const upwardConfig = {
+            ...this.props,
+            nodes: {...this.props.nodes, class: 'upward'},
+            links: {...this.props.links, class: 'upward'},
+            height: this.props.height / 2,
+            flip: true
+        };
+        const downwardConfig = {
+            ...this.props,
+            nodes: {...this.props.nodes, class: 'downward'},
+            links: {...this.props.links, class: 'downward'},
+            height: this.props.height / 2,
+            flip: false
+        };
+        D3VerticalTreeGraph(this.svgRef.current, this.props.upwardTree,
+                            upwardConfig);
+        D3VerticalTreeGraph(this.svgRef.current, this.props.downwardTree,
+                            downwardConfig);
+    }
+
+    componentDidMount() {
+        this.drawTrees();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.data !== this.props.data) {
+            this.drawTrees();
+        }
+        //resetViewBox(this.svgRef.current);
+    }
+
+    render() {
+        const width = this.props.width;
+        const canvasHeight = this.props.height;
+        const treeHeight = canvasHeight / 2;
+        const margin = this.props.margin;
+        const ymin = (-1 * treeHeight) + (-1 * margin);
+        const viewBox = `0 ${ymin} ${width} ${canvasHeight}`;
+        
+        return (
+            <svg ref={this.svgRef} width={width} height={canvasHeight} viewBox={viewBox}>
+              <g id="links"/>
+              <g id="nodes"/>
+            </svg>
+        );
+    }
+
+}
+VerticalDoubleTreeGraph.defaultProps = {
+    margin: DEFAULT_MARGIN,
+    width: DEFAULT_WIDTH,
+    height: DEFAULT_HEIGHT,
+    duration: DEFAULT_TRANSITION_DURATION,
+    nodes: DEFAULT_NODE_CONFIG,
+    links: DEFAULT_LINK_CONFIG
 };
 
 

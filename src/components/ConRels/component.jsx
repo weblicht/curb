@@ -1,7 +1,7 @@
 import { conRelsQueries } from './actions';
-import { selectConRels, selectHyponymsTree, selectHypernymsTree } from './selectors';
+import { selectConRels, selectHyponymsTree, selectHypernymsTree, selectHnymsTrees } from './selectors';
 import { DataList, DataTable, ListItem } from '../GenericDisplay/component';
-import { VerticalTreeGraph } from '../Graphs/component';
+import { VerticalDoubleTreeGraph } from '../Graphs/component';
 import { dataContainerFor, treeContainerFor } from '../DataContainer/component';
 import { connectWithApiQuery } from '../APIWrapper';
 
@@ -79,6 +79,9 @@ HyponymsTree = connectWithApiQuery(HyponymsTree, conRelsQueries.queryActions);
 var HypernymsTree = treeContainerFor('Hypernyms', selectHypernymsTree);
 HypernymsTree = connectWithApiQuery(HypernymsTree, conRelsQueries.queryActions);
 
+var HnymsTree = treeContainerFor('HyperAndHyponyms', selectHnymsTrees);
+HnymsTree = connectWithApiQuery(HnymsTree, conRelsQueries.queryActions);
+
 // TODO: where's the best place to request data for the tree that we
 // haven't yet fetched but the user has requested?
 function HnymsGraph(props){
@@ -93,12 +96,16 @@ function HnymsGraph(props){
         }
     };
 
-    return (<VerticalTreeGraph {...props} nodeClickHandler={expandOrCollapseNode} />);
+    return (<VerticalDoubleTreeGraph {...props}
+                                     upwardTree={props.data.children[0]}
+                                     downwardTree={props.data.children[1]}
+                                     nodeClickHandler={expandOrCollapseNode} />);
 }
 
 export { ConRelsContainer,
          HyponymsTree,
          HypernymsTree,
+         HnymsTree,
          ConRelsAsList,
          ConRelsAsTable,
          HnymsGraph

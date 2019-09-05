@@ -67,10 +67,21 @@ function selectConRelsTree(globalState, props, relation) {
 
 }
 
-export function selectHyponymsTree (globalState, props) {
+export function selectHyponymsTree(globalState, props) {
     return selectConRelsTree(globalState, props, 'has_hyponym');
 }
 
-export function selectHypernymsTree (globalState, props) {
+export function selectHypernymsTree(globalState, props) {
     return selectConRelsTree(globalState, props, 'has_hypernym');
+}
+
+export function selectHnymsTrees(globalState, props) {
+    const hypernyms = selectHypernymsTree(globalState, props); 
+    const hyponyms = selectHyponymsTree(globalState, props); 
+    const children = [hypernyms, hyponyms];
+    return {
+        id: 'DUMMY_ROOT',
+        name: 'DUMMY_ROOT',
+        children
+    };
 }
