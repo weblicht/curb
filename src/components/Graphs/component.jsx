@@ -7,11 +7,26 @@ import * as d3 from 'd3';
 import { connect } from 'react-redux';
 import React from 'react';
 
+// Layout sizing:
 const DEFAULT_WIDTH = 1280;
 const DEFAULT_HEIGHT = 800;
 const DEFAULT_MARGIN = 20;
 const DEFAULT_RADIUS = DEFAULT_WIDTH / 2;
+
+// Transitions:
 const DEFAULT_TRANSITION_DURATION = 750;
+
+// Nodes:
+const DEFAULT_NODE_COLORS = {
+    // TODO: decide on some nice-looking defaults here
+    unselected: 'gray',
+    selected: 'green',
+    unchosen: '',
+    chosen: '' 
+};
+const DEFAULT_NODE_CONFIG = {
+    colors: DEFAULT_NODE_COLORS,
+}
 
 function D3RadialTreeGraph(svgNode, data, config) {
    
@@ -166,8 +181,7 @@ function D3VerticalTreeGraph(svgNode, data, config) {
               });
         
         newNodes.append("circle")
-            .attr("fill", d => d.data.children.length ? "#555" : "#999") // todo: this isn't working
-            .attr("r", 5) ;
+            .attr("r", 5);
     
         newNodes.append("text")
             .attr("dy", "0.35em")
@@ -190,13 +204,16 @@ function D3VerticalTreeGraph(svgNode, data, config) {
         .data(root.descendants(), nodeKey)
         .join(
             enter => appendNewNodes(enter)
-            // TODO: update selection should re-color expanded nodes
-        )
-           // it is important to re-bind the click handler for /all/ nodes, since
-           // it can depend on the value of the rendering component's props,
-           // and those might have changed
-          .on("click", config.nodeClickHandler);
+        );
+    // it is important to re-bind the click handler for /all/ nodes, since
+    // it can depend on the value of the rendering component's props,
+    // and those might have changed
+    nodes.on("click", config.nodeClickHandler);
 
+    // all nodes are unselected by default; those which have
+    // been selected transition to a new color below
+    nodes.selectAll("circle")
+        .attr("fill", config.nodes.colors.unselected);
 
     // Remove now-hidden nodes and edges:
     nodes.exit().remove();
@@ -204,9 +221,14 @@ function D3VerticalTreeGraph(svgNode, data, config) {
 
     // Transition all elements to their new positions:
     function transitionNodes() {
-        return nodes.transition() 
+        nodes.transition() 
             .duration(config.duration)
             .attr("transform", d => `translate(${d.x},${d.y})`);
+        nodes.filter(d => d.data.selected)
+            .selectAll("circle")
+            .transition()
+            .duration(config.duration)
+            .attr("fill", config.nodes.colors.selected);
     }
 
     function transitionLinks() {
@@ -273,6 +295,7 @@ VerticalTreeGraph.defaultProps = {
     width: DEFAULT_WIDTH,
     height: DEFAULT_HEIGHT,
     duration: DEFAULT_TRANSITION_DURATION,
+    nodes: DEFAULT_NODE_CONFIG,
 };
 
 
