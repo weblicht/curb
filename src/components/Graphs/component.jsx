@@ -17,6 +17,7 @@ const DEFAULT_RADIUS = DEFAULT_WIDTH / 2;
 const DEFAULT_TRANSITION_DURATION = 750;
 
 // Nodes:
+const DEFAULT_NODE_RADIUS = 5;
 const DEFAULT_NODE_COLORS = {
     // TODO: decide on some nice-looking defaults here
     unselected: 'gray',
@@ -25,6 +26,7 @@ const DEFAULT_NODE_COLORS = {
     chosen: '' 
 };
 const DEFAULT_NODE_CONFIG = {
+    radius: DEFAULT_NODE_RADIUS,
     colors: DEFAULT_NODE_COLORS,
 }
 
@@ -181,7 +183,7 @@ function D3VerticalTreeGraph(svgNode, data, config) {
               });
         
         newNodes.append("circle")
-            .attr("r", 5);
+            .attr("r", config.nodes.radius);
     
         newNodes.append("text")
             .attr("dy", "0.35em")
