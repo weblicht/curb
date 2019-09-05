@@ -11,25 +11,19 @@ export function selectConRels(globalState, props) {
 
 }
  
-export function selectHyponymsTree(globalState, props) {
+function selectConRelsTree(globalState, props, relation) {
 
     const rootSynsetId = props.queryParams.synsetId;
 
     // for a given synsetId and list of orth forms, return a node in
     // the tree representing that synset
-
-    // TODO: somewhere here, we should keep track of a distinction
-    // between data we haven't fetched yet, and data that is
-    // empty. This is important for visualization: we should mark a
-    // difference between a synset that *has* no hyponyms and one that
-    // simply hasn't been expanded.
     function nodeFor(synsetId, orthForms) {
         var children = [];
         // create nodes for children which have been selected by the user.
         // Always include children for the root node.
         if (synsetId === rootSynsetId || props.selectedItemIds.includes(synsetId)) {
-            const hyponyms = hyponymsFor(synsetId);
-            children = hyponyms.map(cr => nodeFor(cr.relatedSynsetId, cr.allOrthForms));
+            const relateds = relatedsFor(synsetId);
+            children = relateds.map(cr => nodeFor(cr.relatedSynsetId, cr.allOrthForms));
         }
             
         return ({
@@ -43,11 +37,11 @@ export function selectHyponymsTree(globalState, props) {
     // for a given synsetId, returns conrels where this is the
     // *originating* synset ID; each of these conrels represents a
     // child node, with ID given by the *related* synset ID
-    function hyponymsFor(synsetId) {
+    function relatedsFor(synsetId) {
         try {
             const conRels = globalState.apiData.conRels.bySynsetId[synsetId];
             if (Array.isArray(conRels)) {
-                return conRels.filter(cr => cr.conRelType === 'has_hyponym');
+                return conRels.filter(cr => cr.conRelType === relation);
             } 
             return [];
         } catch (e) {
@@ -71,4 +65,12 @@ export function selectHyponymsTree(globalState, props) {
         return undefined; 
     }  
 
+}
+
+export function selectHyponymsTree (globalState, props) {
+    return selectConRelsTree(globalState, props, 'has_hyponym');
+}
+
+export function selectHypernymsTree (globalState, props) {
+    return selectConRelsTree(globalState, props, 'has_hypernym');
 }
