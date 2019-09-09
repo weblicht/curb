@@ -17,6 +17,9 @@ const DEFAULT_RADIUS = DEFAULT_WIDTH / 2;
 const DEFAULT_TRANSITION_DURATION = 750;
 
 // Nodes:
+function DEFAULT_NODE_CLICK_HANDLER(d) {
+    return null;
+}
 const DEFAULT_NODE_RADIUS = 5;
 const DEFAULT_NODE_COLORS = {
     // TODO: decide on some nice-looking defaults here
@@ -27,10 +30,14 @@ const DEFAULT_NODE_COLORS = {
     root: 'pink'
 };
 const DEFAULT_NODE_CLASS = 'node';
+const DEFAULT_NODE_SEP = [DEFAULT_WIDTH / 10,
+                          DEFAULT_HEIGHT / 8];
 const DEFAULT_NODE_CONFIG = {
     radius: DEFAULT_NODE_RADIUS,
     colors: DEFAULT_NODE_COLORS,
-    class: DEFAULT_NODE_CLASS
+    class: DEFAULT_NODE_CLASS,
+    separation: DEFAULT_NODE_SEP,
+    clickHandler: DEFAULT_NODE_CLICK_HANDLER
 };
 
 // Links:
@@ -46,13 +53,13 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     const flipScalar = (config.flip ? -1 : 1);
     const height = config.height * flipScalar;
     const margin = config.margin;
-    const root = d3.tree().size([width - 2 * margin, height - 2 * margin * flipScalar])(hier);
+    const sep = config.nodes.separation;
+    const root = d3.tree().nodeSize([sep[0], sep[1] * flipScalar])(hier);
 
     const svg = d3.select(svgNode)
           .style("max-width", "100%")
           .style("height", "auto")
-          .style("padding", "20px")
-          .style("overflow", "visible")
+          .style("padding", margin.toString()+'px')
           .attr("font-family", "sans-serif")
           .attr("font-size", 10);
 
@@ -88,7 +95,7 @@ function D3VerticalTreeGraph(svgNode, data, config) {
               .attr("id", "root")
               .attr("transform", d => `translate(${d.x},${d.y})`);
 
-        // root gets a special color:
+        // root gets a special color
         rootNode.append("circle")
             .attr("r", config.nodes.radius)
             .attr("fill", config.nodes.colors.root);
@@ -117,7 +124,7 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     function appendNewNodes(enter) {
         
         const newNodes = enter.append("g")
-              .on("click", config.nodeClickHandler)
+              .on("click", config.nodes.clickHandler)
               .attr("class", config.nodes.class)
               .attr("transform", d => {
                   // start new nodes at the same position as the
@@ -152,10 +159,10 @@ function D3VerticalTreeGraph(svgNode, data, config) {
         .join(
             enter => appendNewNodes(enter)
         );
-    // it is important to re-bind the click handler for /all/ nodes, since
+    // it is important to re-bind the click handler for *all* nodes, since
     // it can depend on the value of the rendering component's props,
     // and those might have changed
-    nodes.on("click", config.nodeClickHandler);
+    nodes.on("click", config.nodes.clickHandler);
 
     // all nodes are unselected by default; those which have
     // been selected transition to a new color below
@@ -190,11 +197,36 @@ function D3VerticalTreeGraph(svgNode, data, config) {
             .duration(config.duration)
             .attr("stroke", "#555");
     }
+    function resetViewBox() {
+        // recompute the view box for the svg element so the browser
+        // can scale it automatically.  This *would* be super easy
+        // through the browser .getBBox() API, which works great from
+        // the console, but for whatever reason, it doesn't work here,
+        // in a setting where the node is initially rendered by React.
+        var xmin = 0, xmax= 0, ymin= 0, ymax= 0;
+        svg.selectAll("g#nodes").selectAll("g")
+            .each(d => {
+                xmin = Math.min(xmin, d.x);
+                ymin = Math.min(ymin, d.y);
+                xmax = Math.max(xmax, d.x);
+                ymax = Math.max(ymax, d.y);
+            });
+        const newWidth = 2 * Math.max(xmax, Math.abs(xmin)) + 2 * margin;
+        const newHeight = 2 * Math.max(ymax, Math.abs(ymin)) + 2 * margin;
+        // don't change the viewbox unless the graph has grown beyond the original boundaries:
+        const viewWidth = Math.max(config.width, newWidth);
+        const viewHeight = Math.max(config.canvasHeight, newHeight);
+        const viewXMin = Math.min(config.xmin, xmin + -1 * margin);
+        const viewYMin = Math.min(config.ymin, ymin + -1 * margin);
 
+        svg.attr("viewBox", `${viewXMin} ${viewYMin} ${viewWidth} ${viewHeight}`);
+        
+    }
     transitionNodes();
     // wait until links are moved to fade in the new links, because
     // otherwise we see them in the wrong place:
     transitionLinks().on("end", fadeInNewLinks);
+    resetViewBox();
 }
 
 export class VerticalTreeGraph extends React.Component {
@@ -213,7 +245,7 @@ export class VerticalTreeGraph extends React.Component {
         if (prevProps.data !== this.props.data) {
             D3VerticalTreeGraph(this.svgRef.current, this.props.data, {...this.props});
         }
-        //resetViewBox(this.svgRef.current);
+        resetViewBox(this.svgRef.current);
     }
 
     render() {
@@ -251,22 +283,45 @@ export class VerticalDoubleTreeGraph extends React.Component {
         super(props);
         this.svgRef = React.createRef();
         this.drawTrees = this.drawTrees.bind(this);
+        this.initialDimenions = this.initialDimensions.bind(this);
+    }
+
+    initialDimensions() {
+        const width = this.props.width;
+        const canvasHeight = this.props.height;
+        const treeHeight = canvasHeight / 2;
+        const margin = this.props.margin;
+        const xmin = -0.5 * width;
+        const ymin = (-1 * treeHeight) + (-1 * margin);
+        const viewBox = [xmin, ymin, width, canvasHeight];
+        return {
+            width,
+            canvasHeight,
+            treeHeight,
+            margin,
+            xmin,
+            ymin,
+            viewBox
+        };
     }
 
     drawTrees() {
+        const dim = this.initialDimensions();
         const upwardConfig = {
-            ...this.props,
-            nodes: {...this.props.nodes, class: 'upward'},
+            duration: this.props.duration,
+            nodes: {...this.props.nodes, clickHandler: this.props.nodeClickHandler, class: 'upward'},
             links: {...this.props.links, class: 'upward'},
-            height: this.props.height / 2,
-            flip: true
+            flip: true,
+            height: dim.treeHeight,
+            ...dim,
         };
         const downwardConfig = {
-            ...this.props,
-            nodes: {...this.props.nodes, class: 'downward'},
+            duration: this.props.duration,
+            nodes: {...this.props.nodes, clickHandler: this.props.nodeClickHandler, class: 'downward'},
             links: {...this.props.links, class: 'downward'},
-            height: this.props.height / 2,
-            flip: false
+            flip: false,
+            height: dim.treeHeight,
+            ...dim,
         };
         D3VerticalTreeGraph(this.svgRef.current, this.props.upwardTree,
                             upwardConfig);
@@ -279,25 +334,46 @@ export class VerticalDoubleTreeGraph extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.data !== this.props.data) {
+        // todo: this re-draws too often.
+        if (prevProps.data != this.props.data) {
             this.drawTrees();
         }
-        //resetViewBox(this.svgRef.current);
+    //    resetViewBox(this.svgRef.current);
     }
 
     render() {
-        const width = this.props.width;
-        const canvasHeight = this.props.height;
-        const treeHeight = canvasHeight / 2;
-        const margin = this.props.margin;
-        const ymin = (-1 * treeHeight) + (-1 * margin);
-        const viewBox = `0 ${ymin} ${width} ${canvasHeight}`;
+        // We need to wrap the SVG in a container div to get it to
+        // scale to fit the container.  The container must have
+        // (max-)width/(max-)height properties for this, and for the
+        // overflow property to work.  We then set the SVG viewBox
+        // using the width and height of the container.  See:
+        //   https://css-tricks.com/scale-svg/
+
+        // Especially important advice from that page re: the viewBox:
+        // "The width is the width in user coordinates/px units,
+        // within the SVG code, that should be *scaled to fill the
+        // width of the area* into which you're drawing your SVG (the
+        // viewport in SVG lingo)."
+
+        // and re: height and width attributes: "If you use inline SVG
+        // (i.e., <svg> directly in your HTML5 code), then the <svg>
+        // element *does double duty*, defining the image area within
+        // the web page as well as within the SVG. Any height or width
+        // you set for the SVG with CSS will override the height and
+        // width attributes on the <svg>."
+
+        // I am here using "Option 3" as described on that page.
+        const dim = this.initialDimensions();
         
         return (
-            <svg ref={this.svgRef} width={width} height={canvasHeight} viewBox={viewBox}>
-              <g id="links"/>
-              <g id="nodes"/>
-            </svg>
+            <div className="graph-container" style={{"max-height": dim.canvasHeight.toString() + 'px',
+                                                     "max-width": dim.width.toString() + 'px',
+                                                     "overflow": "scroll"}} >
+              <svg ref={this.svgRef} height="auto" viewBox={dim.viewBox.join(" ")}>
+                <g id="links"/>
+                <g id="nodes"/>
+              </svg>
+            </div>
         );
     }
 
