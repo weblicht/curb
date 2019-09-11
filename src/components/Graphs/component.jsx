@@ -39,9 +39,11 @@ const DEFAULT_NODE_SEP = [DEFAULT_WIDTH / 10,
                           DEFAULT_HEIGHT / 8];
 const DEFAULT_NODE_LABEL_GAP = 6;
 const DEFAULT_NODE_LABEL_ANGLE = -30;
+const DEFAULT_NODE_LABEL_YOFFSET = "0.35em";
 const DEFAULT_NODE_LABEL_SETTINGS = {
     gap: DEFAULT_NODE_LABEL_GAP,
-    angle: DEFAULT_NODE_LABEL_ANGLE
+    angle: DEFAULT_NODE_LABEL_ANGLE,
+    yOffset: DEFAULT_NODE_LABEL_YOFFSET
 };
 const DEFAULT_NODE_CONFIG = {
     radius: DEFAULT_NODE_RADIUS,
@@ -307,10 +309,12 @@ function D3VerticalTreeGraph(svgNode, data, config) {
             .attr("r", config.nodes.radius);
     
         newNodes.append("text")
-            .attr("dy", "0.35em") // TODO: move to config
             .attr("x", flipScalar * config.nodes.labels.gap)
             .attr("text-anchor", config.flip ? "end" : "start")
             .text(d => d.data.name)
+             // dy shoves the label down a little bit so its center
+             // line passes through the middle of the circle. 
+            .attr("dy", config.nodes.labels.yOffset) 
             .attr("transform", `rotate(${config.nodes.labels.angle})`)
             // again, the white outline:
             .clone(true).lower()
