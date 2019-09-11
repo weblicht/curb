@@ -2,6 +2,7 @@ import { doGraphRetrieval } from './actions';
 import { selectD3Data } from './selectors';
 import { dataContainerFor } from '../DataContainer/component';
 import { connectWithApiQuery } from '../APIWrapper';
+import { isVisible } from '../../helpers';
 
 import * as d3 from 'd3';
 import { connect } from 'react-redux';
@@ -101,6 +102,15 @@ const DEFAULT_LINK_CONFIG = {
 //    
 function D3VerticalTreeGraph(svgNode, data, config) {
 
+    // Do nothing when the svgNode is not visible.  This is both a
+    // performance optimization and good UI: since the component
+    // responsible for drawing the chart might be rendered many times
+    // before it's ever made visible, we don't want to perform a bunch
+    // of DOM updates before we have to; and this has the side benefit
+    // of making the transitions visible to the user even on the first
+    // visible render.
+    if (!isVisible(svgNode)) return;
+    
     // Some terminology: the "tree" will refer to the data structure
     // returned by D3's tree layout functions.  (The input data, which
     // is also a tree data structure, will be referred to as the
