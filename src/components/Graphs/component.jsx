@@ -344,12 +344,6 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     // drawn.
     currentNodes.on("click", config.nodes.clickHandler);
 
-    // All nodes receive the 'unselected' color by default; those
-    // which have been selected transition to a new color below.
-    currentNodes.selectAll("circle")
-        .attr("fill", config.nodes.colors.unselected);
-
-
     // At this point, elements have been created in the DOM for the
     // nodes in the tree.  Thus, we can now create the scales for the
     // chart based on a selection of all the nodes in the *chart*,
@@ -429,17 +423,27 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     }
     moveNodes(currentNodes);
 
-    // This transition colors nodes which have been marked as
-    // 'selected' by the user, as represented by the .selected
+    // This transition colors nodes which have been selected or
+    // unselected by the user, as represented by the .selected
     // property on nodes in the tree data and the original hierarchy.
-    function colorSelectedNodes(nodeSelection) {
-        return nodeSelection.filter(d => d.data.selected)
-            .selectAll("circle")
-            .transition()
-            .duration(config.duration)
-            .attr("fill", config.nodes.colors.selected);
+    // We need to create two separate filters here on the nodes, as
+    // opposed to operating on circle elements directly, because there
+    // is no data bound to the circle elements.
+    function recolorNodes(nodeSelection) {
+        const selected = nodeSelection
+              .filter(d => d.data.selected)
+              .selectAll("circle")
+              .transition()
+              .duration(config.duration)
+              .attr("fill", config.nodes.colors.selected);
+        const unselected = nodeSelection
+              .filter(d => !d.data.selected)
+              .selectAll("circle")
+              .transition()
+              .duration(config.duration)
+              .attr("fill", config.nodes.colors.unselected);
     }
-    colorSelectedNodes(currentNodes);
+    recolorNodes(currentNodes);
 
     // This transition moves the link elements to their new positions,
     // and then fades in the new links to their target opacity.
