@@ -372,9 +372,7 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     // have not yet been drawn.
     function appendNewLinks(enter) {
         const newLinks = enter.append("path")
-              // We mark incoming links with an 'incoming' class for
-              // the sake of re-selecting and transitioning them later
-              .classed(`incoming ${config.links.class}`, true)
+              .attr("class", config.links.class)
               // the "d" attribute on path elements tells the browser
               // how to draw the path; it has it's own little
               // mini-language, which is not very human readable.
@@ -388,7 +386,7 @@ function D3VerticalTreeGraph(svgNode, data, config) {
               // we initially draw new links totally transparent, and then
               // transition them to their target opacity below, so that
               // we don't see links in the wrong place
-              .attr("stroke-opacity", 0.0);
+              .attr("stroke-opacity", 0);
     
         return newLinks;
     }
@@ -443,33 +441,25 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     }
     colorSelectedNodes(currentNodes);
 
-    // This transition moves the link elements to their new positions.
+    // This transition moves the link elements to their new positions,
+    // and then fades in the new links to their target opacity.
     // Again, we apply it to all links in the current tree, since
     // adding nodes can cause existing links to shift around.
-    function moveLinks(linkSelection) {
+    function moveAndFadeInLinks(linkSelection) {
         return linkSelection.transition()
             .duration(config.duration)
             .attr("d", d3.linkVertical()
                   .x(d => d.x)
-                  .y(d => d.y));
-    }
-
-    // This transition fades in new links, from 0 (transparent) to
-    // their target opacity.
-    function fadeInNewLinks(linkSelection) {
-        return linkSelection
-            // remove the 'incoming' class before running the transition:
-            .attr("class", config.links.class)
-            .transition() 
-            .duration(config.duration)
+                  .y(d => d.y))
+            // calling .transition() *on a transition* creates a new
+            // transition with the same underlying selection of nodes
+            // and duration, scheduled to run when the present one
+            // finishes; thus, this fades in new links after all the
+            // links have finished moving:
+            .transition()
             .attr("stroke-opacity", config.links.opacity);
     }
-    const newLinks = linkContainer.selectAll("path.incoming");
-
-    // We wait to fade in the new links until all the links have been
-    // moved, so that we don't see new links in the wrong positions:
-    moveLinks(currentLinks).on("end", () => fadeInNewLinks(newLinks));
-
+    moveAndFadeInLinks(currentLinks);
 }
 
 export class VerticalTreeGraph extends React.Component {
