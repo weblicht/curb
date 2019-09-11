@@ -11,7 +11,6 @@ import React from 'react';
 const DEFAULT_WIDTH = 1280;
 const DEFAULT_HEIGHT = 800;
 const DEFAULT_MARGIN = 20;
-const DEFAULT_RADIUS = DEFAULT_WIDTH / 2;
 
 // Transitions:
 const DEFAULT_TRANSITION_DURATION = 750;
@@ -30,32 +29,109 @@ const DEFAULT_NODE_COLORS = {
     root: 'pink'
 };
 const DEFAULT_NODE_CLASS = 'node';
+// What matters here is the *ratio* of the x and y separation values,
+// which determines how quickly the tree "spreads out" in one
+// dimension relative to the other when laid out. These values seems
+// to provide a reasonable default for hyper/hyponym trees drawn in a
+// desktop browser; YMMV:
 const DEFAULT_NODE_SEP = [DEFAULT_WIDTH / 10,
                           DEFAULT_HEIGHT / 8];
+const DEFAULT_NODE_LABEL_GAP = 6;
+const DEFAULT_NODE_LABEL_ANGLE = -30;
+const DEFAULT_NODE_LABEL_SETTINGS = {
+    gap: DEFAULT_NODE_LABEL_GAP,
+    angle: DEFAULT_NODE_LABEL_ANGLE
+};
 const DEFAULT_NODE_CONFIG = {
     radius: DEFAULT_NODE_RADIUS,
     colors: DEFAULT_NODE_COLORS,
     class: DEFAULT_NODE_CLASS,
     separation: DEFAULT_NODE_SEP,
+    labels: DEFAULT_NODE_LABEL_SETTINGS,
     clickHandler: DEFAULT_NODE_CLICK_HANDLER
 };
 
 // Links:
 const DEFAULT_LINK_CLASS = 'link';
+const DEFAULT_LINK_COLOR = '#555'; // a slightly lighter gray than unselected nodes
+const DEFAULT_LINK_THICKNESS = 1.5;
+const DEFAULT_LINK_OPACITY = 0.4;
 const DEFAULT_LINK_CONFIG = {
-    class: DEFAULT_LINK_CLASS
+    class: DEFAULT_LINK_CLASS,
+    color: DEFAULT_LINK_COLOR,
+    thickness: DEFAULT_LINK_THICKNESS,
+    opacity: DEFAULT_LINK_OPACITY 
 };
 
+// params:
+//   svgNode :: React ref, a reference to the svg DOM node where the graph should be drawn
+//     The DOM node should already have children with the following structure:
+//       g.chart-container
+//         g.links
+//         g.nodes
+//
+//   data :: Tree, an object with at least the following properties:
+//     id: a unique identifier
+//     name: a name to be displayed on the chart
+//     children: an array of child tree nodes with the same shape
+// 
+//   config :: Object, parameters for drawing the chart, including:
+//     width :: Integer, the chart width in pixels
+//     height :: Integer, the chart height in pixels
+//     flip :: Bool, whether the tree should be drawn with root at the top (false) or bottom (true)
+//     margin :: Integer
+//     nodes :: Object, with the following properties:
+//       sep :: [Integer, Integer], the width and height between nodes
+//       class :: String
+//       clickHandler :: event handler function; given the clicked tree node as argument
+//       colors :: Object, with the following properties:
+//         selected
+//         unselected
+//         root
+//       labels :: Object, with the following properties:
+//         gap
+//         angle
+//     links :: Object, with the following properties:
+//       class :: String
+//       color :: String
+//       thickness :: Number
+//       opacity :: Number
+//       
+//       
+//    
 function D3VerticalTreeGraph(svgNode, data, config) {
-    // adapted from https://observablehq.com/@d3/cluster-dendrogram
-    const hier = d3.hierarchy(data);
-    const width = config.width; 
+
+    // Some terminology: the "tree" will refer to the data structure
+    // returned by D3's tree layout functions.  (The input data, which
+    // is also a tree data structure, will be referred to as the
+    // "hierarchy", since D3 uses a hierarchy to produce a tree.)  The
+    // "chart" will refer to the complete visualization of the tree:
+    // its nodes, edges, labels, and so on.  This function draws
+    // and/or updates a chart.
+    const hierarchy = d3.hierarchy(data);
+
+    // Basic dimensions for the chart.  flipScalar is used to orient
+    // various elements either upward or downward, 
     const flipScalar = (config.flip ? -1 : 1);
+    const width = config.width; 
     const height = config.height * flipScalar;
     const margin = config.margin;
-    const sep = config.nodes.separation;
-    const root = d3.tree().nodeSize([sep[0], sep[1] * flipScalar])(hier);
 
+    // This performs the layout of the tree.  We use the D3's
+    // .nodeSize tree layout, as opposed to .size, to ensure that the
+    // root node is always laid out at (0,0).  This is important
+    // because we sometimes want to draw multiple trees on the same
+    // svg which are rooted at the same point.  Multiplying the
+    // y-separation value by flipScalar causes the tree to be drawn
+    // either upward or downward from the root.
+    const [sepx, sepy] = config.nodes.separation;
+    const root = d3.tree().nodeSize([sepx, sepy * flipScalar])(hierarchy);
+
+
+    // Here we select the actual svg DOM element using the given
+    // reference, and set various style attributes.  A max-width of
+    // 100% and an auto height allow the chart image to resize with
+    // the browser window.
     const svg = d3.select(svgNode)
           .style("max-width", "100%")
           .style("height", "auto")
@@ -63,86 +139,170 @@ function D3VerticalTreeGraph(svgNode, data, config) {
           .attr("font-family", "sans-serif")
           .attr("font-size", 10);
 
-    function pathKey(d) {
-        // a path is identified by the IDs of its source and target nodes:
-        return `${d.source.data.id}to${d.target.data.id}`;
+    // The chartContainer is a group ("g") element with the
+    // "chart-container" class, and should be the only immediate child
+    // of the svg element.  (This must be guaranteed by the caller.)
+    // It is used as the point to apply zoom transforms: scaling and
+    // translating the chartContainer scales and translates the whole
+    // chart.
+    const chartContainer = svg.select("g.chart-container");
+
+    // This creates the zoom behavior object and sets the zoomed()
+    // function as the handler for zoom events.  We use a very simple
+    // 'geometric' zoom for now, meaning every element scales the same
+    // amount with zoom level (so circles representing nodes, text,
+    // etc. will become very large as the user zooms in).  So all we
+    // need to do here is apply the zoom transform to the
+    // chartContainer.
+    function zoomed() {
+        chartContainer.attr("transform", d3.event.transform.toString());
     }
-    function appendNewLinks(enter) {
-        const newLinks = enter.append("path")
-              .attr("class", config.links.class)
-              .attr("d", d3.linkVertical()
-                    .x(d => d.x)
-                    .y(d => d.y))
-              .attr("stroke", "white");
+    const zoom = d3.zoom().on('zoom', zoomed);
+
+    // This makes the svg node the listener for zoom events, so we can
+    // zoom from anywhere inside the chart.  (We don't use the
+    // chartContainer itself as the listener because g elements can
+    // only listen for events inside children that have a "fill"
+    // attribute; this would prevent zooming when the mouse is over a
+    // region of empty space.)
+    svg.call(zoom);
+
     
-        return newLinks;
+    // D3's tree layout assigns x and y coordinates to each node in
+    // the tree.  These coordinates will be referred to as the "tree"
+    // coordinates, since their maximum and minimum values determine
+    // the rectangle around (0,0) on which the tree (or trees) is laid
+    // out, and which therefore determine the size of the whole chart.
+    // In the tree coordinates, root is always at (0,0), and x and y
+    // can run arbitrarily far in either the negative or positive
+    // direction, depending on how many nodes are in the tree.
+    //  
+    // The "view box" coordinates, by contrast, represent the portion
+    // of the chart that is *visible* inside the svg element.  The
+    // view box has a fixed width and height, determined by
+    // config.width and config.height.  In the view box coordinates,
+    // (0,0) represents the upper left corner, and (config.width,
+    // config.height) the bottom right.
+    //
+    // The two scales returned by this function, xScale and yScale,
+    // map the tree coordinates for a group of nodes into the view box
+    // coordinates, and therefore determine which part of the chart is
+    // visible.  We wait to call this function until after all the
+    // nodes have been placed in the DOM, and can be gathered into a
+    // single selection, because the chart might include nodes
+    // outside the tree we are currently drawing.
+    function scalesFor(nodeSelection) {
+        // Since we are using the .nodeSize layout, which assigns x
+        // and y values to nodes in the tree coordinates based on how
+        // far apart the nodes should be, we do not know the extent of
+        // the tree coordinates in advance; their maximum and minimum
+        // depend on the number of nodes in the tree.  Thus, we need
+        // to calculate their extent based on all the data in a given
+        // selection of nodes before we can determine their domain.
+        const allNodePositions = nodeSelection.data();
+        const [ xmin, xmax ] = d3.extent(allNodePositions, d => d.x);
+        const [ ymin, ymax ] = d3.extent(allNodePositions, d => d.y);
+
+        const xScale = d3.scaleLinear()
+              .domain([ xmin, xmax ]) // tree coordinates
+              .range([0, config.width]); // view box coordinates
+        const yScale = d3.scaleLinear()
+              .domain([ ymin, ymax ])
+              .range([0, config.height]);
+
+        return [xScale, yScale];
     }
-    const links = svg.selectAll("g#links")
-            .attr("fill", "none")
-            .attr("stroke", "#555")
-            .attr("stroke-opacity", 0.4)
-            .attr("stroke-width", 1.5)
-          .selectAll(`.${config.links.class}`)
-          .data(root.links(), pathKey)
-          .join(
-            enter => appendNewLinks(enter)
-          );
+
+
+    // We now get down to the main business of drawing the chart.
+    // This includes:
+    // 1) Binding the tree's nodes to g elements (creating them as
+    // necessary, and handling root specially)
+    // 2) Binding the tree's edges to path elements (creating them as
+    // necessary)
     
-    // we handle the root node separately, to allow drawing multiple
-    // trees with the same root, coloring the root separately, etc.
+    // First, the NODES.  The chart container should have exactly one
+    // child with class 'nodes', which acts as a container for all the
+    // nodes on the chart.  (Again, we assume that has been setup by
+    // the caller.)  Each node will be represented as a group element
+    // inside this container.
+    const nodeContainer = chartContainer.selectAll("g.nodes")
+          .attr("stroke-linejoin", "round")
+          .attr("stroke-width", 3);
+
+    // To bind the tree data to DOM elements, we use the .id property
+    // as a key, which is carried over from the data hierarchy passed
+    // by the caller.
+    function nodeKey(d) { return d.data.id; }
+
+    // We start with the root node, which we handle separately, to
+    // allow drawing multiple trees with the same root, coloring it
+    // differently, and so on.  This function handles adding a group
+    // for the root node to the DOM if it has not yet been drawn.
     function appendRootNode(enter) {
         const rootNode = enter.append("g")
-              .attr("id", "root")
-              .attr("transform", d => `translate(${d.x},${d.y})`);
+              .attr("class", "root")
+              // root is always at (0,0) in tree coordinates:
+              .attr("transform", d => `translate(0,0)`);
 
         // root gets a special color
         rootNode.append("circle")
             .attr("r", config.nodes.radius)
             .attr("fill", config.nodes.colors.root);
     
-        // root text is drawn flat and to the right
+        // root label is drawn flat (no dy attribute) and to the right
         rootNode.append("text") 
-            .attr("x", 6)
+            .attr("x", config.nodes.labels.gap)
             .attr("text-anchor", "start")
             .text(d => d.data.name)
+            // this adds a white outline to the label, which makes it
+            // more readable at points where a label is laid over a
+            // link:
             .clone(true).lower()
             .attr("stroke", "white");
 
         return rootNode;
     }
-    const rootNode = svg
-          .selectAll("g#nodes")
-          .selectAll("g#root")
+
+    // This selects the DOM element for the root node and binds it to
+    // its data.
+    const rootNode = nodeContainer
+          .selectAll("g.root")
           .data([root], nodeKey)
-          .join( enter => appendRootNode(enter));
-    // TODO: root node click handler?
+          .join(enter => appendRootNode(enter));
     
-    function nodeKey(d) {
-        // a node is identified by the .id of its datum
-        return d.data.id;
-    }
+    // We now move on to the non-root nodes in the tree.  This
+    // function handles adding groups to the DOM for nodes which have
+    // not yet been drawn.  The main differences from the root node are:
+    //   - we initially position nodes at the same position as their parent,
+    //     and later transition them to their own position
+    //   - we set the label's angle and orientation based on the direction
+    //     in which we are drawing the tree
+    //   - we bind the node to a click handler provided in the config, which
+    //     can be used e.g. to expand or collapse the tree
     function appendNewNodes(enter) {
         
         const newNodes = enter.append("g")
-              .on("click", config.nodes.clickHandler)
               .attr("class", config.nodes.class)
               .attr("transform", d => {
-                  // start new nodes at the same position as the
-                  // parent (if they have one) so they 'grow out'
-                  // during the transition:
-                  const parent = d.ancestors()[1] || d;
+                  // start new nodes at the same position (in tree
+                  // coordinates) as their parent; they 'grow out' to
+                  // their own position during the transition:
+                  const parent = d.ancestors()[1];
                   return `translate(${parent.x},${parent.y})`;
-              });
+              })
+              .on("click", config.nodes.clickHandler);
         
         newNodes.append("circle")
             .attr("r", config.nodes.radius);
     
         newNodes.append("text")
-            .attr("dy", "0.35em")
-            .attr("x", flipScalar * 6)
+            .attr("dy", "0.35em") // TODO: move to config
+            .attr("x", flipScalar * config.nodes.labels.gap)
             .attr("text-anchor", config.flip ? "end" : "start")
             .text(d => d.data.name)
-            .attr("transform", "rotate(-30)")
+            .attr("transform", `rotate(${config.nodes.labels.angle})`)
+            // again, the white outline:
             .clone(true).lower()
             .attr("stroke", "white");
 
@@ -150,83 +310,152 @@ function D3VerticalTreeGraph(svgNode, data, config) {
 
     }
 
-    const nodes = svg.selectAll("g#nodes")
-          .attr("class", "nodes")
-          .attr("stroke-linejoin", "round")
-          .attr("stroke-width", 3)
+    // This selects the elements *for the nodes in the tree we are
+    // currently drawing* (creating them if necessary) based on the
+    // class specified for them in the config.  Restricting the
+    // selection to that class enables us to bind these elements to
+    // the tree's nodes, without disturbing any other nodes which have
+    // been drawn on the same chart as part of another tree.
+    const currentNodes = nodeContainer
           .selectAll(`.${config.nodes.class}`)
-        .data(root.descendants().slice(1), nodeKey)
-        .join(
-            enter => appendNewNodes(enter)
-        );
-    // it is important to re-bind the click handler for *all* nodes, since
-    // it can depend on the value of the rendering component's props,
-    // and those might have changed
-    nodes.on("click", config.nodes.clickHandler);
+          // the data here is all the descendants of root, excluding
+          // root itself:
+          .data(root.descendants().slice(1), nodeKey)
+          .join(enter => appendNewNodes(enter));
 
-    // all nodes are unselected by default; those which have
-    // been selected transition to a new color below
-    nodes.selectAll("circle")
+    // It is important to re-bind the click handler for *all* nodes in
+    // the tree, whether or not they were previously drawn, since the
+    // handler can depend on the value of a rendering component's
+    // props, which might have changed since the nodes were initially
+    // drawn.
+    currentNodes.on("click", config.nodes.clickHandler);
+
+    // All nodes receive the 'unselected' color by default; those
+    // which have been selected transition to a new color below.
+    currentNodes.selectAll("circle")
         .attr("fill", config.nodes.colors.unselected);
 
-    // Remove now-hidden nodes and edges:
-    nodes.exit().remove();
-    links.exit().remove();
 
-    // Transition all elements to their new positions:
-    function transitionNodes() {
-        nodes.transition() 
+    // At this point, elements have been created in the DOM for the
+    // nodes in the tree.  Thus, we can now create the scales for the
+    // chart based on a selection of all the nodes in the *chart*,
+    // including those outside the current tree.  This is important so
+    // we can ensures that the whole chart is visible before any
+    // zooming takes place.
+    const allNodes = nodeContainer.selectAll("g");
+    const [ xScale, yScale ] = scalesFor(allNodes);
+    
+    // We now move on to drawing the LINKS between the nodes.  Again,
+    // we need a key function for binding the data objects to DOM
+    // elements.  Since links in the original data do not have their
+    // own IDs, we use the IDs of their source and target nodes to
+    // uniquely identify them.
+    function pathKey(d) {
+        return `${d.source.data.id}to${d.target.data.id}`;
+    }
+
+    // This function adds new path elements to the DOM for links that
+    // have not yet been drawn.
+    function appendNewLinks(enter) {
+        const newLinks = enter.append("path")
+              // We mark incoming links with an 'incoming' class for
+              // the sake of re-selecting and transitioning them later
+              .classed(`incoming ${config.links.class}`, true)
+              // the "d" attribute on path elements tells the browser
+              // how to draw the path; it has it's own little
+              // mini-language, which is not very human readable.
+              // Fortunately, D3 can construct it for us.  The
+              // linkVertical() function constructs a smooth Bezier
+              // curve from the link's source point to its target
+              // point.
+              .attr("d", d3.linkVertical()
+                    .x(d => d.x)
+                    .y(d => d.y))
+              // we initially draw new links totally transparent, and then
+              // transition them to their target opacity below, so that
+              // we don't see links in the wrong place
+              .attr("stroke-opacity", 0.0);
+    
+        return newLinks;
+    }
+    // Again, we use a container for all the links on the chart; the
+    // caller must ensure it is there.  Since all the links look the
+    // same, we can set their styling on the container element, and it
+    // will be inherited.
+    const linkContainer = chartContainer.selectAll("g.links")
+          .attr("fill", "none")
+          .attr("stroke", config.links.color)
+          .attr("stroke-width", config.links.thickness);
+
+    // Here we select the DOM elements for the links in the tree we
+    // are currently drawing and bind them to data.  The data here
+    // consists of an array of objects provided by D3's tree
+    // layout. Each has a .source and .target property, which each
+    // point to a node in the tree data.
+    const currentLinks = linkContainer
+          .selectAll(`.${config.links.class}`)
+          .data(root.links(), pathKey)
+          .join(enter => appendNewLinks(enter));
+
+    // At this point, all the DOM elements have been drawn and bound
+    // to data, so we can remove DOM elements that are no longer bound
+    // to data and should not appear on the chart:
+    currentNodes.exit().remove();
+    currentLinks.exit().remove();
+
+    // Finally, we move on to TRANSITIONS.  These animate the chart so
+    // that the user can see what's been added, selected, etc. on the
+    // basis of previous interaction.
+
+    // This transition moves the node elements to their new positions.
+    // We apply it to all nodes in the current tree, because adding
+    // nodes to the tree can cause existing ones to shift around.
+    function moveNodes(nodeSelection) {
+        return nodeSelection.transition() 
             .duration(config.duration)
             .attr("transform", d => `translate(${d.x},${d.y})`);
-        nodes.filter(d => d.data.selected)
+    }
+    moveNodes(currentNodes);
+
+    // This transition colors nodes which have been marked as
+    // 'selected' by the user, as represented by the .selected
+    // property on nodes in the tree data and the original hierarchy.
+    function colorSelectedNodes(nodeSelection) {
+        return nodeSelection.filter(d => d.data.selected)
             .selectAll("circle")
             .transition()
             .duration(config.duration)
             .attr("fill", config.nodes.colors.selected);
     }
+    colorSelectedNodes(currentNodes);
 
-    function transitionLinks() {
-        return links.transition()
+    // This transition moves the link elements to their new positions.
+    // Again, we apply it to all links in the current tree, since
+    // adding nodes can cause existing links to shift around.
+    function moveLinks(linkSelection) {
+        return linkSelection.transition()
             .duration(config.duration)
             .attr("d", d3.linkVertical()
                   .x(d => d.x)
                   .y(d => d.y));
     }
-    function fadeInNewLinks() {
-        return links.transition() 
-            .duration(config.duration)
-            .attr("stroke", "#555");
-    }
-    function resetViewBox() {
-        // recompute the view box for the svg element so the browser
-        // can scale it automatically.  This *would* be super easy
-        // through the browser .getBBox() API, which works great from
-        // the console, but for whatever reason, it doesn't work here,
-        // in a setting where the node is initially rendered by React.
-        var xmin = 0, xmax= 0, ymin= 0, ymax= 0;
-        svg.selectAll("g#nodes").selectAll("g")
-            .each(d => {
-                xmin = Math.min(xmin, d.x);
-                ymin = Math.min(ymin, d.y);
-                xmax = Math.max(xmax, d.x);
-                ymax = Math.max(ymax, d.y);
-            });
-        const newWidth = 2 * Math.max(xmax, Math.abs(xmin)) + 2 * margin;
-        const newHeight = 2 * Math.max(ymax, Math.abs(ymin)) + 2 * margin;
-        // don't change the viewbox unless the graph has grown beyond the original boundaries:
-        const viewWidth = Math.max(config.width, newWidth);
-        const viewHeight = Math.max(config.canvasHeight, newHeight);
-        const viewXMin = Math.min(config.xmin, xmin + -1 * margin);
-        const viewYMin = Math.min(config.ymin, ymin + -1 * margin);
 
-        svg.attr("viewBox", `${viewXMin} ${viewYMin} ${viewWidth} ${viewHeight}`);
-        
+    // This transition fades in new links, from 0 (transparent) to
+    // their target opacity.
+    function fadeInNewLinks(linkSelection) {
+        return linkSelection
+            // remove the 'incoming' class before running the transition:
+            .attr("class", config.links.class)
+            .transition() 
+            .duration(config.duration)
+            .attr("stroke-opacity", config.links.opacity);
     }
-    transitionNodes();
-    // wait until links are moved to fade in the new links, because
-    // otherwise we see them in the wrong place:
-    transitionLinks().on("end", fadeInNewLinks);
-    resetViewBox();
+    const newLinks = linkContainer.selectAll("path.incoming");
+
+    // We wait to fade in the new links until all the links have been
+    // moved, so that we don't see new links in the wrong positions:
+    moveLinks(currentLinks).on("end", () => fadeInNewLinks(newLinks));
+
 }
 
 export class VerticalTreeGraph extends React.Component {
@@ -363,15 +592,21 @@ export class VerticalDoubleTreeGraph extends React.Component {
         // width attributes on the <svg>."
 
         // I am here using "Option 3" as described on that page.
+
+        // TODO: need to do away with element ids, here and above,
+        // because there might be more than one graph on a page.
+        
         const dim = this.initialDimensions();
         
         return (
             <div className="graph-container" style={{"max-height": dim.canvasHeight.toString() + 'px',
                                                      "max-width": dim.width.toString() + 'px',
                                                      "overflow": "scroll"}} >
-              <svg ref={this.svgRef} height="auto" viewBox={dim.viewBox.join(" ")}>
-                <g id="links"/>
-                <g id="nodes"/>
+              <svg ref={this.svgRef} height="auto" viewBox={`0 0 ${dim.width} ${dim.canvasHeight}`}>
+                <g className="chart-container">
+                  <g className="links"/>
+                  <g className="nodes"/>
+                </g>
               </svg>
             </div>
         );
