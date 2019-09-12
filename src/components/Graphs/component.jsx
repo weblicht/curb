@@ -147,7 +147,7 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     const svg = d3.select(svgNode)
           .style("max-width", "100%")
           .style("height", "auto")
-          .style("padding", margin.toString()+'px')
+          .style("margin", margin.toString()+'px')
           .attr("font-family", "sans-serif")
           .attr("font-size", 10);
 
@@ -158,74 +158,7 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     // translating the chartContainer scales and translates the whole
     // chart.
     const chartContainer = svg.select("g.chart-container");
-
-    // This creates the zoom behavior object and sets the zoomed()
-    // function as the handler for zoom events.  We use a very simple
-    // 'geometric' zoom for now, meaning every element scales the same
-    // amount with zoom level (so circles representing nodes, text,
-    // etc. will become very large as the user zooms in).  So all we
-    // need to do here is apply the zoom transform to the
-    // chartContainer.
-    function zoomed() {
-        chartContainer.attr("transform", d3.event.transform.toString());
-    }
-    const zoom = d3.zoom().on('zoom', zoomed);
-
-    // This makes the svg node the listener for zoom events, so we can
-    // zoom from anywhere inside the chart.  (We don't use the
-    // chartContainer itself as the listener because g elements can
-    // only listen for events inside children that have a "fill"
-    // attribute; this would prevent zooming when the mouse is over a
-    // region of empty space.)
-    svg.call(zoom);
-
     
-    // D3's tree layout assigns x and y coordinates to each node in
-    // the tree.  These coordinates will be referred to as the "tree"
-    // coordinates, since their maximum and minimum values determine
-    // the rectangle around (0,0) on which the tree (or trees) is laid
-    // out, and which therefore determine the size of the whole chart.
-    // In the tree coordinates, root is always at (0,0), and x and y
-    // can run arbitrarily far in either the negative or positive
-    // direction, depending on how many nodes are in the tree.
-    //  
-    // The "view box" coordinates, by contrast, represent the portion
-    // of the chart that is *visible* inside the svg element.  The
-    // view box has a fixed width and height, determined by
-    // config.width and config.height.  In the view box coordinates,
-    // (0,0) represents the upper left corner, and (config.width,
-    // config.height) the bottom right.
-    //
-    // The two scales returned by this function, xScale and yScale,
-    // map the tree coordinates for a group of nodes into the view box
-    // coordinates, and therefore determine which part of the chart is
-    // visible.  We wait to call this function until after all the
-    // nodes have been placed in the DOM, and can be gathered into a
-    // single selection, because the chart might include nodes
-    // outside the tree we are currently drawing.
-    function scalesFor(nodeSelection) {
-        // Since we are using the .nodeSize layout, which assigns x
-        // and y values to nodes in the tree coordinates based on how
-        // far apart the nodes should be, we do not know the extent of
-        // the tree coordinates in advance; their maximum and minimum
-        // depend on the number of nodes in the tree.  Thus, we need
-        // to calculate their extent based on all the data in a given
-        // selection of nodes before we can determine their domain.
-        const allNodePositions = nodeSelection.data();
-        const [ xmin, xmax ] = d3.extent(allNodePositions, d => d.x);
-        const [ ymin, ymax ] = d3.extent(allNodePositions, d => d.y);
-
-        const xScale = d3.scaleLinear()
-              .domain([ xmin, xmax ]) // tree coordinates
-              .range([0, config.width]); // view box coordinates
-        const yScale = d3.scaleLinear()
-              .domain([ ymin, ymax ])
-              .range([0, config.height]);
-
-        return [xScale, yScale];
-    }
-
-
     // We now get down to the main business of drawing the chart.
     // This includes:
     // 1) Binding the tree's nodes to g elements (creating them as
@@ -316,7 +249,7 @@ function D3VerticalTreeGraph(svgNode, data, config) {
              // line passes through the middle of the circle. 
             .attr("dy", config.nodes.labels.yOffset) 
             .attr("transform", `rotate(${config.nodes.labels.angle})`)
-            // again, the white outline:
+            // again, the white outline for readability:
             .clone(true).lower()
             .attr("stroke", "white");
 
@@ -345,14 +278,154 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     currentNodes.on("click", config.nodes.clickHandler);
 
     // At this point, elements have been created in the DOM for the
-    // nodes in the tree.  Thus, we can now create the scales for the
-    // chart based on a selection of all the nodes in the *chart*,
-    // including those outside the current tree.  This is important so
-    // we can ensures that the whole chart is visible before any
-    // zooming takes place.
-    const allNodes = nodeContainer.selectAll("g");
-    const [ xScale, yScale ] = scalesFor(allNodes);
-    
+    // nodes in the tree.  Thus, we can now set up ZOOMING based on a
+    // selection of all the nodes in the *chart*, including those
+    // outside the current tree.  This allows us to set an appropriate
+    // zoom that will show the entire chart, regardless of its size.
+
+    // D3's tree layout assigns x and y coordinates to each node in
+    // the tree.  These coordinates will be referred to as the "tree"
+    // coordinates, since their maximum and minimum values determine
+    // the rectangle around (0,0) on which the tree (or trees) is laid
+    // out, and which therefore determine the size of the whole chart.
+    // In the tree coordinates, root is always at (0,0), and x and y
+    // can run arbitrarily far in either the negative or positive
+    // direction, depending on how many nodes are in the tree.
+    //  
+    // The "view window" coordinates, by contrast, represent the portion
+    // of the chart that is *visible* inside the svg element.  The
+    // view window has a fixed width and height, determined by
+    // config.width and config.height.  In the view window coordinates,
+    // (0,0) represents the upper left corner, and (config.width,
+    // config.height) the bottom right.
+    //
+    // The following function calculates d3 scales that map the tree
+    // coordinates (for a given selection of nodes) into the view
+    // window coordinates.  These scales are then used to map a d3
+    // transform in tree coordinates, such as a zoom transform, into a
+    // transform in view window coordinates, which can be applied to
+    // the chart container.  Since this mapping is relatively
+    // complicated and needs to be performed in at least two places,
+    // we wrap it in a function and return that function.
+    function transformToFit(nodeSelection) {
+        return function (transform) {
+            // Since we are using the .nodeSize layout, which assigns
+            // x and y values to nodes in the tree coordinates based
+            // on how far apart the nodes should be, we do not know
+            // the extent of the tree coordinates in advance; their
+            // maximum and minimum depend on the number of nodes in
+            // the tree.  Thus, we need to calculate their extent
+            // based on all the data in a given selection of nodes
+            // before we can determine their domain.
+            const allNodePositions = nodeSelection.data();
+            const [ xmin, xmax ] = d3.extent(allNodePositions, d => d.x);
+            const [ ymin, ymax ] = d3.extent(allNodePositions, d => d.y);
+            
+            // Given the extents in the tree coordinates, we can
+            // derive scales that map the tree coordinates into the
+            // view window coordinates on each axis. These scales
+            // translate points in one coordinate system into the
+            // other.
+            const viewWidth = config.width - 2 * margin;
+            const xScale = d3.scaleLinear()
+                  // tree coordinates:
+                  .domain([ xmin, xmax ]) 
+                  // view window coordinates, margin-shifted:
+                  .range([margin, viewWidth + margin]); 
+            
+            const viewHeight = config.height - 2 * margin;
+            const yScale = d3.scaleLinear()
+                  .domain([ ymin, ymax ])
+                  .range([margin, viewHeight + margin]);
+            
+            // The given zoom transform includes not just a
+            // translation (a point (x,y), representing how far the
+            // chart is panned) but also a scaling factor (k, the zoom
+            // level).  In order to map the scaling factor from tree
+            // coordinates into view window coordinates, we need the
+            // ratios of the widths of the two intervals.
+            const treeWidth = xmax - xmin;
+            const xScalingFactor = viewWidth / treeWidth;
+
+            const treeHeight = ymax - ymin;
+            const yScalingFactor = viewHeight / treeHeight;
+
+            // The chart is almost always wider in one dimension than
+            // the other, and there is no guarantee that its
+            // dimensions match the aspect ratio of the view window.
+            // So we take the scaling factor k to be the *minimum* of
+            // the two ratios.  This ensures that the whole chart will
+            // scale to fit into the view window, along whichever
+            // dimension is greater.
+            const fitFactor = Math.min(xScalingFactor, yScalingFactor);
+            
+            // Finally, we apply the translation and the scaling
+            // factor to the given (tree-coordinate) zoom transform,
+            // returning a new transform in view window coordinates.
+            // The chart is translated so that the root of the tree
+            // appears in the middle of the view window, and scaled to
+            // fit into the window.
+            return transform
+                .translate(xScale(0), yScale(0))
+                .scale(fitFactor);
+        };
+    }
+
+    // We now create a new zoom behavior object with a handler for
+    // zoom events.  We use a very simple 'geometric' zoom for now,
+    // meaning every element scales the same amount with zoom level
+    // (so circles representing nodes, text, etc. will become very
+    // large as the user zooms in).  We want to accomplish two things
+    // with zooming:
+    // 1) automatically scaling the chart to fit the view window
+    //    when it is initially drawn, or when it is expands or
+    //    shrinks as a result of user interaction
+    // 2) allowing the user to explicitly zoom in or out
+
+    // However, it is jarring and annoying to have the zoom level
+    // automatically get reset to include the entire tree if you have
+    // already decided to zoom in on a portion of it.  Thus, whenever
+    // the user first zooms, we set an attribute on the chart
+    // container, and we do not automatically zoom to fit the chart if
+    // that attribute has been previously set.
+    if (!chartContainer.attr("data-user-set-zoom")) {
+        const allNodes = nodeContainer.selectAll("g");
+        const fitTransformer = transformToFit(allNodes);
+
+        // The zoom handler function.  This function is only called
+        // when the user explicitly zooms, so we set the
+        // "data-user-set-zoom" attribute on the chart container to
+        // indicate this.
+        function zoomed() {
+            chartContainer.attr("data-user-set-zoom", true);
+            const transform = fitTransformer(d3.event.transform);
+            chartContainer.attr("transform", transform.toString());
+        }
+
+        // This creates the zoom behavior object and sets the zoomed()
+        // function as its event handler.
+        const zoom = d3.zoom();
+        zoom.on('zoom', zoomed);
+
+        // This makes the svg node the listener for zoom events, so we
+        // can zoom from anywhere inside the chart.  (We don't use the
+        // chartContainer itself as the listener because g elements
+        // can only listen for events inside children that have a
+        // "fill" attribute; this would prevent zooming when the mouse
+        // is over a region of empty space.)
+        svg.call(zoom);
+
+        // Finally, we run the automatic scaling.  We take whatever
+        // transform is currently applied to the chart, which will be
+        // the identity transform if no zoom transform has previously
+        // been set, and map it to view window coordinates.  Then we
+        // transition the chart to the new transform.
+        const initialTransform = fitTransformer(d3.zoomTransform(svg.node()));
+        chartContainer.transition()
+            .duration(config.duration)
+            .attr("transform", initialTransform.toString());
+    }
+
     // We now move on to drawing the LINKS between the nodes.  Again,
     // we need a key function for binding the data objects to DOM
     // elements.  Since links in the original data do not have their
