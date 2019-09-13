@@ -1,7 +1,8 @@
 import { conRelsQueries } from './actions';
-import { selectConRels } from './selectors';
+import { selectConRels, selectHyponymsTree, selectHypernymsTree, selectHnymsTrees } from './selectors';
 import { DataList, DataTable, ListItem } from '../GenericDisplay/component';
-import { dataContainerFor } from '../DataContainer/component';
+import { VerticalTreeGraph, VerticalDoubleTreeGraph } from '../Graphs/component';
+import { dataContainerFor, treeContainerFor } from '../DataContainer/component';
 import { connectWithApiQuery } from '../APIWrapper';
 
 import React from 'react';
@@ -72,8 +73,62 @@ function ConRelsAsTable(props) {
 var ConRelsContainer = dataContainerFor('ConRels', selectConRels);
 ConRelsContainer = connectWithApiQuery(ConRelsContainer, conRelsQueries.queryActions);
 
+var HyponymsTree = treeContainerFor('Hyponyms', selectHyponymsTree);
+HyponymsTree = connectWithApiQuery(HyponymsTree, conRelsQueries.queryActions);
+
+var HypernymsTree = treeContainerFor('Hypernyms', selectHypernymsTree);
+HypernymsTree = connectWithApiQuery(HypernymsTree, conRelsQueries.queryActions);
+
+var HnymsTree = treeContainerFor('HyperAndHyponyms', selectHnymsTrees);
+HnymsTree = connectWithApiQuery(HnymsTree, conRelsQueries.queryActions);
+
+// Not a component; rather, it uses props to make a click handler
+// function, shared by the graph display components below
+function makeNodeClickHandler(props) {
+    return function expandOrCollapseNode(d) {
+        const synset = d.data; // the original node, 
+        const synsetId = synset.id;
+        if (synset.selected) {
+            props.unselect(synsetId);
+        } else {
+            props.select(synsetId);
+            props.query({ synsetId });
+        }
+    };
+}
+
+function HnymsGraph(props){
+    return (
+        <VerticalDoubleTreeGraph upwardTree={props.data.children[0]}
+                                 downwardTree={props.data.children[1]}
+                                 nodeClickHandler={makeNodeClickHandler(props)} />
+    );
+}
+
+function HyponymsGraph(props){
+    return (
+        <VerticalTreeGraph tree={props.data}
+                           flip={false}
+                           nodeClickHandler={makeNodeClickHandler(props)}/>
+    );
+}
+
+function HypernymsGraph(props){
+    return (
+        <VerticalTreeGraph tree={props.data}
+                           flip={true}
+                           nodeClickHandler={makeNodeClickHandler(props)}/>
+    );
+}
+
 export { ConRelsContainer,
          ConRelsAsList,
-         ConRelsAsTable
+         ConRelsAsTable,
+         HyponymsTree,
+         HypernymsTree,
+         HnymsTree,
+         HyponymsGraph,
+         HypernymsGraph,
+         HnymsGraph
        };
 

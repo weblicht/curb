@@ -43,6 +43,13 @@ export function withNullAsString(data, nullString = '') {
     }
 }
 
+// isVisible :: DOM Node -> Bool
+// Borrowed from jQuery; see https://stackoverflow.com/questions/19669786/check-if-element-is-visible-in-dom
+export function isVisible(elem) {
+    return !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length );
+}
+
+
 // makeByIdReducer
 //
 // Creates a reducer that can manage the state for a dynamic list of

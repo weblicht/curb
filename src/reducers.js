@@ -13,6 +13,7 @@ import { compounds } from './components/Compounds/reducers';
 import { conRels } from './components/ConRels/reducers';
 import { iliRecs } from './components/ILIRecords/reducers';
 import { frames } from './components/Frames/reducers';
+import { graphs } from './components/Graphs/reducers';
 import { lexExamples } from './components/LexExamples/reducers';
 import { lexRels } from './components/LexRels/reducers';
 import { lexUnits } from './components/LexUnits/reducers';
@@ -24,6 +25,7 @@ const fullAPIReducer = combineReducers({
     conRels,
     iliRecs,
     frames,
+    graphs,
     lexExamples,
     lexRels,
     lexUnits,
