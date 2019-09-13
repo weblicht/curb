@@ -629,51 +629,67 @@ VerticalTreeGraph.defaultProps = {
     nodes: DEFAULT_NODE_CONFIG,
 };
 
+// VerticalDoubleTreeGraph
+// Draws two vertical trees, one upward and one downward, from a common
+// root.  This component just renders a basic skeleton, and then hands
+// off the actual drawing to D3VerticalTreeGraph.
 export class VerticalDoubleTreeGraph extends React.Component {
 
     constructor(props) {
         super(props);
+        // We use a React ref to hand a DOM node reference down to d3
+        // See: https://reactjs.org/docs/refs-and-the-dom.html
         this.svgRef = React.createRef();
         this.drawTrees = this.drawTrees.bind(this);
-        this.initialDimenions = this.initialDimensions.bind(this);
+        this.dimensions = this.dimensions.bind(this);
     }
 
-    initialDimensions() {
+    dimensions() {
         const width = this.props.width;
         const canvasHeight = this.props.height;
         const treeHeight = canvasHeight / 2;
         const margin = this.props.margin;
-        const xmin = -0.5 * width;
-        const ymin = (-1 * treeHeight) + (-1 * margin);
-        const viewBox = [xmin, ymin, width, canvasHeight];
         return {
             width,
             canvasHeight,
             treeHeight,
             margin,
-            xmin,
-            ymin,
-            viewBox
         };
     }
 
     drawTrees() {
-        const dim = this.initialDimensions();
+        const dim = this.dimensions();
         const upwardConfig = {
             duration: this.props.duration,
-            nodes: {...this.props.nodes, clickHandler: this.props.nodeClickHandler, class: 'upward'},
-            links: {...this.props.links, class: 'upward'},
+            nodes: {
+                ...this.props.nodes,
+                clickHandler: this.props.nodeClickHandler,
+                class: 'upward'
+            },
+            links: {
+                ...this.props.links,
+                class: 'upward'
+            },
             flip: true,
             height: dim.treeHeight,
-            ...dim,
+            width: dim.width,
+            margin: dim.margin
         };
         const downwardConfig = {
             duration: this.props.duration,
-            nodes: {...this.props.nodes, clickHandler: this.props.nodeClickHandler, class: 'downward'},
-            links: {...this.props.links, class: 'downward'},
+            nodes: {
+                ...this.props.nodes,
+                clickHandler: this.props.nodeClickHandler,
+                class: 'downward'
+            },
+            links: {
+                ...this.props.links,
+                class: 'downward'
+            },
             flip: false,
             height: dim.treeHeight,
-            ...dim,
+            width: dim.width,
+            margin: dim.margin
         };
         D3VerticalTreeGraph(this.svgRef.current, this.props.upwardTree,
                             upwardConfig);
@@ -686,53 +702,16 @@ export class VerticalDoubleTreeGraph extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        // todo: this re-draws too often.
+        // TODO: this still re-draws too often, seemingly on every
+        // state change, and not just when we have new data.  Probably
+        // want to do a deep comparison.
         if (prevProps.data != this.props.data) {
             this.drawTrees();
         }
-    //    resetViewBox(this.svgRef.current);
     }
 
     render() {
-        // We need to wrap the SVG in a container div to get it to
-        // scale to fit the container.  The container must have
-        // (max-)width/(max-)height properties for this, and for the
-        // overflow property to work.  We then set the SVG viewBox
-        // using the width and height of the container.  See:
-        //   https://css-tricks.com/scale-svg/
-
-        // Especially important advice from that page re: the viewBox:
-        // "The width is the width in user coordinates/px units,
-        // within the SVG code, that should be *scaled to fill the
-        // width of the area* into which you're drawing your SVG (the
-        // viewport in SVG lingo)."
-
-        // and re: height and width attributes: "If you use inline SVG
-        // (i.e., <svg> directly in your HTML5 code), then the <svg>
-        // element *does double duty*, defining the image area within
-        // the web page as well as within the SVG. Any height or width
-        // you set for the SVG with CSS will override the height and
-        // width attributes on the <svg>."
-
-        // I am here using "Option 3" as described on that page.
-
-        // TODO: need to do away with element ids, here and above,
-        // because there might be more than one graph on a page.
-        
-        const dim = this.initialDimensions();
-        
-        return (
-            <div className="graph-container" style={{"max-height": dim.canvasHeight.toString() + 'px',
-                                                     "max-width": dim.width.toString() + 'px',
-                                                     "overflow": "scroll"}} >
-              <svg ref={this.svgRef} height="auto" viewBox={`0 0 ${dim.width} ${dim.canvasHeight}`}>
-                <g className="chart-container">
-                  <g className="links"/>
-                  <g className="nodes"/>
-                </g>
-              </svg>
-            </div>
-        );
+        return (<GraphSkeleton svgRef={this.svgRef} dimensions={this.dimensions()}/>);
     }
 
 }
@@ -745,4 +724,51 @@ VerticalDoubleTreeGraph.defaultProps = {
     links: DEFAULT_LINK_CONFIG
 };
 
+// GraphSkeleton
+// Renders the svg element and basic internal structure needed by
+// D3VerticalTreeGraph, as well as a container div to allow for
+// scaling to fit the browser window.
+function GraphSkeleton(props) {
+    // We need to wrap the SVG in a container div to get it to scale
+    // to fit the container.  The container must have (max-)width /
+    // (max-)height properties for this, and for the overflow property
+    // to work.  We then set the SVG viewBox using the width and
+    // height of the container.  See: https://css-tricks.com/scale-svg/
+    // I am here using "Option 3" as described on that page to
+    // scale the SVG to the available width.
+   
+    // Especially important advice from that page re: the viewBox:
+    // "The width is the width in user coordinates/px units,
+    // within the SVG code, that should be *scaled to fill the
+    // width of the area* into which you're drawing your SVG (the
+    // viewport in SVG lingo)."
+    
+    // and re: height and width attributes: "If you use inline SVG
+    // (i.e., <svg> directly in your HTML5 code), then the <svg>
+    // element *does double duty*, defining the image area within
+    // the web page as well as within the SVG. Any height or width
+    // you set for the SVG with CSS will override the height and
+    // width attributes on the <svg>."
 
+    // One other important feature: placing the links group before the
+    // node group ensures that the nodes are drawn on *top* of the
+    // links, and thus ensures that their labels will not be obscured
+    // by the links.
+    const dim = props.dimensions;
+    const svgRef = props.svgRef;
+
+    return (
+        <div className="graph-container"
+             style={{"max-height": dim.canvasHeight.toString() + "px",
+                     "max-width": dim.width.toString() + "px",
+                     "overflow": "scroll"}} >
+          <svg ref={svgRef} height="auto" viewBox={`0 0 ${dim.width} ${dim.canvasHeight}`}>
+            <g className="chart-container">
+              <g className="links"/>
+              <g className="nodes"/>
+            </g>
+          </svg>
+        </div>
+    );
+}
+ 
