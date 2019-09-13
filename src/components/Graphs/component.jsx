@@ -582,51 +582,72 @@ function D3VerticalTreeGraph(svgNode, data, config) {
 
 // COMPONENTS:
 
+// VerticalTreeGraph
+// Draws a single tree, either upward or downward, from a root node.
+// This component just renders a basic skeleton, and then hands off
+// the actual drawing to D3VerticalTreeGraph.
 export class VerticalTreeGraph extends React.Component {
 
     constructor(props) {
         super(props);
         this.svgRef = React.createRef();
+        this.drawTree = this.drawTree.bind(this);
+        this.dimensions = this.dimensions.bind(this);
+    }
+
+    dimensions() {
+        const width = this.props.width;
+        const canvasHeight = this.props.height;
+        const margin = this.props.margin;
+        return {
+            width,
+            canvasHeight,
+            margin,
+        };
+    }
+
+    drawTree() {
+        const dim = this.dimensions();
+        const config = {
+            duration: this.props.duration,
+            nodes: {
+                ...this.props.nodes,
+                clickHandler: this.props.nodeClickHandler,
+            },
+            links: {
+                ...this.props.links,
+            },
+            flip: this.props.flip,
+            height: dim.canvasHeight,
+            width: dim.width,
+            margin: dim.margin
+        };
+
+        D3VerticalTreeGraph(this.svgRef.current, this.props.data, config);
     }
 
     componentDidMount() {
-        // TODO: construct config instead of just passing props?
-        D3VerticalTreeGraph(this.svgRef.current, this.props.data, {...this.props});
+        this.drawTree();
     }
-
+    
     componentDidUpdate(prevProps) {
-        if (prevProps.data !== this.props.data) {
-            D3VerticalTreeGraph(this.svgRef.current, this.props.data, {...this.props});
+        if (prevProps.data != this.props.data) {
+            this.drawTree();
         }
     }
-
+    
     render() {
-        const width = this.props.width;
-        const flipScalar = this.props.flip ? -1 : 1;
-        const height = this.props.height;
-        const margin = this.props.margin;
-        const ymin = (this.props.flip? flipScalar * height : 0) + (-1 * flipScalar * margin);
-        const viewBox = `0 ${ymin} ${width} ${height}`;
-        
-        return (
-            // after long hours of searching and experimenting, I have
-            // learned that the svg element won't display properly unless
-            // at least one of the dimensions is constrained; there's a
-            // good explanation here: https://css-tricks.com/scale-svg/
-            <svg ref={this.svgRef} width={width} height={height} viewBox={viewBox}>
-              <g id="links"/>
-              <g id="nodes"/>
-            </svg>
-        );
+        return (<GraphSkeleton svgRef={this.svgRef} dimensions={this.dimensions()}/>);
     }
-
 }
 VerticalTreeGraph.defaultProps = {
+    flip: false,
     margin: DEFAULT_MARGIN,
     width: DEFAULT_WIDTH,
     height: DEFAULT_HEIGHT,
     duration: DEFAULT_TRANSITION_DURATION,
     nodes: DEFAULT_NODE_CONFIG,
+    links: DEFAULT_LINK_CONFIG
 };
 
 // VerticalDoubleTreeGraph
