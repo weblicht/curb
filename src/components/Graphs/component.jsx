@@ -530,6 +530,8 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     // This transition moves the node elements to their new positions.
     // We apply it to all nodes in the current tree, because adding
     // nodes to the tree can cause existing ones to shift around.
+    // It also "grows" nodes out from their parent position, where
+    // they are initially placed.
     function moveNodes(nodeSelection) {
         return nodeSelection.transition() 
             .duration(config.duration)
