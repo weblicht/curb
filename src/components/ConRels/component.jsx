@@ -1,7 +1,7 @@
 import { conRelsQueries } from './actions';
 import { selectConRels, selectHyponymsTree, selectHypernymsTree, selectHnymsTrees } from './selectors';
 import { DataList, DataTable, ListItem } from '../GenericDisplay/component';
-import { VerticalDoubleTreeGraph } from '../Graphs/component';
+import { VerticalTreeGraph, VerticalDoubleTreeGraph } from '../Graphs/component';
 import { dataContainerFor, treeContainerFor } from '../DataContainer/component';
 import { connectWithApiQuery } from '../APIWrapper';
 
@@ -82,10 +82,10 @@ HypernymsTree = connectWithApiQuery(HypernymsTree, conRelsQueries.queryActions);
 var HnymsTree = treeContainerFor('HyperAndHyponyms', selectHnymsTrees);
 HnymsTree = connectWithApiQuery(HnymsTree, conRelsQueries.queryActions);
 
-// TODO: where's the best place to request data for the tree that we
-// haven't yet fetched but the user has requested?
-function HnymsGraph(props){
-    function expandOrCollapseNode(d) {
+// Not a component; rather, it uses props to make a click handler
+// function, shared by the graph display components below
+function makeNodeClickHandler(props) {
+    return function expandOrCollapseNode(d) {
         const synset = d.data; // the original node, 
         const synsetId = synset.id;
         if (synset.selected) {
@@ -95,19 +95,40 @@ function HnymsGraph(props){
             props.query({ synsetId });
         }
     };
+}
 
-    return (<VerticalDoubleTreeGraph {...props}
-                                     upwardTree={props.data.children[0]}
-                                     downwardTree={props.data.children[1]}
-                                     nodeClickHandler={expandOrCollapseNode} />);
+function HnymsGraph(props){
+    return (
+        <VerticalDoubleTreeGraph upwardTree={props.data.children[0]}
+                                 downwardTree={props.data.children[1]}
+                                 nodeClickHandler={makeNodeClickHandler(props)} />
+    );
+}
+
+function HyponymsGraph(props){
+    return (
+        <VerticalTreeGraph tree={props.data}
+                           flip={false}
+                           nodeClickHandler={makeNodeClickHandler(props)}/>
+    );
+}
+
+function HypernymsGraph(props){
+    return (
+        <VerticalTreeGraph tree={props.data}
+                           flip={true}
+                           nodeClickHandler={makeNodeClickHandler(props)}/>
+    );
 }
 
 export { ConRelsContainer,
+         ConRelsAsList,
+         ConRelsAsTable,
          HyponymsTree,
          HypernymsTree,
          HnymsTree,
-         ConRelsAsList,
-         ConRelsAsTable,
+         HyponymsGraph,
+         HypernymsGraph,
          HnymsGraph
        };
 
