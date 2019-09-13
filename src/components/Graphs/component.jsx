@@ -588,6 +588,14 @@ function D3VerticalTreeGraph(svgNode, data, config) {
 // Draws a single tree, either upward or downward, from a root node.
 // This component just renders a basic skeleton, and then hands off
 // the actual drawing to D3VerticalTreeGraph.
+// props:
+//   tree: a tree object
+//   flip: if true, draw the tree upward, instead of downward
+//   nodeClickHandler: call back click handler; receives a node from
+//     upwardTree or downwardTree when the corresponding chart element
+//     is clicked
+//   ...and all the graph configuration props, documented in defaultProps
+//   below
 export class VerticalTreeGraph extends React.Component {
 
     constructor(props) {
@@ -625,7 +633,7 @@ export class VerticalTreeGraph extends React.Component {
             margin: dim.margin
         };
 
-        D3VerticalTreeGraph(this.svgRef.current, this.props.data, config);
+        D3VerticalTreeGraph(this.svgRef.current, this.props.tree, config);
     }
 
     componentDidMount() {
@@ -633,7 +641,7 @@ export class VerticalTreeGraph extends React.Component {
     }
     
     componentDidUpdate(prevProps) {
-        if (prevProps.data != this.props.data) {
+        if (prevProps.tree != this.props.tree) {
             this.drawTree();
         }
     }
@@ -656,6 +664,14 @@ VerticalTreeGraph.defaultProps = {
 // Draws two vertical trees, one upward and one downward, from a common
 // root.  This component just renders a basic skeleton, and then hands
 // off the actual drawing to D3VerticalTreeGraph.
+// props:
+//   upwardTree: a tree object
+//   downwardTree: a tree object
+//   nodeClickHandler: call back click handler; receives a node from
+//     upwardTree or downwardTree when the corresponding chart element
+//     is clicked
+//   ...and all the graph configuration props, documented in defaultProps
+//   below
 export class VerticalDoubleTreeGraph extends React.Component {
 
     constructor(props) {
