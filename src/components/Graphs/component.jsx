@@ -726,9 +726,11 @@ export class VerticalDoubleTreeGraph extends React.Component {
 
     componentDidUpdate(prevProps) {
         // TODO: this still re-draws too often, seemingly on every
-        // state change, and not just when we have new data.  Probably
-        // want to do a deep comparison.
-        if (prevProps.data != this.props.data) {
+        // state change, and not just when the data actually changes.
+        // May want to do a deep comparison if performance becomes a
+        // problem.
+        if (prevProps.upwardTree != this.props.upwardTree ||
+            prevProps.downwardTree != this.props.downwardTree) {
             this.drawTrees();
         }
     }
