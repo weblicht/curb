@@ -8,6 +8,46 @@ import * as d3 from 'd3';
 import { connect } from 'react-redux';
 import React from 'react';
 
+// *******************************************************************
+// READ THIS FIRST:
+// *******************************************************************
+//
+// The React components defined here are mere wrappers; all the actual
+// work is done in the D3VerticalTreeGraph function, which uses d3.js
+// to draw the charts.
+//
+// A word of warning is in order.  In the course of making this code
+// work, I have learned that d3 is a very powerful library, and it
+// provides a bunch of useful abstractions.  But its abstractions
+// encourage you to manipulate the DOM directly, which is a huge piece
+// of state.  They also encourage method chaining, which makes code
+// nicer to read, but harder to step through in a debugger.  And when
+// calling d3 from React, all of that hard-to-step-through DOM
+// manipulation is happening in an environment where someone else is
+// constantly re-rendering the DOM in the background.  Add
+// asynchronous transitions on top of that, and it becomes *very* hard
+// to think clearly about what's going on at any given moment.
+//
+// In short, here be dragons.  Your mental model of how this code
+// works is probably wrong.  (*Mine* is probably wrong.)
+// Understanding everything to the point where I could get it working
+// was *way* more effort than I expected; there were many, many times
+// when something completely unexpected started happening, even after
+// making changes that seemed trivial, and it took me hours to figure
+// out why.  If you must work on this code, go very slowly: make the
+// smallest change you can imagine, and then thoroughly test it before
+// you make any others.
+//
+// And please, please, PLEASE: do NOT commit any changes to the code
+// in this file, and especially not to the functions which call d3,
+// unless you have documented very clearly and thoroughly both *what*
+// your code is doing and *why*.  d3 makes it very easy to write code
+// which appears to work right now, but will be difficult for someone
+// else to understand, and therefore difficult to maintain later.
+// Resist that temptation, for the sake of your sanity, and mine.
+
+// Without further ado, here are the CONSTANTS:
+
 // Layout sizing:
 const DEFAULT_WIDTH = 1280;
 const DEFAULT_HEIGHT = 800;
@@ -30,13 +70,15 @@ const DEFAULT_NODE_COLORS = {
     root: 'pink'
 };
 const DEFAULT_NODE_CLASS = 'node';
-// What matters here is the *ratio* of the x and y separation values,
-// which determines how quickly the tree "spreads out" in one
-// dimension relative to the other when laid out. These values seems
-// to provide a reasonable default for hyper/hyponym trees drawn in a
-// desktop browser; YMMV:
+
+// Node separation for layout.  What matters here is the *ratio* of
+// the x and y separation values, which determines how quickly the
+// tree "spreads out" in one dimension relative to the other when laid
+// out. These values seem to provide a reasonable default for
+// hyper/hyponym trees drawn in a desktop browser; YMMV:
 const DEFAULT_NODE_SEP = [DEFAULT_WIDTH / 10,
                           DEFAULT_HEIGHT / 8];
+
 const DEFAULT_NODE_LABEL_GAP = 6;
 const DEFAULT_NODE_LABEL_ANGLE = -30;
 const DEFAULT_NODE_LABEL_YOFFSET = "0.35em";
@@ -66,6 +108,7 @@ const DEFAULT_LINK_CONFIG = {
     opacity: DEFAULT_LINK_OPACITY 
 };
 
+// D3VerticalTreeGraph starts here - heed the notice at the top of this file!
 // params:
 //   svgNode :: React ref, a reference to the svg DOM node where the graph should be drawn
 //     The DOM node should already have children with the following structure:
@@ -86,7 +129,7 @@ const DEFAULT_LINK_CONFIG = {
 //     nodes :: Object, with the following properties:
 //       sep :: [Integer, Integer], the width and height between nodes
 //       class :: String
-//       clickHandler :: event handler function; given the clicked tree node as argument
+//       clickHandler :: event handler function; it will be passed the clicked tree node as argument
 //       colors :: Object, with the following properties:
 //         selected
 //         unselected
@@ -99,8 +142,6 @@ const DEFAULT_LINK_CONFIG = {
 //       color :: String
 //       thickness :: Number
 //       opacity :: Number
-//       
-//       
 //    
 function D3VerticalTreeGraph(svgNode, data, config) {
 
@@ -537,7 +578,9 @@ function D3VerticalTreeGraph(svgNode, data, config) {
             .attr("stroke-opacity", config.links.opacity);
     }
     moveAndFadeInLinks(currentLinks);
-}
+} 
+
+// COMPONENTS:
 
 export class VerticalTreeGraph extends React.Component {
 
