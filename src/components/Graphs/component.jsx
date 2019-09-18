@@ -1,11 +1,6 @@
-import { doGraphRetrieval } from './actions';
-import { selectD3Data } from './selectors';
-import { dataContainerFor } from '../DataContainer/component';
-import { connectWithApiQuery } from '../APIWrapper';
 import { isVisible } from '../../helpers';
 
 import * as d3 from 'd3';
-import { connect } from 'react-redux';
 import React from 'react';
 
 // *******************************************************************
