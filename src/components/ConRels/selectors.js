@@ -52,10 +52,27 @@ function selectConRelsTree(globalState, props, relation) {
     // construct and return the tree from the root node
     try {
 
-        // TODO: how can we get the orthforms to generate a name for
-        // the root synset node?  these are not included in the
-        // conrels data
-        var rootNode = nodeFor(rootSynsetId, []);
+        // This is a best-faith effort to find a synset object
+        // corresponding to the given ID, so that we can display a
+        // label for the root node.  There's no guarantee that it will
+        // find anything, though, because there need not have been
+        // any previous search which returned a result with a synset
+        // with the given ID.
+
+        // TODO: fetch this synset if we don't yet have (synset) data
+        // for it.  Also, there really should be a better place in the
+        // Redux store for synset objects than inside the state for a search
+        // box.  
+        var rootOrthForms = [];
+        for (var searchBoxState of Object.values(globalState.synsetSearchBoxes.byId)) {
+            var rootSynset = searchBoxState.synsets.find(synset => synset.id === rootSynsetId);
+            if (rootSynset) {
+                rootOrthForms = rootSynset.orthForms;
+                break;
+            }
+        }
+
+        const rootNode = nodeFor(rootSynsetId, rootOrthForms);
 
         return rootNode;
     }
