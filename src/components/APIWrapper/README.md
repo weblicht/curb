@@ -145,6 +145,18 @@ following arguments:
 return value to replace the original component definition.  See the
 recipe below for more details.
 
+A component created with `connectWithApiQuery` automatically queries
+the API when the component first mounts, with the request parameters
+given as the `queryParams` prop, or the return value of the
+`propsToParams` function.
+
+The component also receives one additional `query` prop.  This is a
+function which exposes the `doQuery` action creator, so that you can
+make API queries elsewhere in your component's lifecycle.  Calling
+this function with a request parameters object results in a new API
+query.  You can use this to e.g. fetch additional data into a data
+container based on user interactions.
+
 ## Recipe: component connected to API
 
 To write a new component that transparently loads data via the API:
@@ -155,7 +167,9 @@ To write a new component that transparently loads data via the API:
 
   1. Define the component as you normally would in `component.jsx`.
      To hook up to the API, your component will need a `queryParams`
-     prop that defines the request parameters for fetching the data.
+     prop that defines the request parameters for fetching the data,
+     or a `propsToParams` function that creates such an object from
+     the component's other props (see above).
 
   1. Define action types in `actions.js` for the type of data loaded
      from the API using the `makeQueryActions` helper, e.g.,
@@ -210,11 +224,10 @@ To write a new component that transparently loads data via the API:
      ```
      Don't forget to export the wrapped component.
 
-  1. Finally, wherever you actually *instantiate* the component,
+  1. Wherever you actually *instantiate* the component,
      remember to pass the correct `queryParams` in addition to your
      other props, if you did not pass a `propsToParams` function to connectWithApiQuery.
      ```
      <LexUnitsContainer queryParams={{ synsetId: someId }} .../>
      ```
-     
      
