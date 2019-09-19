@@ -6,5 +6,6 @@
 export class InternalError {
     constructor(msg) {
         this.message = msg;
+        console.error(msg);
     }
 }
