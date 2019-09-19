@@ -795,9 +795,9 @@ function GraphSkeleton(props) {
 
     return (
         <div className="graph-container"
-             style={{"max-height": dim.canvasHeight.toString() + "px",
-                     "max-width": dim.width.toString() + "px",
-                     "overflow": "scroll"}} >
+             style={{maxHeight: dim.canvasHeight.toString() + "px",
+                     maxWidth: dim.width.toString() + "px",
+                     overflow: "scroll"}} >
           <svg ref={svgRef} height="auto" viewBox={`0 0 ${dim.width} ${dim.canvasHeight}`}>
             <g className="chart-container">
               <g className="links"/>
