@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Common React components for GermaNet-related web UIs",
   "main": "dist/germanet-common.js",
-  "author": "",
+  "author": "Richard Lawrence",
+  "license": "LGPL-3.0-or-later",
   "scripts": {
     "develop": "webpack --mode development",
     "build": "webpack --mode production"
