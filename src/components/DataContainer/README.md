@@ -21,9 +21,13 @@ A data container handles three functions:
 
 ## Component
 
-The `DataContainer` component is implemented as a higher-order
-component called `dataContainerFor`.  This function accepts three
-arguments:
+Data containers are implemented as higher-order components (i.e.,
+functions that *return* a React component).  There are two such
+components defined here: `dataContainerFor`, which creates a data
+container where data is stored as an *array*; and `treeContainerFor`,
+which creates a data container where data is stored as a *tree*.
+
+Both of these functions accept three arguments:
 
   - a name for the type of data in the container
   - a Redux selector function for that data, 
@@ -32,8 +36,9 @@ arguments:
 The third argument is optional; if not supplied, it will default to a
 function that looks for an `.id` field on data objects.
 
-`dataContainerFor` returns a component that you can instantiate to be
-a container for a certain type of data.  You call it like this:
+These functions return components that you can instantiate to be a
+container for a certain type of data.  For example, you call
+`dataContainerFor` like this:
 
 ```
 import { components } from 'germanet-common';
@@ -66,6 +71,15 @@ synsets as an HTML list.
 
 ## Conventions
 
+### Container types
+
+There are at present two types of containers, representing two common
+formats for a set of data objects: *row* containers (created by
+`dataContainerFor`) and *tree* containers (created by
+`treeContainerFor`).  The two types of container provide the same
+props interface, but differ in the data format that they expect from
+their selector functions and provide to their rendering components.
+
 ### Selector functions
 
 The data objects in a data container are loaded into its `data` prop
@@ -75,9 +89,22 @@ accept two arguments:
   1. `globalState`, the global state in the Redux store
   2. `ownProps`, the props of the data container component instance
   
-It should return an array of data objects.  If the data is not yet in
-the Redux store (e.g., if it has not yet been fetched from the API),
-the selection function should return `undefined`.
+It should return the data objects in an appropriate format for the
+container, namely:
+
+  - as an array, for a row container
+  - as a tree, for a tree container
+  
+A tree is a recursive data object, consisting of *nodes* representing
+the data objects in the container.  Each node must be uniquely
+identifiable by the `idFor` function, and must have at least the
+`children` property, which should be a (possibly empty) array of
+nodes.  A selector function for a tree data container should return
+the root node object.
+
+For both types of containers, if the data is not yet in the Redux
+store (e.g., if it has not yet been fetched from the API), the
+selector function should return `undefined`.
 
 ### "Selecting" and "Choosing" data objects
 
@@ -131,8 +158,8 @@ the value of its `displayAs` prop.  This component is responsible for
 rendering the data container in a suitable way.
 
 The rendering component will receive all the props from the data
-container (except `containerId`), including the data and, if the container has
-a `containerId`, the control props.
+container (except `containerId`), including the data and, if the
+container has a `containerId`, the control props.
 
 Several components in the [GenericDisplay](../GenericDisplay)
 directory are designed to work well with data containers, and make it
