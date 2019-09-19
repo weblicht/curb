@@ -463,7 +463,7 @@ export function Select(props) {
 //    data :: [ Object ]
 //       These objects represent the tabs to be displayed.
 //       The objects should have the following fields:
-//          id :: String, an identifier for the tab and its associated pane
+//          id, an identifier for the tab and its associated pane
 //          chosen :: Bool, whether the tab is chosen (i.e., open)
 //          buttonText ::  String, the text for the tab button
 //          buttonExtras, extra classes for the tab button
@@ -471,7 +471,7 @@ export function Select(props) {
 //          contentExtras, extra classes for the tab pane
 //       It is the caller's responsibility to ensure that exactly one object
 //       has .chosen === true.  No tab will be chosen by default.
-//    choose :: String -> (anything), a callback to call with the tab ID
+//    choose, a callback to call with the data object's ID
 //       when a tab button is clicked
 //    tabsClassName (optional), className for tab buttons container
 //       Defaults to 'nav-tabs'. See Bootstrap documentation for other useful options: 
@@ -482,10 +482,11 @@ export function Select(props) {
 export function TabbedPanes(props) {
     if (!(props.data && props.data.length)) return null;
 
-    function activateTab(e) {
-        e.preventDefault();
-        const itemId = e.target.getAttribute('data-id');
-        props.choose(itemId);
+    function activateTabFor(itemId) {
+        return function(e) {
+            e.preventDefault();
+            props.choose(itemId);
+        };
     }
 
     return (
@@ -500,12 +501,11 @@ export function TabbedPanes(props) {
                                              item.buttonExtras
                                             )}
                        id={item.id + "-tab"}
-                       data-id={item.id}
                        href={"#" + item.id}
                        role="tab"
                        aria-controls={item.id + '-pane'}
                        aria-selected={item.chosen}
-                       onClick={activateTab}>
+                       onClick={activateTabFor(item.id)}>
                       {item.buttonText} 
                     </a>
                 
