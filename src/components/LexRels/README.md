@@ -37,7 +37,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ### Example
 
 ```
-import { components } from 'germanet-common';
+import { components } from '@sfstuebingen/germanet-common';
 const { LexRelsContainer, LexRelsAsTable } = components;
 
 <LexRelsContainer id='theLexRels'

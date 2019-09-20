@@ -24,7 +24,7 @@ corresponding search box.
 ### Example
 
 ```
-import { components } from 'germanet-common';
+import { components } from '@sfstuebingen/germanet-common';
 const { SynsetSearchBox, SynsetSearchResults, SynsetsAsTable } = components;
 
 <SynsetSearchBox id="mainSearch" />
@@ -36,7 +36,7 @@ const { SynsetSearchBox, SynsetSearchResults, SynsetsAsTable } = components;
 To use these components, you also need to install the corresponding
 reducers in your root Redux reducer: 
 ```javascript
-import { reducers } from 'germanet-common';
+import { reducers } from '@sfstuebingen/germanet-common';
 const { synsetSearchBoxes, dataContainers } = reducers;
 
 combineReducers({

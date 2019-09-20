@@ -63,7 +63,7 @@ projects at the SfS, this is probably `webui`.)
 To make the library useful, you will need to install several reducers
 from this library into your root Redux reducer:
 ```
-import { reducers } from 'germanet-common';
+import { reducers } from '@sfstuebingen/germanet-common';
 
 const { synsetSearchBoxes, dataContainers, apiData } = reducers; // e.g.
 
@@ -78,7 +78,7 @@ const rootReducer = {
 
 Then you can import the components and use them in your own code:
 ```
-import { components } from 'germanet-common';
+import { components } from '@sfstuebingen/germanet-common';
 
 const { LexUnitsContainer, LexUnitsAsList } = components; // e.g.
 

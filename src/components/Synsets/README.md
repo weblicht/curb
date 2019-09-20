@@ -51,6 +51,6 @@ components as the `data` prop.
 ### Example
 
 ```
-import { components } from 'germanet-common';
+import { components } from '@sfstuebingen/germanet-common';
 const { SynsetsContainer, SynsetsAsTable } = components;
 ```
