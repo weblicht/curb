@@ -9,7 +9,7 @@ implementing the following pattern:
   3. Rendering the data in a container into a UI (see [GenericDisplay](./src/components/GenericDisplay))
 
 It also implements this pattern for the different types of data
-objects in the GermaNet API, namely
+objects in the [GermaNet](http://www.sfs.uni-tuebingen.de/GermaNet/) API, namely
 
   - synsets (see [Synsets](./src/components/Synset))
   - conceptual relations (see [ConRels](./src/components/ConRels))
@@ -26,6 +26,13 @@ code needed to render GermaNet data for their own specific use case,
 without having to define all the boilerplate for fetching that data
 and managing it.
 
+**Note**: if you are reading this README on NPM, the relative links on
+this page will be broken, because they are designed to work with our
+internal GitLab instance at the
+[Seminar für Sprachwissenschaft](https://uni-tuebingen.de/fakultaeten/philosophische-fakultaet/fachbereiche/neuphilologie/seminar-fuer-sprachwissenschaft/arbeitsbereiche/allg-sprachwissenschaft-computerlinguistik/).
+You can read the complete source and documentation by installing the
+package.
+
 ## Prerequisites
 
 When you use these components from another project, that project
@@ -40,32 +47,23 @@ should have the following NPM packages installed:
 These are listed as *peer dependencies* in the `package.json` file.
 This means that this package relies on them, but does not bundle them
 itself.  This is because consuming applications (for instance, any
-project based on the
-[reactprojecttemplate](https://weblicht.sfs.uni-tuebingen.de/gitlab/clarind/misc/reactprojecttemplate)
-repository) are likely to depend on these packages already.
+project based on the SfS' `reactprojecttemplate` repository) are
+likely to depend on these packages already.
 
 ## Use
 
-**Note**: For now, only local development is possible, but once this
-package is stable it should be published to NPM; these instructions
-will then change.
-
-Clone the project and build the library:
+The library is available as a package on NPM in the `@sfstuebingen`
+scope.  To install the package, run
 ```
-npm run build 
+npm install --save @sfstuebingen/germanet-common
 ```
-This should create a bundle at `dist/germanet-common.js`.
-
-Then, to use this library from within another project:
-```
-cd some/other/repo/webui
-npm install path/to/this/repo
-```
+in the directory containing your node_modules directory. (For internal
+projects at the SfS, this is probably `webui`.) 
 
 To make the library useful, you will need to install several reducers
 from this library into your root Redux reducer:
 ```
-import { reducers } from 'germanet-common';
+import { reducers } from '@sfstuebingen/germanet-common';
 
 const { synsetSearchBoxes, dataContainers, apiData } = reducers; // e.g.
 
@@ -80,7 +78,7 @@ const rootReducer = {
 
 Then you can import the components and use them in your own code:
 ```
-import { components } from 'germanet-common';
+import { components } from '@sfstuebingen/germanet-common';
 
 const { LexUnitsContainer, LexUnitsAsList } = components; // e.g.
 

@@ -60,7 +60,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ### Example
 
 ```
-import { components } from 'germanet-common';
+import { components } from '@sfstuebingen/germanet-common';
 const { ConRelsContainer, ConRelsAsTable } = components;
 
 <ConRelsContainer id='theConRels'

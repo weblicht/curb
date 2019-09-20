@@ -41,7 +41,7 @@ container for a certain type of data.  For example, you call
 `dataContainerFor` like this:
 
 ```
-import { components } from 'germanet-common';
+import { components } from '@sfstuebingen/germanet-common';
 const { dataContainerFor } = components;
 
 const SynsetsContainer = dataContainerFor('Synsets', selectSynsets);
@@ -175,7 +175,7 @@ renders the synsets in the container as an ordered list of checkboxes,
 where toggling a checkbox will toggle the highlighting of the item in
 the list:
 ```
-import { components } from 'germanet-common';
+import { components } from '@sfstuebingen/germanet-common';
 const { Checkbox, List, ListItem } = components;
 
 function SynsetsAsHighlightableList(props) {
@@ -229,7 +229,7 @@ to the data container, which will pass it on to `SynsetsAsList`.
 Here's what that looks like:
 
 ```
-import { components } from 'germanet-common';
+import { components } from '@sfstuebingen/germanet-common';
 const { Checkbox, ListItem, SynsetsAsList } = components;
 
 function HighlightableSynset(props) {

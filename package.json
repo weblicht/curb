@@ -1,12 +1,15 @@
 {
-  "name": "germanet-common",
+  "name": "@sfstuebingen/germanet-common",
+  "homepage": "http://www.sfs.uni-tuebingen.de/GermaNet/",
   "version": "1.0.0",
   "description": "Common React components for GermaNet-related web UIs",
   "main": "dist/germanet-common.js",
-  "author": "",
+  "author": "Richard Lawrence",
+  "license": "LGPL-3.0-or-later",
   "scripts": {
     "develop": "webpack --mode development",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -34,5 +37,10 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "d3": "^5.11.0"
-  }
+  },
+  "keywords": [
+    "germanet",
+    "wordnet",
+    "components"
+  ]
 }
