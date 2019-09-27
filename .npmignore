@@ -1,6 +1,5 @@
-# NOTE: this file should be the same as .npmignore, *except* that the
-# following built component definitions should *not* appear in .npmignore:
-components/*/component.js
+# NOTE: This file should be a copy of .gitignore, *EXCEPT* that it
+# should not ignore the built component.js files
 
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
