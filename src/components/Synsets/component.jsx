@@ -93,34 +93,32 @@ function SynsetAsOption(props) {
 // function/component for formatting the data in individual table
 // cells, but for now, synsets are the only data type that needs
 // special treatment at the level of individual cells, so I'm just
-// providing a custom row component instead of using DataTableRow
+// providing a custom row component 
 function SynsetAsTableRow(props) {
-    const displayFields = props.displayFields || SYNSET_ALL_FIELDS;
-    return (
-        <tr key={props.data.id} id={props.data.id}>
-
-        {displayFields.map(
+    const displayFields = props.displayFields;
+    const displayData = Object.fromEntries(
+        displayFields.map(
             function (field) {
                 switch (field) {
                 case 'wordCategory': {
-                    return <td>{props.data.wordCategory.wordCategory}</td>;
+                    return [field, props.data.wordCategory.wordCategory];
                 }
                 case 'wordClass': {
-                    return <td>{props.data.wordClass.wordClass}</td>;
+                    return [field, props.data.wordClass.wordClass];
                 }
                 case 'orthForms': {
-                    return <td><Delimited data={props.data.orthForms} /></td>;
+                    return [field, props.data.orthForms.filter(o => o !== null).join(', ')];
                 }
                 case 'wiktionaryParaphrases': {
-                    return <td><Delimited data={props.data[field]} delimiter='; '/></td>;
+                    return [field, props.data.wiktionaryParaphrases.filter(o => o !== null).join('; ')];
                 }
                 default:
-                    return <td>{withNullAsString( props.data[field] )}</td>;
+                    return [field, withNullAsString(props.data[field])];
                 }
-            }
-        )
-        }
-        </tr>
+            }));
+
+    return (
+        <DataTableRow {...props} displayFields={displayFields} data={displayData} />
     );
 }
 
