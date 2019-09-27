@@ -3,6 +3,7 @@
   "homepage": "http://www.sfs.uni-tuebingen.de/GermaNet/",
   "version": "1.0.1",
   "description": "Common React components for GermaNet-related web UIs",
+  "module": "index.js",
   "author": "Richard Lawrence",
   "license": "LGPL-3.0-or-later",
   "scripts": {
