@@ -34,8 +34,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ### Example
 
 ```
-import { components } from '@sfstuebingen/germanet-common';
-const { ExamplesContainer, ExamplesAsDefList } = components;
+import { ExamplesContainer, ExamplesAsDefList } from '@sfstuebingen/germanet-common/components';
 
 <ExamplesContainer id='theExamples'
                    queryParams={{ lexUnitId: someLexUnit.id }}

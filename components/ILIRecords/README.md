@@ -40,8 +40,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ### Example
 
 ```
-import { components } from '@sfstuebingen/germanet-common';
-const { ILIRecordsContainer, ILIRecordsAsDefList } = components;
+import { ILIRecordsContainer, ILIRecordsAsDefList } from '@sfstuebingen/germanet-common/components';
 
 <ILIRecordsContainer id='theILIRecords'
                      queryParams={{ lexUnitId: someLexUnit.id }}

@@ -33,8 +33,7 @@ the code for complete documentation.
 ### Example
 
 ```
-import { components } from '@sfstuebingen/germanet-common';
-const { VerticalTreeGraph } = components;
+import { VerticalTreeGraph } from '@sfstuebingen/germanet-common/components';
 
 <VerticalTreeGraph tree={someTree} flip={true} />
 ```

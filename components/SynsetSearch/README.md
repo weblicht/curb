@@ -24,8 +24,7 @@ corresponding search box.
 ### Example
 
 ```
-import { components } from '@sfstuebingen/germanet-common';
-const { SynsetSearchBox, SynsetSearchResults, SynsetsAsTable } = components;
+import { SynsetSearchBox, SynsetSearchResults, SynsetsAsTable } from '@sfstuebingen/germanet-common/components';
 
 <SynsetSearchBox id="mainSearch" />
 <SynsetSearchResults id="mainSearchResults" source="mainSearch" displayAs={SynsetsAsTable}/>

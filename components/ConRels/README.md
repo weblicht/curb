@@ -60,8 +60,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ### Example
 
 ```
-import { components } from '@sfstuebingen/germanet-common';
-const { ConRelsContainer, ConRelsAsTable } = components;
+import { ConRelsContainer, ConRelsAsTable } from '@sfstuebingen/germanet-common/components';
 
 <ConRelsContainer id='theConRels'
                   queryParams={{ synsetId: someSynsetId }}

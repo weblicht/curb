@@ -30,8 +30,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ### Example
 
 ```
-import { components } from '@sfstuebingen/germanet-common';
-const { FramesContainer, FramesAsList } = components;
+import { FramesContainer, FramesAsList } from '@sfstuebingen/germanet-common/components';
 
 <FramesContainer queryParams={{ lexUnitId: someLexUnit.id }}
                  displayAs={FramesAsList}/>

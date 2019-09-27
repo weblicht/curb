@@ -37,8 +37,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ### Example
 
 ```
-import { components } from '@sfstuebingen/germanet-common';
-const { LexRelsContainer, LexRelsAsTable } = components;
+import { LexRelsContainer, LexRelsAsTable } from '@sfstuebingen/germanet-common/components';
 
 <LexRelsContainer id='theLexRels'
                   queryParams={{ lexUnitId: someLexUnit.id }}

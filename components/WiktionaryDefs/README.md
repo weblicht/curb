@@ -42,8 +42,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ### Example
 
 ```
-import { components } from '@sfstuebingen/germanet-common';
-const { WiktionaryDefsContainer, WiktDefsAsDefList } = components;
+import { WiktionaryDefsContainer, WiktDefsAsDefList } from '@sfstuebingen/germanet-common/components';
 
 <WiktionaryDefsContainer id='theWiktionaryDefs'
                          queryParams={{ lexUnitId: someLexUnit.id }}
