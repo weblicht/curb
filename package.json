@@ -3,28 +3,19 @@
   "homepage": "http://www.sfs.uni-tuebingen.de/GermaNet/",
   "version": "1.0.1",
   "description": "Common React components for GermaNet-related web UIs",
-  "main": "dist/germanet-common.js",
   "author": "Richard Lawrence",
   "license": "LGPL-3.0-or-later",
-  "scripts": {
-    "develop": "webpack --mode development",
-    "build": "webpack --mode production",
-    "prepublishOnly": "npm run build"
-  },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
     "axios": "^0.19.0",
-    "babel-loader": "^8.0.6",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-redux": "^7.1.0",
     "redux": "^4.0.1",
-    "seamless-immutable": "^7.1.4",
-    "webpack": "^4.35.2",
-    "webpack-cli": "^3.3.5"
+    "seamless-immutable": "^7.1.4"
   },
   "peerDependencies": {
     "axios": "^0.19.0",
