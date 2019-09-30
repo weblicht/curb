@@ -45,11 +45,13 @@ export const ILIREC_ALL_FIELDS = ILIREC_FIELD_MAP.map(entry => entry[0]);
 
 // props:
 //   data :: DataObject, an ilirec 
+// className and extras props, if given, will be passed on to ListItem
 function ILIRecordAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
         <ListItem id={props.data.iliId}
-                  extras="ilirecs-detail">
+                  className={props.className}
+                  extras={props.extras}>
           <em>{props.data.englishEquivalent}</em> ({props.data.relation.replace('_', ' ')}) &ndash; {props.data.pwn20Paraphrase}  
         </ListItem>
     );
@@ -73,14 +75,19 @@ function ILIRecordsAsDefList(props) {
 //      Defaults to IlirecAsListItem
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataList:
+//   className, extras, itemClassName, itemExtras   
 function ILIRecordsAsList(props) {
     return (
         <DataList data={props.data} idFor={props.idFor}
                   choose={props.choose} unchoose={props.unchoose}
                   select={props.select} unselect={props.unselect}
                   ordered={props.ordered}
-                  extras="ilirecs-container"
-                  displayItemAs={props.displayItemAs || ILIRecordAsListItem}/>
+                  displayItemAs={props.displayItemAs || ILIRecordAsListItem}
+                  className={props.className}
+                  extras={props.extras}
+                  itemClassName={props.itemClassName}
+                  itemExtras={props.itemExtras} />
     );
 }
 

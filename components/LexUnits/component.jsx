@@ -63,11 +63,14 @@ function LexUnitAsOption(props) {
 
 // props:
 //   data :: Object, a lex unit
+// className and extras props, if given, will be passed on to ListItem
 function LexUnitAsListItem(props) {
     const luId = props.data.id;
 
     return (
-        <ListItem id={luId} extras="lexunit-detail">
+        <ListItem id={luId} 
+                  className={props.className}
+                  extras={props.extras}>
           {props.data.orthForm}
         </ListItem>
     );
@@ -82,14 +85,20 @@ function LexUnitAsListItem(props) {
 //     Defaults to LexUnitAsListItem.
 //     Data container control props (.choose, etc.), if given, will be passed on
 //     to this component.
+// These props, if given, will also be passed on to DataList:
+//   className, extras, itemClassName, itemExtras   
 function LexUnitsAsList(props) {
     return (
         <DataList data={props.data} idFor={props.idFor}
                   choose={props.choose} unchoose={props.unchoose}
                   select={props.select} unselect={props.unselect}
                   ordered={props.ordered}
-                  extras='lexunits-container'
-                  displayItemAs={props.displayItemAs || LexUnitAsListItem} />
+                  displayItemAs={props.displayItemAs || LexUnitAsListItem} 
+                  className={props.className}
+                  extras={props.extras}
+                  itemClassName={props.itemClassName}
+                  itemExtras={props.itemExtras} />
+
     );
 }
                                  

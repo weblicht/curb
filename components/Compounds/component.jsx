@@ -106,13 +106,18 @@ function CompoundAsGrid(props) {
 
 // props:
 //   data :: [ DataObject ], the compounds 
+// These props, if given, will also be passed on to DataList:
+//   className, extras, itemClassName, itemExtras   
 function CompoundsAsList(props) {
     return (
         <DataList data={props.data} idFor={props.idFor}
                   choose={props.choose} unchoose={props.unchoose}
                   select={props.select} unselect={props.unselect}
                   displayItemAs={props.displayItemAs || CompoundAsGrid}
-                  extras='compounds-container'/>
+                  className={props.className}
+                  extras={props.extras}
+                  itemClassName={props.itemClassName}
+                  itemExtras={props.itemExtras} />
     );
 }
 

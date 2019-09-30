@@ -38,11 +38,13 @@ export const FRAME_ALL_FIELDS = FRAME_FIELD_MAP.map(entry => entry[0]);
 
 // props:
 //   data :: DataObject, a frame 
+// className and extras props, if given, will be passed on to ListItem
 function FrameAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
         <ListItem id={props.data.frameId}
-                  extras="frames-detail">
+                  className={props.className}
+                  extras={props.extras}>
           {props.data.frameType}
         </ListItem>
     );
@@ -57,14 +59,19 @@ function FrameAsListItem(props) {
 //      Defaults to FrameAsListItem
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataList:
+//   className, extras, itemClassName, itemExtras   
 function FramesAsList(props) {
     return (
         <DataList data={props.data} idFor={props.idFor}
                   choose={props.choose} unchoose={props.unchoose}
                   select={props.select} unselect={props.unselect}
                   ordered={props.ordered}
-                  extras="frames-container"
-                  displayItemAs={props.displayItemAs || FrameAsListItem}/>
+                  displayItemAs={props.displayItemAs || FrameAsListItem}
+                  className={props.className}
+                  extras={props.extras}
+                  itemClassName={props.itemClassName}
+                  itemExtras={props.itemExtras} />
     );
 }
 

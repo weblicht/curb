@@ -44,11 +44,13 @@ export const WIKTDEF_ALL_FIELDS = WIKTDEF_FIELD_MAP.map(entry => entry[0]);
 
 // props:
 //   data :: DataObject, a wiktdef
+// className and extras props, if given, will be passed on to ListItem
 function WiktDefAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
         <ListItem id={props.data.wikiRecordId}
-                  extras="wiktdefs-detail">
+                  className={props.className}
+                  extras={props.extras}>
           {props.data.orthForm}: {props.data.wknParaphrase}
         </ListItem>
     );
@@ -73,14 +75,19 @@ function WiktDefsAsDefList(props) {
 //      Defaults to WiktDefAsListItem
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataList:
+//   className, extras, itemClassName, itemExtras   
 function WiktDefsAsList(props) {
     return (
         <DataList data={props.data} idFor={props.idFor}
                   choose={props.choose} unchoose={props.unchoose}
                   select={props.select} unselect={props.unselect}
                   ordered={props.ordered}
-                  extras="wiktdefs-container"
-                  displayItemAs={props.displayItemAs || WiktDefAsListItem}/>
+                  displayItemAs={props.displayItemAs || WiktDefAsListItem}
+                  className={props.className}
+                  extras={props.extras}
+                  itemClassName={props.itemClassName}
+                  itemExtras={props.itemExtras} />
     );
 }
 

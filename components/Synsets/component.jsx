@@ -65,10 +65,13 @@ function WordCategory(props) {
 
 // props:
 //    data :: DataObject, a synset
+// className and extras props, if given, will be passed on to ListItem
 function SynsetAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
-        <ListItem id={props.data.id} extras="synset-detail">
+        <ListItem id={props.data.id}
+                  className={props.className}
+                  extras={props.extras}>
           <Delimited data={props.data.orthForms} />
         </ListItem>
     );
@@ -144,14 +147,19 @@ function SynsetAsTableRow(props) {
 //      Defaults to SynsetAsListItem
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataList:
+//   className, extras, itemClassName, itemExtras   
 function SynsetsAsList(props) {
     return (
         <DataList data={props.data} idFor={props.idFor}
                   choose={props.choose} unchoose={props.unchoose}
                   select={props.select} unselect={props.unselect}
+                  displayItemAs={props.displayItemAs || SynsetAsListItem}
                   ordered={props.ordered}
-                  extras="synsets-container"
-                  displayItemAs={props.displayItemAs || SynsetAsListItem}/>
+                  className={props.className}
+                  extras={props.extras}
+                  itemClassName={props.itemClassName}
+                  itemExtras={props.itemExtras} />
     );
 }
 

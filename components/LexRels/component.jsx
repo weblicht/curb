@@ -32,11 +32,16 @@ export const LEX_REL_FIELD_MAP = [
 ];
 export const LEX_REL_ALL_FIELDS = LEX_REL_FIELD_MAP.map( entry => entry[0] );
 
+// props:
+//   data: DataObject, a lexrel
+// className and extras props, if given, will be passed on to ListItem
 function LexRelAsListItem(props) {
     // TODO: is there a more sensible default to provide here?
     const relDisplay = props.data.lexRelType.replace('_', ' ');
     return (
-        <ListItem id={props.data.id}>
+        <ListItem id={props.data.id}
+                  className={props.className}
+                  extras={props.extras}>
           {`LexUnit ${props.data.originatingLexUnitId} ${relDisplay} LexUnit ${props.data.relatedLexUnitId}`}
         </ListItem>
     ); 
@@ -50,6 +55,8 @@ function LexRelAsListItem(props) {
 //      Defaults to LexRelAsListItem
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataList:
+//   className, extras, itemClassName, itemExtras   
 function LexRelsAsList(props) {
     return (
         <DataList data={props.data}
@@ -57,8 +64,10 @@ function LexRelsAsList(props) {
                   choose={props.choose} unchoose={props.unchoose}
                   select={props.select} unselect={props.unselect}
                   displayItemAs={props.displayItemAs || LexRelAsListItem}
-                  extras='lexrels-container'
-        />
+                  className={props.className}
+                  extras={props.extras}
+                  itemClassName={props.itemClassName}
+                  itemExtras={props.itemExtras} />
     );
 }
 

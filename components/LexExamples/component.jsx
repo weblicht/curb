@@ -39,11 +39,13 @@ export const EXAMPLE_ALL_FIELDS = EXAMPLE_FIELD_MAP.map(entry => entry[0]);
 
 // props:
 //   data :: DataObject, an example 
+// className and extras props, if given, will be passed on to ListItem
 function ExampleAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
         <ListItem id={props.data.exampleId}
-                  extras="examples-detail">
+                  className={props.className}
+                  extras={props.extras}>
           {props.data.frameType} &ndash; {props.data.text}  
         </ListItem>
     );
@@ -69,14 +71,19 @@ function ExamplesAsDefList(props) {
 //      Defaults to ExampleAsListItem
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataList:
+//   className, extras, itemClassName, itemExtras   
 function ExamplesAsList(props) {
     return (
         <DataList data={props.data} idFor={props.idFor}
                   choose={props.choose} unchoose={props.unchoose}
                   select={props.select} unselect={props.unselect}
                   ordered={props.ordered}
-                  extras="examples-container"
-                  displayItemAs={props.displayItemAs || ExampleAsListItem}/>
+                  displayItemAs={props.displayItemAs || ExampleAsListItem}
+                  className={props.className}
+                  extras={props.extras}
+                  itemClassName={props.itemClassName}
+                  itemExtras={props.itemExtras} />
     );
 }
 

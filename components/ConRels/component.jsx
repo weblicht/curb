@@ -35,11 +35,16 @@ export const CON_REL_FIELD_MAP = [
 ];
 export const CON_REL_ALL_FIELDS = CON_REL_FIELD_MAP.map( entry => entry[0] );
 
+// props:
+//   data :: DataObject, a conrel
+// className and extras props, if given, will be passed on to ListItem
 function ConRelAsListItem(props) {
     // TODO: is there a more sensible default to provide here?
     const relDisplay = props.data.conRelType.replace('_', ' ');
     return (
-        <ListItem id={props.data.id}>
+        <ListItem id={props.data.id}
+                  className={props.className}
+                  extras={props.extras}>
           {`Synset ${props.data.originatingSynsetId} ${relDisplay} Synset ${props.data.relatedSynsetId}`}
         </ListItem>
     ); 
@@ -53,6 +58,8 @@ function ConRelAsListItem(props) {
 //      Defaults to ConRelAsListItem
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataList:
+//   className, extras, itemClassName, itemExtras   
 function ConRelsAsList(props) {
     return (
         <DataList data={props.data}
@@ -60,7 +67,10 @@ function ConRelsAsList(props) {
                   choose={props.choose} unchoose={props.unchoose}
                   select={props.select} unselect={props.unselect}
                   displayItemAs={props.displayItemAs || ConRelAsListItem}
-                  extras='conrels-container'
+                  className={props.className}
+                  extras={props.extras}
+                  itemClassName={props.itemClassName}
+                  itemExtras={props.itemExtras}
         />
     );
 }
