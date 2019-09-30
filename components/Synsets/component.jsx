@@ -88,12 +88,14 @@ function SynsetAsOption(props) {
 // props:
 //    data :: DataObject, a synset
 //    displayFields :: [ String ], a list of data fields to render
+// Other props accepted by DataTableRow are also passed on to it.
 // TODO: it *may* eventually be worth adding an additional generic
 // abstraction for data tables that allows specifying a
 // function/component for formatting the data in individual table
 // cells, but for now, synsets are the only data type that needs
-// special treatment at the level of individual cells, so I'm just
-// providing a custom row component 
+// special treatment at the level of individual cells, and that need
+// will hopefully go away soon; so I'm just providing a custom row
+// component for now
 function SynsetAsTableRow(props) {
     const displayFields = props.displayFields;
     const displayData = Object.fromEntries(
@@ -115,10 +117,21 @@ function SynsetAsTableRow(props) {
                 default:
                     return [field, withNullAsString(props.data[field])];
                 }
-            }));
+            }).concat([
+                // also pass on data container metadata as-is so that
+                // DataTableRow can highlight selected rows:
+                ['chosen', props.data.chosen],
+                ['selected', props.data.selected]
+            ]));
 
     return (
-        <DataTableRow {...props} displayFields={displayFields} data={displayData} />
+        <DataTableRow displayFields={displayFields} data={displayData}
+                      idFor={props.idFor}
+                      choose={props.choose} unchoose={props.unchoose}
+                      select={props.select} unselect={props.unselect}
+                      onClick={props.onClick}
+                      className={props.className}
+                      extras={props.extras}/>
     );
 }
 
@@ -194,6 +207,7 @@ export { SynsetsContainer,
          SynsetsAsList,
          SynsetsAsSelect,
          SynsetsAsTable,
+         SynsetAsTableRow,
          WordClass,
          WordCategory
        };
