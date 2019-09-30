@@ -1,0 +1,16 @@
+* 1.x
+
+** 1.0.3
+
+** 1.0.2
+
+   - rearrange package structure.  The package no longer has separate
+     src/ and dist/ trees, and no longer transpiles and builds a
+     single bundle. Instead, JSX files are transpiled in-place to
+     ES2015, and consuming applications are expected to further
+     transpile and bundle any code that they import from this library
+     as necessary. See the top-level README for motivations for this
+     change.
+   - Synsets: rewrite SynsetsAsTableRow to use DataTableRow under the
+     hood, for consistency and better CSS support
+
