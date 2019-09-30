@@ -89,6 +89,10 @@ function ExamplesAsList(props) {
 //      Defaults to DataTableRow.
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataTable:
+//   className, extras
+//   headClassName, headExtras
+//   bodyClassName, bodyExtras 
 function ExamplesAsTable(props) {
     return (
         <DataTable data={props.data} idFor={props.idFor}
@@ -97,8 +101,9 @@ function ExamplesAsTable(props) {
                    fieldMap={props.fieldMap || EXAMPLE_FIELD_MAP}
                    displayFields={props.displayFields || EXAMPLE_ALL_FIELDS}
                    displayItemAs={props.displayItemAs}
-                   extras="examples-container"
-        />
+                   className={props.className} extras={props.extras}
+                   headClassName={props.headClassName} headExtras={props.headExtras}
+                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
     );
 }
  

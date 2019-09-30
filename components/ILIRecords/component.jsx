@@ -92,6 +92,10 @@ function ILIRecordsAsList(props) {
 //      Defaults to DataTableRow.
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataTable:
+//   className, extras
+//   headClassName, headExtras
+//   bodyClassName, bodyExtras 
 function ILIRecordsAsTable(props) {
     return (
         <DataTable data={props.data} idFor={props.idFor}
@@ -100,8 +104,9 @@ function ILIRecordsAsTable(props) {
                    fieldMap={props.fieldMap || ILIREC_FIELD_MAP}
                    displayFields={props.displayFields || ILIREC_ALL_FIELDS}
                    displayItemAs={props.displayItemAs}
-                   extras="ilirecs-container"
-        />
+                   className={props.className} extras={props.extras}
+                   headClassName={props.headClassName} headExtras={props.headExtras}
+                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
     );
 }
 

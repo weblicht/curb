@@ -69,6 +69,10 @@ function LexRelsAsList(props) {
 //   displayItemAs (optional) :: Component to render a LexRel as a table row
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataTable:
+//   className, extras
+//   headClassName, headExtras
+//   bodyClassName, bodyExtras 
 function LexRelsAsTable(props) {
     return (
         <DataTable data={props.data} idFor={props.idFor}
@@ -77,8 +81,9 @@ function LexRelsAsTable(props) {
                    fieldMap={props.fieldMap || LEX_REL_FIELD_MAP}
                    displayFields={props.displayFields || LEX_REL_ALL_FIELDS}
                    displayItemAs={props.displayItemAs}
-                   extras='lexrels-container'
-        />
+                   className={props.className} extras={props.extras}
+                   headClassName={props.headClassName} headExtras={props.headExtras}
+                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
     );
 }
 

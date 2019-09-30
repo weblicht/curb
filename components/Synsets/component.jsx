@@ -185,6 +185,10 @@ function SynsetsAsSelect(props) {
 //      Defaults to SynsetAsTableRow.
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataTable:
+//   className, extras
+//   headClassName, headExtras
+//   bodyClassName, bodyExtras 
 function SynsetsAsTable(props) {
     return (
         <DataTable data={props.data} idFor={props.idFor}
@@ -193,8 +197,9 @@ function SynsetsAsTable(props) {
                    fieldMap={props.fieldMap || SYNSET_FIELD_MAP}
                    displayFields={props.displayFields || SYNSET_ALL_FIELDS}
                    displayItemAs={props.displayItemAs || SynsetAsTableRow}
-                   extras="synsets-container"
-        />
+                   className={props.className} extras={props.extras}
+                   headClassName={props.headClassName} headExtras={props.headExtras}
+                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
     );
 }
     

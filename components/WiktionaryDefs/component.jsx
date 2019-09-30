@@ -92,6 +92,10 @@ function WiktDefsAsList(props) {
 //      Defaults to DataTableRow.
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataTable:
+//   className, extras
+//   headClassName, headExtras
+//   bodyClassName, bodyExtras 
 function WiktDefsAsTable(props) {
     return (
         <DataTable data={props.data} idFor={props.idFor}
@@ -100,8 +104,9 @@ function WiktDefsAsTable(props) {
                    fieldMap={props.fieldMap || WIKTDEF_FIELD_MAP}
                    displayFields={props.displayFields || WIKTDEF_ALL_FIELDS}
                    displayItemAs={props.displayItemAs}
-                   extras="wiktdefs-container"
-        />
+                   className={props.className} extras={props.extras}
+                   headClassName={props.headClassName} headExtras={props.headExtras}
+                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
     );
 }
 

@@ -76,6 +76,10 @@ function CompoundAsTableRow(props) {
 
 // props:
 //   data :: DataObject, the compound 
+// These props, if given, will also be passed on to DataTable:
+//   className, extras
+//   headClassName, headExtras
+//   bodyClassName, bodyExtras 
 function CompoundAsGrid(props) {
     if (!(props.data.splits)) return null;
     const fieldMap = [['title', ''],
@@ -92,7 +96,9 @@ function CompoundAsGrid(props) {
     return (
         <DataTable data={constituents} idFor={obj => obj.id}
                    fieldMap={fieldMap} displayFields={displayFields}
-                   extras='compound-detail'/>
+                   className={props.className} extras={props.extras}
+                   headClassName={props.headClassName} headExtras={props.headExtras}
+                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
     );
 }
 
@@ -118,6 +124,10 @@ function CompoundsAsList(props) {
 //      Defaults to DataTableRow.
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataTable:
+//   className, extras
+//   headClassName, headExtras
+//   bodyClassName, bodyExtras 
 function CompoundsAsTable(props) {
     return (
         <DataTable data={props.data} idFor={props.idFor}
@@ -126,7 +136,9 @@ function CompoundsAsTable(props) {
                    fieldMap={props.fieldMap || COMPOUND_FIELD_MAP}
                    displayFields={props.displayFields || COMPOUND_ALL_FIELDS}
                    displayItemAs={props.displayItemAs || CompoundAsTableRow}
-                   extras='compounds-container'/>
+                   className={props.className} extras={props.extras}
+                   headClassName={props.headClassName} headExtras={props.headExtras}
+                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
     );
 }
  

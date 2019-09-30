@@ -77,6 +77,10 @@ function FramesAsList(props) {
 //      Defaults to DataTableRow.
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+// These props, if given, will also be passed on to DataTable:
+//   className, extras
+//   headClassName, headExtras
+//   bodyClassName, bodyExtras 
 function FramesAsTable(props) {
     return (
         <DataTable data={props.data} idFor={props.idFor}
@@ -85,8 +89,9 @@ function FramesAsTable(props) {
                    fieldMap={props.fieldMap || FRAME_FIELD_MAP}
                    displayFields={props.displayFields || FRAME_ALL_FIELDS}
                    displayItemAs={props.displayItemAs}
-                   extras="frames-container"
-        />
+                   className={props.className} extras={props.extras}
+                   headClassName={props.headClassName} headExtras={props.headExtras}
+                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
     );
 }
  

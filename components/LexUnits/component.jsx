@@ -113,6 +113,10 @@ function LexUnitsAsSelect(props) {
 //   displayItemAs (optional) :: Component to render a lexunit as a table row
 //     Data container control props (.choose, etc.), if given, will be passed on
 //     to this component.
+// These props, if given, will also be passed on to DataTable:
+//   className, extras
+//   headClassName, headExtras
+//   bodyClassName, bodyExtras 
 function LexUnitsAsTable(props) {
     return (
         <DataTable data={props.data} idFor={props.idFor}
@@ -121,8 +125,9 @@ function LexUnitsAsTable(props) {
                    fieldMap={props.fieldMap || LU_FIELD_MAP}
                    displayFields={props.displayFields || LU_ALL_FIELDS}
                    displayItemAs={props.displayItemAs}
-                   extras='lexunits-container' 
-        />
+                   className={props.className} extras={props.extras}
+                   headClassName={props.headClassName} headExtras={props.headExtras}
+                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
     );
 }
 
