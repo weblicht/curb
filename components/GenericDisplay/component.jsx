@@ -286,6 +286,7 @@ export function DataTableHeaders(props) {
 //   displayFields :: [ String ] 
 //   data :: DataObject, with at least all the properties listed in displayFields
 //   idFor :: DataObject -> identifier
+//   onClick (optional) :: Event handler function, to handle a click event on the whole table row
 //   className (optional), defaults to 'table-active' if data object is .chosen or .selected 
 //   extras (optional), extra classes for tr element
 export function DataTableRow(props) {
@@ -293,7 +294,8 @@ export function DataTableRow(props) {
     return (
         <tr key={props.idFor(props.data)}
             className={classNames({'table-active': active} || props.className,
-                                  props.extras)}>
+                                  props.extras)}
+            onClick={props.onClick}>
               {props.displayFields.map(
                   (field) => <td>{ withNullAsString(props.data[field]) }</td>
               )}
@@ -302,7 +304,7 @@ export function DataTableRow(props) {
 }
 
 // props:
-//   data :: [ Object ], the data objects which will be formattted as the rows of the table
+//   data :: [ Object ], the data objects which will be formatted as the rows of the table
 //   fieldMap :: [ [String, String] ], array mapping data field names to display names
 //   displayFields :: [ String ], array of data fields to be displayed
 //     This should be a subset of the keys in fieldMap.
@@ -432,12 +434,14 @@ export function List(props) {
 //      a function to compute the .id from .data if .id is not given  
 //   data (optional) :: Object, the contents of the list item;
 //      defaults to props.children
+//   onClick (optional) :: Event handler for clicks on the list item
 //   className (optional), defaults to 'list-group-item'
 //   extras (optional), extra classes for list item
 export function ListItem(props) {
     const key = props.id || (props.idFor && props.idFor(props.data));
     return (
-        <li key={key} className={withDefault('list-group-item', props)}>
+        <li key={key} className={withDefault('list-group-item', props)}
+            onClick={props.onClick}>
           {props.data || props.children}
         </li>
     );
