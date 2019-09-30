@@ -92,7 +92,7 @@ across the library:
 The library is available as a package on NPM in the `@sfstuebingen`
 scope.  To install the package, run
 ```
-npm install --save @sfstuebingen/germanet-common
+npm install --save '@sfstuebingen/germanet-common'
 ```
 in the directory containing your node_modules directory. (For internal
 projects at the SfS, this is probably `webui`.) 
