@@ -28,7 +28,7 @@ import { dataContainerFor } from '../DataContainer/component';
 import React from 'react';
 
 // Maps all data fields in wiktionary def objects to their display names.
-const WIKTDEF_FIELD_MAP = [
+export const WIKTDEF_FIELD_MAP = [
     ['wikiRecordId', 'Wiki Id'],
     ['lexUnitId', 'LexUnit Id'],
     ['orthForm', 'Orth Form'],
@@ -37,7 +37,7 @@ const WIKTDEF_FIELD_MAP = [
     ['wknParaphrase', 'WKN Paraphrase'],
     ['edited', 'Edited']
 ];
-const WIKTDEF_ALL_FIELDS = WIKTDEF_FIELD_MAP.map(entry => entry[0]);
+export const WIKTDEF_ALL_FIELDS = WIKTDEF_FIELD_MAP.map(entry => entry[0]);
 
 
 // Display components for individual wiktdefs:

@@ -28,12 +28,12 @@ import { connectWithApiQuery } from '../APIWrapper';
 import React from 'react';
 
 // Maps all data fields in Example objects to their display names.
-const EXAMPLE_FIELD_MAP = [
+export const EXAMPLE_FIELD_MAP = [
     ['exampleId', 'Example Id'],
     ['text', 'Text'],
     ['frameType', 'Frame Type'],
 ];
-const EXAMPLE_ALL_FIELDS = EXAMPLE_FIELD_MAP.map(entry => entry[0]);
+export const EXAMPLE_ALL_FIELDS = EXAMPLE_FIELD_MAP.map(entry => entry[0]);
 
 // Display components for individual examples:
 

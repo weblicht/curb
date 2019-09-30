@@ -28,7 +28,7 @@ import { connectWithApiQuery } from '../APIWrapper';
 import React from 'react';
 
 // Maps all data fields in ILI record objects to their display names.
-const ILIREC_FIELD_MAP = [
+export const ILIREC_FIELD_MAP = [
     ['iliId', 'ILI Id'],
     ['lexUnitId', 'LexUnit Id'],
     ['relation', 'Relation'],
@@ -39,7 +39,7 @@ const ILIREC_FIELD_MAP = [
     ['pwn20Paraphrase', 'PWN 2.0 Paraphrase'],
     ['source', 'Source']
 ];
-const ILIREC_ALL_FIELDS = ILIREC_FIELD_MAP.map(entry => entry[0]);
+export const ILIREC_ALL_FIELDS = ILIREC_FIELD_MAP.map(entry => entry[0]);
 
 // Display components for individual ilirecs:
 

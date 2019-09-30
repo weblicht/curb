@@ -28,11 +28,11 @@ import { connectWithApiQuery } from '../APIWrapper';
 import React from 'react';
 
 // Maps all data fields in Frame objects to their display names.
-const FRAME_FIELD_MAP = [
+export const FRAME_FIELD_MAP = [
     ['frameId', 'Frame Id'],
     ['frameType', 'Frame Type'],
 ];
-const FRAME_ALL_FIELDS = FRAME_FIELD_MAP.map(entry => entry[0]);
+export const FRAME_ALL_FIELDS = FRAME_FIELD_MAP.map(entry => entry[0]);
 
 // Display components for individual frames:
 

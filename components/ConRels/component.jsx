@@ -24,7 +24,7 @@ import { connectWithApiQuery } from '../APIWrapper';
 
 import React from 'react';
 
-const CON_REL_FIELD_MAP = [
+export const CON_REL_FIELD_MAP = [
     ['id', 'ConRel Id'],
     ['conRelType', 'Type'],
     ['allOrthForms', 'All Orth Forms'],
@@ -33,7 +33,7 @@ const CON_REL_FIELD_MAP = [
     ['originatingSynsetId', 'From Synset'],
     ['relatedSynsetId', 'To Synset'],
 ];
-const CON_REL_ALL_FIELDS = CON_REL_FIELD_MAP.map( entry => entry[0] );
+export const CON_REL_ALL_FIELDS = CON_REL_FIELD_MAP.map( entry => entry[0] );
 
 function ConRelAsListItem(props) {
     // TODO: is there a more sensible default to provide here?

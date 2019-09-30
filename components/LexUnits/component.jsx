@@ -32,7 +32,7 @@ import { connect } from 'react-redux';
 // Constants:
 
 // Maps all data fields in lex unit objects to their display names.
-const LU_FIELD_MAP = [
+export const LU_FIELD_MAP = [
     ['id', 'Lex Unit Id'],
     ['synsetId', 'Synset Id'],
     ['orthForm', 'Orth Form'],
@@ -46,7 +46,7 @@ const LU_FIELD_MAP = [
     ['comment', 'Comment']
 ];
 // All data field names:
-const LU_ALL_FIELDS = LU_FIELD_MAP.map( entry => entry[0] );
+export const LU_ALL_FIELDS = LU_FIELD_MAP.map( entry => entry[0] );
 
 // Display components for individual lex units:
 

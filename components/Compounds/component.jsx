@@ -29,7 +29,7 @@ import { withNullAsString } from '../../helpers';
 import React from 'react';
 
 // Maps all data fields in Compound objects to their display names.
-const COMPOUND_FIELD_MAP = [
+export const COMPOUND_FIELD_MAP = [
     // id === lexUnitId; see comment in reducer
     ['id', 'Id'], 
     ['lexUnitId', 'LexUnit Id'],  
@@ -38,7 +38,7 @@ const COMPOUND_FIELD_MAP = [
     ['modifier1', 'Modifier 1'], 
     ['modifier2', 'Modifier 2'], 
 ];
-const COMPOUND_ALL_FIELDS = COMPOUND_FIELD_MAP.map(entry => entry[0]);
+export const COMPOUND_ALL_FIELDS = COMPOUND_FIELD_MAP.map(entry => entry[0]);
 
 // Display components for individual compound constituents:
 

@@ -23,14 +23,14 @@ import { connectWithApiQuery } from '../APIWrapper';
 
 import React from 'react';
 
-const LEX_REL_FIELD_MAP = [
+export const LEX_REL_FIELD_MAP = [
     ['id', 'LexRel Id'],
     ['lexRelType', 'Type'],
     ['orthForm', 'Orth Form'],
     ['originatingLexUnitId', 'From Lex Unit'],
     ['relatedLexUnitId', 'To Lex Unit'],
 ];
-const LEX_REL_ALL_FIELDS = LEX_REL_FIELD_MAP.map( entry => entry[0] );
+export const LEX_REL_ALL_FIELDS = LEX_REL_FIELD_MAP.map( entry => entry[0] );
 
 function LexRelAsListItem(props) {
     // TODO: is there a more sensible default to provide here?

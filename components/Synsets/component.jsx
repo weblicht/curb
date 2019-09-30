@@ -34,7 +34,7 @@ import { connect } from 'react-redux';
 // Constants:
 
 // Maps all data fields in Synset objects to their display names.
-const SYNSET_FIELD_MAP = [
+export const SYNSET_FIELD_MAP = [
     ['id', 'Synset Id'],
     ['wordCategory', 'Word Category'],
     ['wordClass', 'Word Class'],
@@ -43,7 +43,7 @@ const SYNSET_FIELD_MAP = [
     ['wiktionaryParaphrases', 'Wiktionary Paraphrases'],
     ['comment', 'Comment']
 ];
-const SYNSET_ALL_FIELDS = SYNSET_FIELD_MAP.map(entry => entry[0]);
+export const SYNSET_ALL_FIELDS = SYNSET_FIELD_MAP.map(entry => entry[0]);
 
 // Display components for individual synsets:
 
