@@ -37,6 +37,8 @@ function withDefault(dfault, props) {
 //   text (optional) :: String to use as button text; defaults to props.children
 //   onClick :: Event handler function
 //   type (optional) :: String, defaults to 'button'
+//   disabled (optional) :: Bool, defaults to false.
+//     Disabled buttons are styled differently by Bootstrap CSS and cannot handle click events.
 //   className (optional), defaults to 'btn'
 //   extras (optional), extra classes for button input
 export function Button(props) {
@@ -44,7 +46,8 @@ export function Button(props) {
           <button type={props.type || 'button'}
                   name={props.id}
                   className={withDefault('btn', props)}
-                  onClick={props.onClick}>
+                  disabled={props.disabled}
+                  onClick={props.disabled ? undefined : props.onClick}>
             {props.text || props.children}
           </button>
     );
