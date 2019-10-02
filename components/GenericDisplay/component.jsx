@@ -393,6 +393,33 @@ export function Delimited(props) {
 }
 
 // props:
+//   message :: String, a message to be displayed in the table's only row
+//   fieldMap :: [ [String, String] ], array mapping data field names to display names
+//   displayFields :: [ String ], array of data fields to be displayed
+//     This should be a subset of the keys in fieldMap.
+//   className (optional), defaults to 'table'
+//   extras (optional), extra classes for table element
+//   headClassName (optional), className for thead element
+//   headExtras (optional), extras for thead element
+//   bodyClassName (optional), className for tbody element
+//   bodyExtras (optional), extras for tbody element
+export function EmptyTable(props) {
+    return (
+        <table className={ withDefault('table', props) }>
+          <DataTableHeaders fieldMap={props.fieldMap} displayFields={props.displayFields}
+                            className={props.headClassName} extras={props.headExtras} />
+          <tbody className={classNames(props.bodyClassName, props.bodyExtras)}>
+            <tr>
+              <td colSpan={props.displayFields.length}>
+                <p className="text-center">{props.message}</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+    );
+}
+
+// props:
 //    level :: Number in 1...6
 //    data (optional) :: String, content of heading; defaults to props.children
 //    className

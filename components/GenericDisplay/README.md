@@ -30,6 +30,10 @@ generate an HTML definition list.
 `Delimited`: given an array of data, pretty-print this data with
 delimiters.
 
+`EmptyTable`: given formatting information and a message to display,
+generate an HTML table (with headers, etc.) containing the message as
+its only row
+
 `Heading`: generate an HTML section heading at an appropriate level
 
 `List`: display an ordered or unordered list, depending on `ordered`
