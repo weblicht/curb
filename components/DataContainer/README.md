@@ -136,9 +136,12 @@ these additional *control* props:
   - `select`
   - `unselect`
 
-These are callbacks that accept an item ID, and dispatch a Redux action to
-indicate that a particular item in the container has been (un)chosen
-or (un)selected.  They will be passed on to the rendering component.
+These are callbacks that accept an item ID, and dispatch a Redux
+action to indicate that a particular item in the container has been
+(un)chosen or (un)selected.  The container also receives an additional
+control prop, `reset`, which resets the container to its default
+state, where no item is selected or chosen.  These control props will
+be passed on to the rendering component.
 
 In addition, the data objects in the `data` prop will have Boolean
 `.selected` and `.chosen` properties, which you can test for when

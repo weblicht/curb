@@ -110,9 +110,7 @@ function containerFor(type, name, dataSelector, idFromItem) {
         if (typeof props.displayAs === 'function') {
             const Renderer = props.displayAs;
             return (
-                // We avoid passing container id to renderer so it doesn't get
-                // propagated to other containers down the tree:
-                <Renderer {...props} id={undefined} data={dataWithMetadata} />
+                <Renderer {...props} data={dataWithMetadata} />
             );
         } else {
             throw new InternalError('Data container was rendered with an incorrect displayAs prop');
@@ -170,11 +168,12 @@ function containerFor(type, name, dataSelector, idFromItem) {
                 unchoose: itemId => dispatch(actions.unchoose(itemId)),
                 select: itemId => dispatch(actions.select(itemId)),
                 unselect: itemId => dispatch(actions.unselect(itemId)), 
+                reset: () => dispatch(actions.reset())
             };
         } else {
             function warn(method) {
                 return function (itemId) {
-                    throw new InternalError(`$.{method}() was called with itemId = ${itemId}`+
+                    throw new InternalError(`.${method}() was called with itemId = ${itemId}`+
                                             ` on a container with no .containerId`);
                 };
             }
@@ -183,6 +182,9 @@ function containerFor(type, name, dataSelector, idFromItem) {
                 unchoose: warn('unchoose'),
                 select: warn('select'),
                 unselect: warn('unselect'),
+                reset: function() {
+                    throw new InternalError('.reset() was called on a container with no .containerId');
+                }
             };
         }
     }

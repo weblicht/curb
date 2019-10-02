@@ -24,47 +24,55 @@ export const actionTypes = actionTypesFromStrings([
     'DATA_CONTAINER_UNCHOOSE',
     'DATA_CONTAINER_SELECT', // i.e., possibly multiple selections
     'DATA_CONTAINER_UNSELECT',
+    'DATA_CONTAINER_RESET'
 ])
 
-// Makes action creators for a given data container.
+// Action creators
+export function choose(containerId, itemId) {
+    return { type: actionTypes.DATA_CONTAINER_CHOOSE,
+             id: containerId,
+             itemId
+           };
+}
+// an itemId is not really necessary for unchoosing, but we accept
+// it for the sake of uniformity:
+export function unchoose(containerId, itemId) {
+    return { type: actionTypes.DATA_CONTAINER_UNCHOOSE,
+             id: containerId,
+             itemId
+           };
+}
+
+export function select(containerId, itemId) {
+    return { type: actionTypes.DATA_CONTAINER_SELECT,
+             id: containerId,
+             itemId
+           };
+}
+
+export function unselect(containerId, itemId) {
+    return { type: actionTypes.DATA_CONTAINER_UNSELECT,
+             id: containerId,
+             itemId
+           };
+}
+
+export function reset(containerId) {
+    return { type: actionTypes.DATA_CONTAINER_RESET,
+             id: containerId
+           };
+}
+
+// Wraps the above action creators for a given data container.
 // params:
 //   containerId, a unique identifier for the container
 export function makeActionsForContainer(containerId) {
 
-    function choose(itemId) {
-        return { type: actionTypes.DATA_CONTAINER_CHOOSE,
-                 id: containerId,
-                 itemId
-               };
-    }
-
-    // an itemId is not really necessary for unchoosing, but we accept
-    // it for the sake of uniformity:
-    function unchoose(itemId) {
-        return { type: actionTypes.DATA_CONTAINER_UNCHOOSE,
-                 id: containerId,
-                 itemId
-               };
-    }
-
-    function select(itemId) {
-        return { type: actionTypes.DATA_CONTAINER_SELECT,
-                 id: containerId,
-                 itemId
-               };
-    }
-
-    function unselect(itemId) {
-        return { type: actionTypes.DATA_CONTAINER_UNSELECT,
-                 id: containerId,
-                 itemId
-               };
-    }
-    
     return {
-        choose,
-        unchoose,
-        select,
-        unselect
+        choose: itemId => choose(containerId, itemId),
+        unchoose: itemId => unchoose(containerId, itemId),
+        select: itemId => select(containerId, itemId),
+        unselect: itemId => unselect(containerId, itemId),
+        reset: () => reset(containerId)
     }
 }

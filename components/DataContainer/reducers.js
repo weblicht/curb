@@ -68,6 +68,10 @@ function dataContainerPrivReducer(state = dataContainerPrivState, action) {
         });
     }
 
+    case actionTypes.DATA_CONTAINER_RESET: {
+        return dataContainerPrivState;
+    }
+
     default:
         return state;
     }
