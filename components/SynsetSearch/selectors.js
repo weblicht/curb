@@ -20,14 +20,7 @@
 
 import { defaultSearchBoxState } from './reducers';
 
-// TODO: we are assuming here that the state for search boxes lives at
-// globalState.synsetSearchBoxes, but if the consuming application uses a
-// different name for the synsetSearchBoxes reducer in its combineReducers
-// call, these selectors will break. Need to document this and/or
-// perform some magic to dynamically determine the location of the
-// search boxes part of the state.
-
-export function searchBoxState(id, globalState) {
+export function selectSearchBoxState(globalState, id) {
     if ( globalState.synsetSearchBoxes.byId === undefined  ) { 
         // globalState.synsetSearchBoxes.byId might not exist yet, because
         // it is created when the first search box component is
@@ -53,3 +46,15 @@ export function selectSynsetsForSearchBox(globalState, ownProps) {
     }
 
 }
+
+export function selectHistoryForSearchBox(globalState, ownProps) {
+    try {
+        return globalState.synsetSearchBoxes.byId[ownProps.source].history || [];
+    } catch (e) {
+        // TypeError if one of the properties in the middle is not
+        // defined yet
+        return [];
+    }
+
+}
+

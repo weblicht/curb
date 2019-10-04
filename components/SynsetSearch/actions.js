@@ -25,7 +25,8 @@ import axios from 'axios';
 // these are all per-id actions:
 export const actionTypes = actionTypesFromStrings([
     'SYNSET_SEARCH_UPDATE_SEARCH_TERM',
-    'SYNSET_SEARCH_TOGGLE_CASE',
+    'SYNSET_SEARCH_SET_IGNORE_CASE',
+    'SYNSET_SEARCH_TOGGLE_IGNORE_CASE',
     'SYNSET_SEARCH_UPDATE_ERROR',
     'SYNSET_SEARCH_SUBMITTED',
     'SYNSET_SEARCH_RESULTS_RETURNED',
@@ -39,8 +40,12 @@ export function updateSearchTerm(id, searchTerm) {
     return { type: actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_TERM, id, searchTerm };
 }
 
-export function updateIgnoreCase(id) {
-    return { type: actionTypes.SYNSET_SEARCH_TOGGLE_CASE, id };
+export function toggleIgnoreCase(id) {
+    return { type: actionTypes.SYNSET_SEARCH_TOGGLE_IGNORE_CASE, id };
+}
+
+export function setIgnoreCase(id, ignoreCase) {
+    return { type: actionTypes.SYNSET_SEARCH_SET_IGNORE_CASE, id, ignoreCase };
 }
 
 export function updateError(id, error) {
@@ -51,8 +56,8 @@ export function submitSearch(id, params) {
     return { type: actionTypes.SYNSET_SEARCH_SUBMITTED, id, params };
 }
 
-export function receiveResults(id, data) {
-    return { type: actionTypes.SYNSET_SEARCH_RESULTS_RETURNED, id, data };
+export function receiveResults(id, data, params) {
+    return { type: actionTypes.SYNSET_SEARCH_RESULTS_RETURNED, id, data, params };
 }
 
 export function searchFailure(id) {
@@ -84,12 +89,9 @@ export function doSearch(id, term, ignoreCase) {
         const config = { params };
         dispatch(submitSearch(id, params));
         return axios.get(apiPath.synsets, config)
-        .then(response => {
-            dispatch(receiveResults(id, response.data.data)); 
-            },
-              error => dispatch(updateError(id,
+            .then(response => dispatch(receiveResults(id, response.data.data, params)),
                   // TODO: more generalized error handling? logging?
-                  `Failed to retrieve results for "${params.word}".`)) 
+                  error => dispatch(updateError(id, `Failed to retrieve results for "${params.word}".`)) 
              );
     };
 }

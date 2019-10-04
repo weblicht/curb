@@ -21,6 +21,14 @@ search is submitted.
 The `source` prop is required and must be the same as the `id` for the
 corresponding search box.
 
+### SynsetSearchHistoryBox
+
+Displays a row of buttons of previous search terms. Each button allows
+reperforming the search with the same parameters. 
+
+The `source` prop is required and must be the same as the `id` for the
+corresponding search box.
+
 ### Example
 
 ```

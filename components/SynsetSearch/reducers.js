@@ -28,17 +28,26 @@ import SI from 'seamless-immutable';
 const searchBoxInnerState = SI({
     ignoreCase: false,
     currentSearchTerm: '',
-    mostRecentSearchTerm: '',
-    synsets: [], // TODO: these represent results; but are there any other kinds of results?
-    error: ''
+    history: [],
+    synsets: [], 
+    alert: undefined, // message for user
+    alertClass: undefined, // 'info', 'warning', 'success', etc.: Bootstrap class for alert message
+    error: undefined
 })
 export { searchBoxInnerState as defaultSearchBoxState }; 
 
 // manages private state for an individual search box
 function searchBoxInnerReducer(state = searchBoxInnerState, action) {
     switch (action.type) {
-    case actionTypes.SYNSET_SEARCH_TOGGLE_CASE: {
+    // we have actions both to TOGGLE and SET ignore case because
+    // TOGGLE is best suited to easily handling clicks on the
+    // checkbox, but SET is best suited to updating the checkbox
+    // explicitly with the value from a previous search
+    case actionTypes.SYNSET_SEARCH_TOGGLE_IGNORE_CASE: {
         return state.merge({ ignoreCase: !state.ignoreCase });
+    }
+    case actionTypes.SYNSET_SEARCH_SET_IGNORE_CASE: {
+        return state.merge({ ignoreCase: action.ignoreCase });
     }
     case actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_TERM: {
         return state.merge({ currentSearchTerm: action.searchTerm });
@@ -48,14 +57,28 @@ function searchBoxInnerReducer(state = searchBoxInnerState, action) {
     }
     case actionTypes.SYNSET_SEARCH_SUBMITTED: {
         return state.merge({
-            mostRecentSearchTerm: state.currentSearchTerm,
-            currentSearchTerm: ''
+            currentSearchTerm: '',
+            alert: undefined,
+            alertClass: undefined
         })
     }
     case actionTypes.SYNSET_SEARCH_RESULTS_RETURNED: {
-        return state.merge({
-            synsets: action.data,
-            error: action.data.length === 0 ? 'No synsets found.' : ''
+        // to keep things simple, we only record a new history item
+        // here, after a successful roundtrip from the server, instead
+        // of when the search is submitted; otherwise, we'd need to
+        // deal with updating a history item we've already partially
+        // recorded, and with the possibility of network failures.
+        const newHistoryItem = SI({
+            word: action.params.word,
+            ignoreCase: action.params.ignoreCase,
+            numResults: action.data.length
+        });
+
+       return state.merge({
+           synsets: action.data,
+           history: [newHistoryItem].concat(state.history),
+           alert: action.data.length === 0 ? `No synsets found for "${action.params.word}".` : undefined,
+           alertClass: action.data.length === 0 ?  'warning' : undefined
         })
     }
     default:
@@ -69,3 +92,5 @@ const searchBoxesById = makeByIdReducer(searchBoxInnerReducer,
 
 export { searchBoxesById as synsetSearchBoxes };        
 
+       
+ 
