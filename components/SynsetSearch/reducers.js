@@ -81,6 +81,11 @@ function searchBoxInnerReducer(state = searchBoxInnerState, action) {
            alertClass: action.data.length === 0 ?  'warning' : undefined
         })
     }
+    case actionTypes.SYNSET_SEARCH_RELOAD_HISTORY: {
+        return state.merge({
+            history: action.history
+        });
+    }
     default:
         return state;
     }

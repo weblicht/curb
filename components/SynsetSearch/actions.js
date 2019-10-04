@@ -31,6 +31,7 @@ export const actionTypes = actionTypesFromStrings([
     'SYNSET_SEARCH_SUBMITTED',
     'SYNSET_SEARCH_RESULTS_RETURNED',
     'SYNSET_SEARCH_BACKEND_FAILURE',
+    'SYNSET_SEARCH_RELOAD_HISTORY'
 ])
 
 
@@ -62,6 +63,11 @@ export function receiveResults(id, data, params) {
 
 export function searchFailure(id) {
     return { type: actionTypes.SYNSET_SEARCH_BACKEND_FAILURE, id };
+}
+
+export function reloadHistory(id) {
+    const history = JSON.parse(localStorage.getItem(id + '.searchHistory')) || [];
+    return { type: actionTypes.SYNSET_SEARCH_RELOAD_HISTORY, id, history };
 }
     
 

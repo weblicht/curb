@@ -98,11 +98,16 @@ export { SynsetSearchResults };
 //   source :: String, the .id of the corresponding SynsetSearchBox
 //   onlyUnique (optional) :: Bool, whether to only display a list of unique search terms
 //   onlySuccessful (optional) :: Bool, whether to only display searches that returned results
+//   persist (optional) :: Bool, whether to use browser localStorage to persist search history
 //   limit (optional) :: Number, a maximum number of history items to display, *after*
 //     filtering for unique and successful items (if requested)
 //   buttonClassName (optional), className for history buttons
 //   buttonExtras (optional), extras for history buttons
 function SynsetSearchHistoryBox(props) {
+
+    // the reducer tracks the complete search history; we start by
+    // filtering the complete history down to a subset, in accordance
+    // with the given props
     var itemsToDisplay = props.history;
     if (props.onlyUnique) {
         var seenWords = [];
@@ -124,6 +129,12 @@ function SynsetSearchHistoryBox(props) {
         itemsToDisplay = itemsToDisplay.slice(0, props.limit);
     }
 
+    // store the filtered history in browser localStorage, so it can be retrieved 
+    // after page refreshes; see reloadHistory in actions.js:
+    if (props.persist) {
+        localStorage.setItem(props.source + '.searchHistory', JSON.stringify(itemsToDisplay));
+    }
+    
     if (!(itemsToDisplay && itemsToDisplay.length)) {
         return (
             <Card title="History" level={3}>
