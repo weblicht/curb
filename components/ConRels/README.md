@@ -11,8 +11,8 @@ A conceptual relation object contains the following fields:
   - `relType` :: String
   - `fromOrthForms` :: [String]
   - `toOrthForms` :: [String]
-  - `numHyponyms`
-  - `canBeDeleted`
+  - `numHyponyms` :: Integer (number of hyponyms of synset with `toSynsetId`)
+  - `canBeDeleted` :: Bool
   - `fromSynsetId` :: String
   - `toSynsetId` :: String
 
