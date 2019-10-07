@@ -7,7 +7,7 @@ for Interlingual Index records.
 
 An ILI record object contains the following fields:
 
-  - `iliId`
+  - `id`
   - `lexUnitId`
   - `relation`
   - `englishEquivalent`

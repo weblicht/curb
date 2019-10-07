@@ -29,7 +29,7 @@ import React from 'react';
 
 // Maps all data fields in ILI record objects to their display names.
 export const ILIREC_FIELD_MAP = [
-    ['iliId', 'ILI Id'],
+    ['id', 'ILI Id'],
     ['lexUnitId', 'LexUnit Id'],
     ['relation', 'Relation'],
     ['englishEquivalent', 'English Equivalent'],
@@ -49,7 +49,7 @@ export const ILIREC_ALL_FIELDS = ILIREC_FIELD_MAP.map(entry => entry[0]);
 function ILIRecordAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
-        <ListItem id={props.data.iliId}
+        <ListItem id={props.data.id}
                   className={props.className}
                   extras={props.extras}>
           <em>{props.data.englishEquivalent}</em> ({props.data.relation.replace('_', ' ')}) &ndash; {props.data.pwn20Paraphrase}  
@@ -119,8 +119,7 @@ function ILIRecordsAsTable(props) {
 
 // props:
 //   queryParams :: { lexUnitId: ... }
-var ILIRecordsContainer = dataContainerFor('ILIRecords', selectIliRecs,
-                                           ilirec => ilirec.iliId);
+var ILIRecordsContainer = dataContainerFor('ILIRecords', selectIliRecs);
 ILIRecordsContainer = connectWithApiQuery(ILIRecordsContainer, iliQueries.queryActions);
 
 export { ILIRecordsContainer,
