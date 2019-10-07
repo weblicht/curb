@@ -26,7 +26,8 @@ import React from 'react';
 export const LEX_REL_FIELD_MAP = [
     ['id', 'LexRel Id'],
     ['relType', 'Type'],
-    ['orthForm', 'Orth Form'],
+    ['fromOrthForm', 'From Orth Form'],
+    ['toOrthForm', 'To Orth Form'],
     ['fromLexUnitId', 'From Lex Unit'],
     ['toLexUnitId', 'To Lex Unit'],
 ];

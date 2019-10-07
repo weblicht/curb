@@ -9,7 +9,8 @@ A lexical relation object contains the following fields:
 
   - `id` :: String
   - `relType` :: String
-  - `orthForm`
+  - `fromOrthForm` :: String
+  - `toOrthForm` :: String
   - `fromLexUnitId` :: String
   - `toLexUnitId` :: String
 
