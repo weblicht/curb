@@ -1,6 +1,28 @@
 * 1.x
 
-** 1.0.3
+** 1.1.0
+
+The data format returned by backend API has changed; hence the jump of
+the minor version number.  In addition to accommodating and
+documenting these API changes, the major changes in this version are:
+
+   - There is support for tracking search history in the SynsetSearch
+     components, including a new SynsetSearchHistoryBox component that
+     displays a row of buttons to re-perform previous searches.  These
+     searches will be performed with the same parameters (i.e.,
+     ignoreCase will be correctly set).
+   - The FIELD_MAP and ALL_FIELDS constants for each data type are
+     exported so consuming applications can use them.
+   - Props related to CSS are better exposed.  Containers for
+     individual data types will pass on classNames, extras, etc. to
+     the underlying DataTable and DataList components.  This allows
+     styling these containers more easily in a consuming application.
+   - Various smaller changes in GenericDisplay components, including:
+     + a new EmptyTable component, which displays an
+       empty data table with column headers and a message for the user
+     + the generic Button component also now supports rendering
+       disabled buttons.
+     + DataTableRow and ListItem gained onClick props
 
 ** 1.0.2
 
