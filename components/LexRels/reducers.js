@@ -32,10 +32,9 @@ export function lexRels(state = SI({}), action) {
         const originatingId = action.params.lexUnitId;
         const lexRelsData = action.data.map(
             lr => SI(lr).merge({
-                id: lr.lexRelId,
                 originatingLexUnitId: originatingId,
                 relatedLexUnitId: lr.lexUnitId,
-            }).without('lexRelId', 'lexUnitId')
+            }).without('lexUnitId')
         );
         return SI.setIn(state, ["byLexUnitId", originatingId],
                         lexRelsData);
