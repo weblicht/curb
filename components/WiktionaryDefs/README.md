@@ -7,13 +7,13 @@ for Wiktionary definitions of lexical units.
 
 An wiktionary definition object contains the following fields:
 
-  - `wikiRecordId`
-  - `lexUnitId`
-  - `orthForm`
-  - `wknId`
-  - `wknSenseId`
-  - `wknParaphrase`
-  - `edited`
+  - `id` :: String
+  - `lexUnitId` :: String
+  - `orthForm` :: String
+  - `wknId` :: Integer
+  - `wknSenseId` :: Integer
+  - `wknParaphrase` :: String
+  - `edited` :: Bool
 
 ## Components defined here
 

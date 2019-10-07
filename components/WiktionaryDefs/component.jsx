@@ -29,7 +29,7 @@ import React from 'react';
 
 // Maps all data fields in wiktionary def objects to their display names.
 export const WIKTDEF_FIELD_MAP = [
-    ['wikiRecordId', 'Wiki Id'],
+    ['id', 'Wiki Id'],
     ['lexUnitId', 'LexUnit Id'],
     ['orthForm', 'Orth Form'],
     ['wknId', 'WKN Id'],
@@ -48,7 +48,7 @@ export const WIKTDEF_ALL_FIELDS = WIKTDEF_FIELD_MAP.map(entry => entry[0]);
 function WiktDefAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
-        <ListItem id={props.data.wikiRecordId}
+        <ListItem id={props.data.id}
                   className={props.className}
                   extras={props.extras}>
           {props.data.orthForm}: {props.data.wknParaphrase}
@@ -120,8 +120,7 @@ function WiktDefsAsTable(props) {
 
 // props:
 //   queryParams :: { lexUnitId: ... }
-var WiktionaryDefsContainer = dataContainerFor('WiktionaryDefs', selectWiktDefs,
-                                               wd => wd.wikiRecordId); // TODO: is this the right id field?? 
+var WiktionaryDefsContainer = dataContainerFor('WiktionaryDefs', selectWiktDefs);
 WiktionaryDefsContainer = connectWithApiQuery(WiktionaryDefsContainer, wiktDefsQueries.queryActions);
 
 export { WiktionaryDefsContainer,
