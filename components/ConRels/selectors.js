@@ -58,7 +58,7 @@ function selectConRelsTree(globalState, props, relation) {
         try {
             const conRels = globalState.apiData.conRels.bySynsetId[synsetId];
             if (Array.isArray(conRels)) {
-                return conRels.filter(cr => cr.conRelType === relation);
+                return conRels.filter(cr => cr.relType === relation);
             } 
             return [];
         } catch (e) {

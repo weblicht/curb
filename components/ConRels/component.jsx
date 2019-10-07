@@ -26,7 +26,7 @@ import React from 'react';
 
 export const CON_REL_FIELD_MAP = [
     ['id', 'ConRel Id'],
-    ['conRelType', 'Type'],
+    ['relType', 'Type'],
     ['fromOrthForms', 'From Orth Forms'],
     ['toOrthForms', 'To Orth Forms'],
     ['numHyponyms', 'Hyponyms'],
@@ -41,7 +41,7 @@ export const CON_REL_ALL_FIELDS = CON_REL_FIELD_MAP.map( entry => entry[0] );
 // className and extras props, if given, will be passed on to ListItem
 function ConRelAsListItem(props) {
     // TODO: is there a more sensible default to provide here?
-    const relDisplay = props.data.conRelType.replace('_', ' ');
+    const relDisplay = props.data.relType.replace('_', ' ');
     return (
         <ListItem id={props.data.id}
                   className={props.className}
