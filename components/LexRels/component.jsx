@@ -25,7 +25,7 @@ import React from 'react';
 
 export const LEX_REL_FIELD_MAP = [
     ['id', 'LexRel Id'],
-    ['lexRelType', 'Type'],
+    ['relType', 'Type'],
     ['orthForm', 'Orth Form'],
     ['originatingLexUnitId', 'From Lex Unit'],
     ['relatedLexUnitId', 'To Lex Unit'],
@@ -37,7 +37,7 @@ export const LEX_REL_ALL_FIELDS = LEX_REL_FIELD_MAP.map( entry => entry[0] );
 // className and extras props, if given, will be passed on to ListItem
 function LexRelAsListItem(props) {
     // TODO: is there a more sensible default to provide here?
-    const relDisplay = props.data.lexRelType.replace('_', ' ');
+    const relDisplay = props.data.relType.replace('_', ' ');
     return (
         <ListItem id={props.data.id}
                   className={props.className}
