@@ -7,7 +7,7 @@ for conceptual relations.
 
 A conceptual relation object contains the following fields:
 
-  - `id`
+  - `id` :: String
   - `conRelType`
   - `allOrthForms`
   - `numHyponyms`

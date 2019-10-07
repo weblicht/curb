@@ -32,13 +32,12 @@ export function conRels(state = SI({}), action) {
         const originatingId = action.params.synsetId;
         const conRelsData = action.data.map(
             cr => SI(cr).merge({
-                id: cr.conRelId,
                 // incoming data looks like "{foo,bar}"; but we want
                 // ["foo", "bar"], as in the synset object:
                 allOrthForms:  cr.allOrthForms.slice(1, cr.allOrthForms.length - 1).split(','),
                 originatingSynsetId: originatingId,
                 relatedSynsetId: cr.synsetId,
-            }).without('conRelId', 'synsetId')
+            }).without('synsetId')
         );
         return SI.setIn(state, ["bySynsetId", originatingId],
                         conRelsData);
