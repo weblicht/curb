@@ -5,15 +5,15 @@ for synsets.
 
 ## Data object
 
-A synset object contains the following fields:
+A synset object contains the following fields with the following types:
 
-  - `id`
-  - `wordCategory`
-  - `wordClass`
-  - `orthForms`
-  - `paraphrase`
-  - `wiktionaryParaphrases`
-  - `comment`
+  - `id` :: String
+  - `wordCategory` :: String
+  - `wordClass` :: String
+  - `orthForms` :: [String]
+  - `paraphrase` :: String
+  - `wiktionaryParaphrases` :: [String]
+  - `comment` :: String
 
 ## Components defined here
 
@@ -36,17 +36,6 @@ the [SynsetSearch](../SynsetSearch) components.
 
 These components accept, and pass on, [data container control
 props](../DataContainer#user-content-selecting-and-choosing-data-objects) for choosing and selecting data.
-
-
-There are two additional display components for dealing with
-subobjects on synset objects:
-
-`WordCategory`: renders a synset's word category
-
-`WordClass`: renders a synset's word class
-
-They are provided for convenience.  Pass the entire synset to these
-components as the `data` prop.
 
 ### Example
 

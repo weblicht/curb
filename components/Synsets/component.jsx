@@ -48,22 +48,6 @@ export const SYNSET_ALL_FIELDS = SYNSET_FIELD_MAP.map(entry => entry[0]);
 // Display components for individual synsets:
 
 // props:
-//   data :: DataObject containing a .wordClass field 
-function WordClass(props) {
-    return (
-        <span className="wordClass">{props.data.wordClass}</span>
-    );
-}
-
-// props:
-//   data :: DataObject containing a .wordCategory field 
-function WordCategory(props) {
-    return (
-        <span className="wordCategory">{props.data.wordCategory}</span>
-    );
-}
-
-// props:
 //    data :: DataObject, a synset
 // className and extras props, if given, will be passed on to ListItem
 function SynsetAsListItem(props) {
@@ -83,7 +67,7 @@ function SynsetAsOption(props) {
     return (
         // TODO: what's the best data to display to disambiguate between synsets with the same orthforms?
         <option key={props.data.id} value={props.data.id}>
-          {props.data.wordClass.wordClass}: {props.data.orthForms.join(', ')} 
+          {props.data.wordClass}: {props.data.orthForms.join(', ')} 
         </option>
     );
 }
@@ -106,10 +90,10 @@ function SynsetAsTableRow(props) {
             function (field) {
                 switch (field) {
                 case 'wordCategory': {
-                    return [field, props.data.wordCategory.wordCategory];
+                    return [field, props.data.wordCategory];
                 }
                 case 'wordClass': {
-                    return [field, props.data.wordClass.wordClass];
+                    return [field, props.data.wordClass];
                 }
                 case 'orthForms': {
                     return [field, props.data.orthForms.filter(o => o !== null).join(', ')];
@@ -220,8 +204,6 @@ export { SynsetsContainer,
          SynsetsAsList,
          SynsetsAsSelect,
          SynsetsAsTable,
-         SynsetAsTableRow,
-         WordClass,
-         WordCategory
+         SynsetAsTableRow
        };
 
