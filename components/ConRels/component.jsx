@@ -27,7 +27,8 @@ import React from 'react';
 export const CON_REL_FIELD_MAP = [
     ['id', 'ConRel Id'],
     ['conRelType', 'Type'],
-    ['allOrthForms', 'All Orth Forms'],
+    ['fromOrthForms', 'From Orth Forms'],
+    ['toOrthForms', 'To Orth Forms'],
     ['numHyponyms', 'Hyponyms'],
     ['canBeDeleted', 'Can be deleted'],
     ['originatingSynsetId', 'From Synset'],

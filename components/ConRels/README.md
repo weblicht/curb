@@ -9,7 +9,8 @@ A conceptual relation object contains the following fields:
 
   - `id` :: String
   - `conRelType`
-  - `allOrthForms`
+  - `fromOrthForms` :: [String]
+  - `toOrthForms` :: [String]
   - `numHyponyms`
   - `canBeDeleted`
   - `originatingSynsetId`
