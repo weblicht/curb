@@ -30,12 +30,7 @@ export function conRels(state = SI({}), action) {
         // to make the request). Thus, we reshape it a bit here for
         // clarity.
         const originatingId = action.params.synsetId;
-        const conRelsData = action.data.map(
-            cr => SI(cr).merge({
-                originatingSynsetId: originatingId,
-                relatedSynsetId: cr.synsetId,
-            }).without('synsetId')
-        );
+        const conRelsData = action.data;
         return SI.setIn(state, ["bySynsetId", originatingId],
                         conRelsData);
     }

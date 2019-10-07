@@ -13,12 +13,8 @@ A conceptual relation object contains the following fields:
   - `toOrthForms` :: [String]
   - `numHyponyms`
   - `canBeDeleted`
-  - `originatingSynsetId`
-  - `relatedSynsetId`
-
-**Note**: this is not exactly the shape of the data which is currently
-returned by the backend; it is reshaped a little bit for clarity.  See
-[reducers.js](./reducers.js) for the details.
+  - `fromSynsetId` :: String
+  - `toSynsetId` :: String
 
 ## Components defined here
 

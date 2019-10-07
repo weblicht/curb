@@ -40,7 +40,7 @@ function selectConRelsTree(globalState, props, relation) {
         // Always include children for the root node.
         if (synsetId === rootSynsetId || props.selectedItemIds.includes(synsetId)) {
             const relateds = relatedsFor(synsetId);
-            children = relateds.map(cr => nodeFor(cr.relatedSynsetId, cr.toOrthForms));
+            children = relateds.map(cr => nodeFor(cr.toSynsetId, cr.toOrthForms));
         }
             
         return ({

@@ -31,8 +31,8 @@ export const CON_REL_FIELD_MAP = [
     ['toOrthForms', 'To Orth Forms'],
     ['numHyponyms', 'Hyponyms'],
     ['canBeDeleted', 'Can be deleted'],
-    ['originatingSynsetId', 'From Synset'],
-    ['relatedSynsetId', 'To Synset'],
+    ['fromSynsetId', 'From Synset'],
+    ['toSynsetId', 'To Synset'],
 ];
 export const CON_REL_ALL_FIELDS = CON_REL_FIELD_MAP.map( entry => entry[0] );
 
@@ -46,7 +46,7 @@ function ConRelAsListItem(props) {
         <ListItem id={props.data.id}
                   className={props.className}
                   extras={props.extras}>
-          {`Synset ${props.data.originatingSynsetId} ${relDisplay} Synset ${props.data.relatedSynsetId}`}
+          {`Synset ${props.data.fromSynsetId} ${relDisplay} Synset ${props.data.toSynsetId}`}
         </ListItem>
     ); 
 }
