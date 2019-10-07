@@ -7,15 +7,15 @@ for Interlingual Index records.
 
 An ILI record object contains the following fields:
 
-  - `id`
-  - `lexUnitId`
-  - `relation`
-  - `englishEquivalent`
-  - `pwn20Id`
-  - `pwn30Id`
-  - `pwn20Synonyms`
-  - `pwn20Paraphrase`
-  - `source`
+  - `id` :: String
+  - `lexUnitId` :: String
+  - `relation` :: String
+  - `englishEquivalent` :: String
+  - `pwn20Id` :: String
+  - `pwn30Id` :: String
+  - `pwn20Synonyms` :: [String]
+  - `pwn20Paraphrase` :: String
+  - `source` :: String
 
 ## Components defined here
 
