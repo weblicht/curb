@@ -29,7 +29,7 @@ import React from 'react';
 
 // Maps all data fields in Frame objects to their display names.
 export const FRAME_FIELD_MAP = [
-    ['frameId', 'Frame Id'],
+    ['id', 'Frame Id'],
     ['frameType', 'Frame Type'],
 ];
 export const FRAME_ALL_FIELDS = FRAME_FIELD_MAP.map(entry => entry[0]);
@@ -42,7 +42,7 @@ export const FRAME_ALL_FIELDS = FRAME_FIELD_MAP.map(entry => entry[0]);
 function FrameAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
-        <ListItem id={props.data.frameId}
+        <ListItem id={props.data.id}
                   className={props.className}
                   extras={props.extras}>
           {props.data.frameType}
@@ -104,7 +104,7 @@ function FramesAsTable(props) {
  
 // props:
 //   queryParams :: { lexUnitId: ... }
-var FramesContainer = dataContainerFor('Frames', selectFrames, frame => frame.frameId);
+var FramesContainer = dataContainerFor('Frames', selectFrames);
 FramesContainer = connectWithApiQuery(FramesContainer, framesQueries.queryActions);
 
 export { FramesContainer,
