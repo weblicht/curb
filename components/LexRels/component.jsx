@@ -27,8 +27,8 @@ export const LEX_REL_FIELD_MAP = [
     ['id', 'LexRel Id'],
     ['relType', 'Type'],
     ['orthForm', 'Orth Form'],
-    ['originatingLexUnitId', 'From Lex Unit'],
-    ['relatedLexUnitId', 'To Lex Unit'],
+    ['fromLexUnitId', 'From Lex Unit'],
+    ['toLexUnitId', 'To Lex Unit'],
 ];
 export const LEX_REL_ALL_FIELDS = LEX_REL_FIELD_MAP.map( entry => entry[0] );
 
@@ -42,7 +42,7 @@ function LexRelAsListItem(props) {
         <ListItem id={props.data.id}
                   className={props.className}
                   extras={props.extras}>
-          {`LexUnit ${props.data.originatingLexUnitId} ${relDisplay} LexUnit ${props.data.relatedLexUnitId}`}
+          {`LexUnit ${props.data.fromLexUnitId} ${relDisplay} LexUnit ${props.data.toLexUnitId}`}
         </ListItem>
     ); 
 }
