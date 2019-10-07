@@ -7,27 +7,30 @@ for compounds.
 
 A compound object contains the following fields:
 
-  - `id`
-  - `lexUnitId`
-  - `splits`
-  - `head`
-    - `lemma`
-    - `property`
-    - `id`
-  - `modifier1`
-    - `lemma`
-    - `property`
-    - `category`
-    - `id`
-    - `id2`
-    - `id3`
-  - `modifier2`
-    - `lemma`
-    - `property`
-    - `category`
-    - `id`
-    - `id2`
-    - `id3`
+  - `id` :: String
+  - `lexUnitId` :: String
+  - `splitCode` :: Integer (0: undetermined; 1: not a compound; 2: is
+    a compound)
+  - `splits` :: Bool (undefined: splitCode === 0; false: splitCode ===
+    1; true: splitCode === 2)
+  - `head` :: Object, with properties
+    - `orthForm` :: String
+    - `property` :: String
+    - `id` :: String
+  - `modifier1` :: Object, with properties
+    - `orthForm` :: String
+    - `property` :: String
+    - `category` :: String
+    - `id` :: String
+    - `id2` :: String
+    - `id3` :: String
+  - `modifier2` :: Object, with properties
+    - `orthForm` :: String
+    - `property` :: String
+    - `category` :: String
+    - `id` :: String
+    - `id2` :: String
+    - `id3` :: String
 
 ## Components defined here
 
@@ -40,7 +43,7 @@ The required query parameters look like: `{ lexUnitId: someId }`.
 ### Display components
 
 `CompoundAsGrid`: renders a single compound's head and modifier
-objects as a table with lemma, property, and category columns
+objects as a table with orth form, property, and category columns
 
 `CompoundsAsList`: renders a set of compounds as a list
 

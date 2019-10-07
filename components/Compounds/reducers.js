@@ -39,39 +39,10 @@ export function compounds(state = SI({}), action) {
     case queryActionTypes.COMPOUNDS_RETURNED: {
         const originatingId = action.params.lexUnitId;
         const compoundsData = action.data.map(
-            // Reshape the data from the backend for easier lookup
-            // and display.
-            c => SI({
-                // We use the corresponding lexunit ID as an
-                // identifier, because there is a 1:1 relationship
-                // between compound records and lexunit records.  (The
-                // backend does not return the record id in the
-                // compounds table.)
-                id: originatingId, 
-                lexUnitId: originatingId,
-                splits: isCompound(c.notSplitted),
-                head: {
-                    lemma: c.head,
-                    id: c.idHead,
-                    property: c.propertyHead
-                },
-                modifier1: {
-                    lemma: c.mod1,
-                    id: c.idMod1,
-                    id2: c.id2Mod1,
-                    id3: c.id3Mod1,
-                    property: c.propertyMod1,
-                    category: c.categoryMod1
-                },
-                modifier2: {
-                    lemma: c.mod2,
-                    id: c.idMod2,
-                    id2: c.id2Mod2,
-                    id3: c.id3Mod2,
-                    property: c.propertyMod2,
-                    category: c.categoryMod2
-                }
-
+            // Add a Boolean interpretation of the splitCode returned
+            // by the backend for ease of conditionals in the frontend:
+            c => SI.merge(c, {
+                splits: isCompound(c.splitCode)
             })
         );
         return SI.setIn(state, ["byLexUnitId", originatingId],
