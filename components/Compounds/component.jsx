@@ -33,7 +33,7 @@ export const COMPOUND_FIELD_MAP = [
     // id === lexUnitId; see comment in reducer
     ['id', 'Id'], 
     ['lexUnitId', 'LexUnit Id'],  
-    ['splits', 'Compound?'], // TODO: reasonable field and display names
+    ['splits', 'Compound?'],
     ['head', 'Head'], 
     ['modifier1', 'Modifier 1'], 
     ['modifier2', 'Modifier 2'], 
@@ -45,9 +45,9 @@ export const COMPOUND_ALL_FIELDS = COMPOUND_FIELD_MAP.map(entry => entry[0]);
 function ConstituentAsDefList(props) {
     const item = props.data;
     if (props.isHead)
-        return (<DefList terms={['Lemma', 'Property']} defs={[item.lemma, item.property]}/>);
+        return (<DefList terms={['Orth Form', 'Property']} defs={[item.orthForm, item.property]}/>);
     else
-        return (<DefList terms={['Lemma', 'Property', 'Category']} defs={[item.lemma, item.property, item.category]}/>);
+        return (<DefList terms={['Orth Form', 'Property', 'Category']} defs={[item.orthForm, item.property, item.category]}/>);
 }
 
 // Display components for individual compounds:
@@ -83,7 +83,7 @@ function CompoundAsTableRow(props) {
 function CompoundAsGrid(props) {
     if (!(props.data.splits)) return null;
     const fieldMap = [['title', ''],
-                      ['lemma', 'Lemma'],
+                      ['orthForm', 'Orth Form'],
                       ['property', 'Property'],
                       ['category', 'Category']];
     const displayFields = fieldMap.map(field => field[0]);

@@ -40,7 +40,7 @@ function selectConRelsTree(globalState, props, relation) {
         // Always include children for the root node.
         if (synsetId === rootSynsetId || props.selectedItemIds.includes(synsetId)) {
             const relateds = relatedsFor(synsetId);
-            children = relateds.map(cr => nodeFor(cr.relatedSynsetId, cr.allOrthForms));
+            children = relateds.map(cr => nodeFor(cr.toSynsetId, cr.toOrthForms));
         }
             
         return ({
@@ -58,7 +58,7 @@ function selectConRelsTree(globalState, props, relation) {
         try {
             const conRels = globalState.apiData.conRels.bySynsetId[synsetId];
             if (Array.isArray(conRels)) {
-                return conRels.filter(cr => cr.conRelType === relation);
+                return conRels.filter(cr => cr.relType === relation);
             } 
             return [];
         } catch (e) {

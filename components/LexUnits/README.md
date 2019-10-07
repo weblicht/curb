@@ -7,17 +7,17 @@ for lexical units.
 
 A lexical unit object contains the following fields:
 
-  - `id`
-  - `synsetId`
-  - `orthForm`
-  - `orthVar`
-  - `oldOrthForm`
-  - `oldOrthVar`
-  - `source`
-  - `namedEntity`
-  - `artificial`
-  - `styleMarking`
-  - `comment`
+  - `id` :: String
+  - `synsetId` :: String
+  - `orthForm` :: String
+  - `orthVar` :: String
+  - `oldOrthForm` :: String
+  - `oldOrthVar` :: String
+  - `source` :: String
+  - `namedEntity` :: Bool
+  - `artificial` :: Bool
+  - `styleMarking` :: Bool
+  - `comment` :: String
 
 ## Components defined here
 

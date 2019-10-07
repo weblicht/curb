@@ -29,7 +29,7 @@ import React from 'react';
 
 // Maps all data fields in Example objects to their display names.
 export const EXAMPLE_FIELD_MAP = [
-    ['exampleId', 'Example Id'],
+    ['id', 'Example Id'],
     ['text', 'Text'],
     ['frameType', 'Frame Type'],
 ];
@@ -43,7 +43,7 @@ export const EXAMPLE_ALL_FIELDS = EXAMPLE_FIELD_MAP.map(entry => entry[0]);
 function ExampleAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
-        <ListItem id={props.data.exampleId}
+        <ListItem id={props.data.id}
                   className={props.className}
                   extras={props.extras}>
           {props.data.frameType} &ndash; {props.data.text}  
@@ -116,7 +116,7 @@ function ExamplesAsTable(props) {
  
 // props:
 //   queryParams :: { lexUnitId: ... }
-var ExamplesContainer = dataContainerFor('Examples', selectExamples, example => example.exampleId);
+var ExamplesContainer = dataContainerFor('Examples', selectExamples);
 ExamplesContainer = connectWithApiQuery(ExamplesContainer, examplesQueries.queryActions);
 
 export { ExamplesContainer,

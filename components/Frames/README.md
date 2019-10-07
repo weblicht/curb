@@ -7,8 +7,8 @@ for frames for lexical units.
 
 A frame object contains the following fields:
 
-  - `frameId`
-  - `frameType`
+  - `id` :: String
+  - `frameType` :: String
 
 ## Components defined here
 

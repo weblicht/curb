@@ -7,11 +7,12 @@ for lexical relations.
 
 A lexical relation object contains the following fields:
 
-  - `id`
-  - `lexRelType`
-  - `orthForm`
-  - `originatingLexUnitId`
-  - `relatedLexUnitId`
+  - `id` :: String
+  - `relType` :: String
+  - `fromOrthForm` :: String
+  - `toOrthForm` :: String
+  - `fromLexUnitId` :: String
+  - `toLexUnitId` :: String
 
 **Note**: this is not exactly the shape of the data which is currently
 returned by the backend; it is reshaped a little bit for clarity.  See
@@ -22,7 +23,7 @@ returned by the backend; it is reshaped a little bit for clarity.  See
 ### Container
 
 `LexRelsContainer`: a data container for lexical relation objects.
-These objects are queried from the API by the (originating) lexUnit ID.
+These objects are queried from the API by the (from) lexUnit ID.
 The required query parameters look like: `{ lexUnitId: someId }`.
 
 ### Display components

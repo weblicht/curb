@@ -7,9 +7,9 @@ for examples for lexical units.
 
 An example object contains the following fields:
 
-  - `exampleId`
-  - `text`
-  - `frameType`
+  - `id` :: String
+  - `text` :: String
+  - `frameType` :: String
 
 ## Components defined here
 
