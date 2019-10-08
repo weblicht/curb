@@ -43,7 +43,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ```
 import { LexUnitsContainer, LexUnitsAsTable } from '@sfstuebingen/germanet-common/components';
 
-<LexUnitsContainer id='theLexUnits'
+<LexUnitsContainer containerId='theLexUnits'
                    queryParams={{ synsetId: someSynset.id }}
                    displayAs={LexUnitsAsTable}/>
 ```
