@@ -145,17 +145,17 @@ following arguments:
 return value to replace the original component definition.  See the
 recipe below for more details.
 
-A component created with `connectWithApiQuery` automatically queries
-the API when the component first mounts, with the request parameters
-given as the `queryParams` prop, or the return value of the
-`propsToParams` function.
-
-The component also receives one additional `query` prop.  This is a
-function which exposes the `doQuery` action creator, so that you can
-make API queries elsewhere in your component's lifecycle.  Calling
-this function with a request parameters object results in a new API
-query.  You can use this to e.g. fetch additional data into a data
-container based on user interactions.
+A component created with `connectWithApiQuery` will automatically try
+to query the API when the component first mounts, with the request
+parameters given by the `queryParams` prop, or the return value of the
+`propsToParams` function.  If both of these values are undefined, no
+request will be made automatically; but you can make the request
+explicitly at any time in your component's lifecycle (for example, in
+an event handler) by calling the `query` prop.  This prop is a
+function which exposes the `doQuery` action creator.  Calling this
+function with a request parameters object results in a new API query.
+You can use this to e.g. fetch additional data into a data container
+based on user interactions.
 
 ## Recipe: component connected to API
 

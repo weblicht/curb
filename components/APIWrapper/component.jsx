@@ -29,6 +29,8 @@ import { connect } from 'react-redux';
 //     returned by makeQueryActions.
 //   propsToParams (optional) :: props -> Object, a function that maps the
 //     component's props to an object representing query parameters for the API query
+//     The function should return undefined if no query should be made based on the
+//     component's props.
 //     If this function is not given, instances of this component should instead
 //     directly define the query parameters object as the value of their
 //     queryParams prop.
@@ -36,10 +38,6 @@ import { connect } from 'react-redux';
 export function connectWithApiQuery(Component, queryActions, propsToParams) {
 
     const makeParams = propsToParams || function (props) {
-        if (props.queryParams === undefined) {
-            throw new InternalError('connectWithApiQuery was given neither '
-                                    + 'a propsToParams function nor a queryParams prop');
-        }
         return props.queryParams;
     };
 
@@ -51,7 +49,11 @@ export function connectWithApiQuery(Component, queryActions, propsToParams) {
         
         componentDidMount() {
             const params = makeParams(this.props);
-            this.props.query(params);
+            if (params !== undefined) {
+                this.props.query(params);
+            }
+            // TODO: otherwise, message like this?
+            // console.info(`${componentName} was mounted without enough information to make an API query.`);
         }
 
         render() {
@@ -67,8 +69,9 @@ export function connectWithApiQuery(Component, queryActions, propsToParams) {
         };
     };
 
+    const componentName = (Component.displayName || Component.name || 'Component') + 'WithApiQuery';
     const Connected = connect(undefined, mapDispatchToProps)(APIQueryWrapper);
-    Connected.displayName = (Component.displayName || Component.name || 'Component') + 'WithApiQuery';
+    Connected.displayName = componentName ;
 
     return Connected;
 }
