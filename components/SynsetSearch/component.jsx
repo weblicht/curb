@@ -122,7 +122,7 @@ function SynsetSearchHistoryBox(props) {
             }
         );
     }
-    if (props.onlySuccesful) {
+    if (props.onlySuccessful) {
         itemsToDisplay = itemsToDisplay.filter(item => item.numResults > 0);
     }
     if (props.limit) {
