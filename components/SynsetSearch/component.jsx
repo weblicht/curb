@@ -27,6 +27,13 @@ import classNames from 'classnames';
 import React from 'react';
 import { connect } from 'react-redux';
 
+// props:
+//   id :: String, an identifier for the search box
+// The following props, if given, will be forwarded to the <Card> component that wraps the search form:
+//   title 
+//   level
+//   extras
+//   bodyExtras 
 function SynsetSearchBox(props) {
     function onSearchTermChange (e) {
         props.updateSearchTerm(e.target.value);
@@ -46,9 +53,9 @@ function SynsetSearchBox(props) {
     // elements by default, so just leaving it out causes the form
     // size to jump in an annoying way.)
     return ( 
-        <Card>
+        <Card title={props.title} level={props.level} extras={props.extras} bodyExtras={props.bodyExtras}>
           <form className="form-inline" onSubmit={onSubmit}>
-            <TextInput id="searchTerm" label="Search for"
+            <TextInput id={`${props.id}-searchTerm`} label="Search for"
                        value={props.currentSearchTerm}
                        onChange={onSearchTermChange}
                        autoFocus={true}
@@ -56,7 +63,7 @@ function SynsetSearchBox(props) {
                        extras=""
             />
             <Button text="Find" onClick={onSubmit} extras="btn-primary ml-3 my-1"/>
-            <Checkbox id="ignoreCase" label="ignore case"
+            <Checkbox id={`${props.id}-ignoreCase `} label="ignore case"
                       checked={props.ignoreCase}
                       onChange={props.toggleIgnoreCase}
                       extras="ml-3 my-1"
@@ -103,6 +110,11 @@ export { SynsetSearchResults };
 //     filtering for unique and successful items (if requested)
 //   buttonClassName (optional), className for history buttons
 //   buttonExtras (optional), extras for history buttons
+// The following props, if given, will be forwarded to the <Card> component that wraps the history controls:
+//   title (optional, defaults to "History")
+//   level (optional, defaults to 3)
+//   extras
+//   bodyExtras 
 function SynsetSearchHistoryBox(props) {
 
     // the reducer tracks the complete search history; we start by
@@ -144,7 +156,8 @@ function SynsetSearchHistoryBox(props) {
     }
 
     return (
-        <Card title="History" level={3}>
+        <Card title={props.title || "History"} level={props.level || 3}
+              extras={props.extras} bodyExtras={props.bodyExtras}>
           <nav>
             {itemsToDisplay.map(
                  item => <Button text={item.word}
