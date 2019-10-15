@@ -17,6 +17,7 @@
 
 import { InternalError } from '../../errors'; 
 
+import { isEqual } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';  
 
@@ -54,6 +55,14 @@ export function connectWithApiQuery(Component, queryActions, propsToParams) {
             }
             // TODO: otherwise, message like this?
             // console.info(`${componentName} was mounted without enough information to make an API query.`);
+        }
+
+        componentDidUpdate(prevProps) {
+            const prevParams = makeParams(prevProps);
+            const newParams = makeParams(this.props);
+            if (!isEqual(prevParams, newParams) && newParams !== undefined) {
+                this.props.query(newParams);
+            }
         }
 
         render() {
