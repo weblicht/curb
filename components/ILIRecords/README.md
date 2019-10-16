@@ -10,11 +10,11 @@ An ILI record object contains the following fields:
   - `id` :: String
   - `lexUnitId` :: String
   - `relation` :: String
-  - `englishEquivalent` :: String
+  - `pwnWord` :: String
   - `pwn20Id` :: String
+  - `pwn20Paraphrase` :: String
   - `pwn30Id` :: String
   - `pwn20Synonyms` :: [String]
-  - `pwn20Paraphrase` :: String
   - `source` :: String
 
 ## Components defined here

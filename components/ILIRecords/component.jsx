@@ -32,7 +32,7 @@ export const ILIREC_FIELD_MAP = [
     ['id', 'ILI Id'],
     ['lexUnitId', 'LexUnit Id'],
     ['relation', 'Relation'],
-    ['englishEquivalent', 'English Equivalent'],
+    ['pwnWord', 'English Equivalent'],
     ['pwn20Id', 'PWN 2.0 Id'],
     ['pwn30Id', 'PWN 3.0 Id'],
     ['pwn20Synonyms', 'PWN 2.0 Synonyms'],
@@ -52,7 +52,7 @@ function ILIRecordAsListItem(props) {
         <ListItem id={props.data.id}
                   className={props.className}
                   extras={props.extras}>
-          <em>{props.data.englishEquivalent}</em> ({props.data.relation.replace('_', ' ')}) &ndash; {props.data.pwn20Paraphrase}  
+          <em>{props.data.pwnWord}</em> ({props.data.relation.replace('_', ' ')}) &ndash; {props.data.pwn20Paraphrase}  
         </ListItem>
     );
 }
@@ -62,7 +62,7 @@ function ILIRecordAsListItem(props) {
 // props:
 //   data :: [ DataObject ], the ilirecs
 function ILIRecordsAsDefList(props) {
-    const terms = props.data.map( d => `${d.englishEquivalent} (${d.relation.replace('_', ' ')})`);
+    const terms = props.data.map( d => `${d.pwnWord} (${d.relation.replace('_', ' ')})`);
     const defs = props.data.map( d => d.pwn20Paraphrase );
     return ( <DefList className="ilirecs-container" terms={terms} defs={defs} /> );
 }
