@@ -497,7 +497,7 @@ export function Select(props) {
  
     return (
         <>
-          <label className={classNames('sr-only' || props.labelClassName, props.labelExtras)}
+          <label className={classNames(props.labelClassName || 'sr-only', props.labelExtras)}
                  htmlFor={props.id}>
             {props.label}
           </label>
@@ -543,7 +543,7 @@ export function TabbedPanes(props) {
     return (
         <>
           <nav className={classNames("nav", // always required
-                                     "nav-tabs" || props.tabsClassName,
+                                     props.tabsClassName || "nav-tabs",
                                      props.tabsExtras)}>
             {props.data.map(
                 item => 
@@ -565,7 +565,7 @@ export function TabbedPanes(props) {
           <div className="tab-content">
             {props.data.map(
                 item =>
-                    <div className={classNames("tab-pane" || props.paneClassName,
+                    <div className={classNames(props.paneClassName || "tab-pane",
                                                { active: item.chosen },
                                                props.paneExtras,
                                                item.contentExtras
