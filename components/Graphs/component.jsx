@@ -61,19 +61,19 @@ import React from 'react';
 // Without further ado, here are the CONSTANTS:
 
 // Layout sizing:
-const DEFAULT_WIDTH = 1280;
-const DEFAULT_HEIGHT = 800;
-const DEFAULT_MARGIN = 20;
+export const DEFAULT_WIDTH = 1280;
+export const DEFAULT_HEIGHT = 800;
+export const DEFAULT_MARGIN = 20;
 
 // Transitions:
-const DEFAULT_TRANSITION_DURATION = 750;
+export const DEFAULT_TRANSITION_DURATION = 750;
 
 // Nodes:
 function DEFAULT_NODE_CLICK_HANDLER(d) {
     return null;
 }
-const DEFAULT_NODE_RADIUS = 5;
-const DEFAULT_NODE_COLORS = {
+export const DEFAULT_NODE_RADIUS = 5;
+export const DEFAULT_NODE_COLORS = {
     // TODO: decide on some nice-looking defaults here
     unselected: 'gray',
     selected: 'green',
@@ -81,25 +81,25 @@ const DEFAULT_NODE_COLORS = {
     chosen: '',
     root: 'pink'
 };
-const DEFAULT_NODE_CLASS = 'node';
+export const DEFAULT_NODE_CLASS = 'node';
 
-// Node separation for layout.  What matters here is the *ratio* of
-// the x and y separation values, which determines how quickly the
-// tree "spreads out" in one dimension relative to the other when laid
-// out. These values seem to provide a reasonable default for
-// hyper/hyponym trees drawn in a desktop browser; YMMV:
-const DEFAULT_NODE_SEP = [DEFAULT_WIDTH / 10,
-                          DEFAULT_HEIGHT / 8];
+// Node separation [x, y] for layout.  The ratio of the x and y
+// separation values determines how quickly the tree "spreads out" in
+// one dimension relative to the other when laid out. These values
+// seem to provide a reasonable default for hyper/hyponym trees drawn
+// in a desktop browser; YMMV:
+export const DEFAULT_NODE_SEP = [DEFAULT_WIDTH / 10,
+                                 DEFAULT_HEIGHT / 8];
 
-const DEFAULT_NODE_LABEL_GAP = 6;
-const DEFAULT_NODE_LABEL_ANGLE = -30;
-const DEFAULT_NODE_LABEL_YOFFSET = "0.35em";
-const DEFAULT_NODE_LABEL_SETTINGS = {
+export const DEFAULT_NODE_LABEL_GAP = 6;
+export const DEFAULT_NODE_LABEL_ANGLE = -30;
+export const DEFAULT_NODE_LABEL_YOFFSET = "0.35em";
+export const DEFAULT_NODE_LABEL_SETTINGS = {
     gap: DEFAULT_NODE_LABEL_GAP,
     angle: DEFAULT_NODE_LABEL_ANGLE,
     yOffset: DEFAULT_NODE_LABEL_YOFFSET
 };
-const DEFAULT_NODE_CONFIG = {
+export const DEFAULT_NODE_CONFIG = {
     radius: DEFAULT_NODE_RADIUS,
     colors: DEFAULT_NODE_COLORS,
     class: DEFAULT_NODE_CLASS,
@@ -109,11 +109,11 @@ const DEFAULT_NODE_CONFIG = {
 };
 
 // Links:
-const DEFAULT_LINK_CLASS = 'link';
-const DEFAULT_LINK_COLOR = '#555'; // a slightly lighter gray than unselected nodes
-const DEFAULT_LINK_THICKNESS = 1.5;
-const DEFAULT_LINK_OPACITY = 0.4;
-const DEFAULT_LINK_CONFIG = {
+export const DEFAULT_LINK_CLASS = 'link';
+export const DEFAULT_LINK_COLOR = '#555'; // a slightly lighter gray than unselected nodes
+export const DEFAULT_LINK_THICKNESS = 1.5;
+export const DEFAULT_LINK_OPACITY = 0.4;
+export const DEFAULT_LINK_CONFIG = {
     class: DEFAULT_LINK_CLASS,
     color: DEFAULT_LINK_COLOR,
     thickness: DEFAULT_LINK_THICKNESS,
