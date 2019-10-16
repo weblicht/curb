@@ -130,11 +130,31 @@ function makeNodeClickHandler(props) {
     };
 }
 
+// props:
+//   nodeClickHandler (optional): d3 event handler function to handle
+//     clicks on nodes in the graph. The function should accept a d3
+//     'datum'; the original synset object for the clicked node is
+//     available on the datum's .data property.  If not passed, a
+//     default click handler is used which 'selects' clicked nodes.
+//     Selected nodes have their related hyper- or hypo-nyms displayed
+//     in the graph.
+//     
+// These props, if given, will be passed on to VerticalDoubleTreeGraph:
+//   margin
+//   width
+//   height
+//   nodes
+//   links 
 function HnymsGraph(props){
     return (
         <VerticalDoubleTreeGraph upwardTree={props.data.children[0]}
                                  downwardTree={props.data.children[1]}
-                                 nodeClickHandler={makeNodeClickHandler(props)} />
+                                 margin={props.margin}
+                                 width={props.width}
+                                 height={props.height}
+                                 nodes={props.nodes}
+                                 links={props.links}
+                                 nodeClickHandler={props.nodeClickHandler || makeNodeClickHandler(props)} />
     );
 }
 
@@ -142,7 +162,12 @@ function HyponymsGraph(props){
     return (
         <VerticalTreeGraph tree={props.data}
                            flip={false}
-                           nodeClickHandler={makeNodeClickHandler(props)}/>
+                           margin={props.margin}
+                           width={props.width}
+                           height={props.height}
+                           nodes={props.nodes}
+                           links={props.links}
+                           nodeClickHandler={props.nodeClickHandler || makeNodeClickHandler(props)}/>
     );
 }
 
@@ -150,7 +175,13 @@ function HypernymsGraph(props){
     return (
         <VerticalTreeGraph tree={props.data}
                            flip={true}
-                           nodeClickHandler={makeNodeClickHandler(props)}/>
+                           margin={props.margin}
+                           width={props.width}
+                           height={props.height}
+                           nodes={props.nodes}
+                           links={props.links}
+                           nodeClickHandler={props.nodeClickHandler || makeNodeClickHandler(props)}/>
+
     );
 }
 
