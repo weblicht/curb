@@ -94,6 +94,40 @@ const SynsetSearchResults = dataContainerFor('SynsetSearchResults', selectSynset
 
 export { SynsetSearchResults };
 
+// Renders an alert related to searches.
+// props:
+//   source :: String, the .id of the corresponding SynsetSearchForm
+//   className (optional), className for alert div. Defaults to 'alert' plus an appropriate
+//     alert detail class (e.g., 'alert-warning').
+//   extras (optional), extras for alert div
+//   props.children, if given, will also be placed inside the div, after the alert message.
+function SynsetSearchAlert(props) {
+    if (!props.alert) return null;
+    
+    return (
+        <div className={classNames(props.className || props.alertClass,
+                                   props.extras)} role="alert">
+          {props.alert}
+          {props.children}
+        </div>
+    );
+}
+
+function alertStateToProps(state, ownProps) {
+    const searchState = selectSearchFormState(state, ownProps.source);
+    const bootstrapAlertClass = searchState.alertClass
+          ? 'alert alert-' + searchState.alertClass
+          : undefined;
+
+    return {
+        alert: searchState.alert,
+        alertClass: bootstrapAlertClass
+    };
+}
+
+SynsetSearchAlert = connect(alertStateToProps, undefined)(SynsetSearchAlert);
+export { SynsetSearchAlert };
+
 // Renders search history as buttons inside a <nav> element.
 // props:
 //   source :: String, the .id of the corresponding SynsetSearchForm

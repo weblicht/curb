@@ -31,6 +31,15 @@ via localStorage.
 The `source` prop is required and must be the same as the `id` for the
 corresponding search form.
 
+### SynsetSearchAlert
+
+Displays an appropriately-styled alert div containing an alert message
+when a search fails to return results.
+
+The `source` prop is required and must be the same as the `id` for the
+corresponding search form.
+
+
 ### Example
 
 ```
