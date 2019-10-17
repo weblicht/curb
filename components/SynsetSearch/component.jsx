@@ -199,7 +199,7 @@ class SynsetSearchHistoryNav extends React.Component {
         );
         
         return (
-            <nav className={classNames(this.props.class, this.props.extras)}>
+            <nav className={classNames(this.props.className, this.props.extras)}>
               {(itemsToDisplay && itemsToDisplay.length) ? buttons : empty }
             </nav>
         );
