@@ -16,29 +16,21 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 // SynsetSearch/selectors.js
-// Data selectors for SynsetSearchBox state
+// Data selectors for SynsetSearchForm state
 
-import { defaultSearchBoxState } from './reducers';
+import { defaultSearchFormState } from './reducers';
 
-export function selectSearchBoxState(globalState, id) {
-    if ( globalState.synsetSearchBoxes.byId === undefined  ) { 
-        // globalState.synsetSearchBoxes.byId might not exist yet, because
-        // it is created when the first search box component is
-        // registered, but this function can be called before that --
-        // e.g., in the mapStateToProps which precedes constructing
-        // the first search box. In that case we still need to provide
-        // the default values.
-        return defaultSearchBoxState;
+export function selectSearchFormState(globalState, id) {
+    if ( globalState.synsetSearches.byId === undefined  ) { 
+        return defaultSearchFormState;
     } else {
-        // the normal case: this component's state is already
-        // initialized 
-        return globalState.synsetSearchBoxes.byId[id];
+        return globalState.synsetSearches.byId[id];
     }
 }
    
-export function selectSynsetsForSearchBox(globalState, ownProps) {
+export function selectSynsetsForSearchForm(globalState, ownProps) {
     try {
-        return globalState.synsetSearchBoxes.byId[ownProps.source].synsets || [];
+        return globalState.synsetSearches.byId[ownProps.source].synsets || [];
     } catch (e) {
         // TypeError if one of the properties in the middle is not
         // defined yet
@@ -47,9 +39,9 @@ export function selectSynsetsForSearchBox(globalState, ownProps) {
 
 }
 
-export function selectHistoryForSearchBox(globalState, ownProps) {
+export function selectHistoryForSearchForm(globalState, ownProps) {
     try {
-        return globalState.synsetSearchBoxes.byId[ownProps.source].history || [];
+        return globalState.synsetSearches.byId[ownProps.source].history || [];
     } catch (e) {
         // TypeError if one of the properties in the middle is not
         // defined yet

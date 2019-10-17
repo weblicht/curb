@@ -79,10 +79,10 @@ function selectConRelsTree(globalState, props, relation) {
         // TODO: fetch this synset if we don't yet have (synset) data
         // for it.  Also, there really should be a better place in the
         // Redux store for synset objects than inside the state for a search
-        // box.  
+        // form.  
         var rootOrthForms = [];
-        for (var searchBoxState of Object.values(globalState.synsetSearchBoxes.byId)) {
-            var rootSynset = searchBoxState.synsets.find(synset => synset.id === rootSynsetId);
+        for (var searchState of Object.values(globalState.synsetSearches.byId)) {
+            var rootSynset = searchState.synsets.find(synset => synset.id === rootSynsetId);
             if (rootSynset) {
                 rootOrthForms = rootSynset.orthForms;
                 break;

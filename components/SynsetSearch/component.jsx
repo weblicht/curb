@@ -18,23 +18,27 @@
 // SynsetSearch/component.jsx
 
 import { doSearch, updateSearchTerm, toggleIgnoreCase, setIgnoreCase, reloadHistory } from './actions';
-import { selectSearchBoxState,
-         selectSynsetsForSearchBox } from './selectors';
-import { Button, Checkbox, TextInput, Card } from '../GenericDisplay/component';
+import { selectSearchFormState,
+         selectSynsetsForSearchForm } from './selectors';
+import { Button, Checkbox, TextInput } from '../GenericDisplay/component';
 import { dataContainerFor } from '../DataContainer/component';
 
 import classNames from 'classnames';
 import React from 'react';
 import { connect } from 'react-redux';
 
+// Renders a simple search form with text input and submit button for synset searches 
 // props:
-//   id :: String, an identifier for the search box
-// The following props, if given, will be forwarded to the <Card> component that wraps the search form:
-//   title 
-//   level
-//   extras
-//   bodyExtras 
-function SynsetSearchBox(props) {
+//   id :: String, an identifier for the search form
+//   className (optional), class for form element. Defaults to "form-inline".
+//   extras (optional), extra classes for form element.
+//   inputClassName, inputExtras (optional), className and extras for the text input.
+//   buttonClassName, buttonExtras (optional), className and extras for the submit button.
+//     Defaults space the button slightly right from the text input.  
+//   checkboxClassName, checkboxExtras (optional), className and extras for the 
+//     "ignore case" checkbox. Defaults space the button slightly right of the
+//     submit button.
+function SynsetSearchForm(props) {
     function onSearchTermChange (e) {
         props.updateSearchTerm(e.target.value);
     }
@@ -44,47 +48,36 @@ function SynsetSearchBox(props) {
         props.doSearch(props.currentSearchTerm, props.ignoreCase);
     }
 
-    // Note: we use a <label> to display any alert because it aligns
-    // better with the other form elements, and users can click it to
-    // return to the search field. The invisible "Alignment message"
-    // is just there to maintain alignment of the form elements and
-    // the height of the form row when there is no actual alert to
-    // display.  (Alerts are slightly taller than the rest of the form
-    // elements by default, so just leaving it out causes the form
-    // size to jump in an annoying way.)
     return ( 
-        <Card title={props.title} level={props.level} extras={props.extras} bodyExtras={props.bodyExtras}>
-          <form className="form-inline" onSubmit={onSubmit}>
-            <TextInput id={`${props.id}-searchTerm`} label="Search for"
-                       value={props.currentSearchTerm}
-                       onChange={onSearchTermChange}
-                       autoFocus={true}
-                       placeholder="Enter a word or Synset Id"
-                       extras=""
-            />
-            <Button text="Find" onClick={onSubmit} extras="btn-primary ml-3 my-1"/>
-            <Checkbox id={`${props.id}-ignoreCase `} label="ignore case"
-                      checked={props.ignoreCase}
-                      onChange={props.toggleIgnoreCase}
-                      extras="ml-3 my-1"
-            />
-            <label htmlFor="searchTerm"
-                   className={classNames('d-inline-block',
-                                         'alert',
-                                         props.alertClass ? 'alert-' + props.alertClass : 'invisible',
-                                         'ml-3 my-1')}>
-              {props.alert || "Alignment message"}
-            </label>
-          </form>
-        </Card>
+        <form className={classNames(props.className || "form-inline", props.extras)}
+              onSubmit={onSubmit}>
+          <TextInput id={`${props.id}-searchTerm`} label="Search for"
+                     value={props.currentSearchTerm}
+                     onChange={onSearchTermChange}
+                     autoFocus={true}
+                     placeholder="Enter a word or Synset Id"
+                     className={props.inputClassName}
+                     extras={props.inputExtras}
+          />
+          <Button text="Find" onClick={onSubmit}
+                  className={props.buttonClassName}
+                  extras={props.buttonExtras || "btn-primary ml-3 my-1"}
+          />
+          <Checkbox id={`${props.id}-ignoreCase `} label="ignore case"
+                    checked={props.ignoreCase}
+                    onChange={props.toggleIgnoreCase}
+                    className={props.checkboxClassName}
+                    extras={props.checkboxExtras || "ml-3 my-1"}
+          />
+        </form>
     );
 }
 
-function searchBoxStateToProps(state, ownProps) {
-    return selectSearchBoxState(state, ownProps.id);
+function searchFormStateToProps(state, ownProps) {
+    return selectSearchFormState(state, ownProps.id);
 }
 
-function searchBoxDispatchToProps(dispatch, ownProps) {
+function searchFormDispatchToProps(dispatch, ownProps) {
     return {
         doSearch: (term, igcase) => dispatch(doSearch(ownProps.id, term, igcase)),
         updateSearchTerm: (term) => dispatch(updateSearchTerm(ownProps.id, term)),
@@ -92,18 +85,18 @@ function searchBoxDispatchToProps(dispatch, ownProps) {
     };
 }
 
-SynsetSearchBox = connect(searchBoxStateToProps, searchBoxDispatchToProps)(SynsetSearchBox);
-export { SynsetSearchBox };
+SynsetSearchForm = connect(searchFormStateToProps, searchFormDispatchToProps)(SynsetSearchForm);
+export { SynsetSearchForm };
 
 // props:
-//   source :: String, the .id of the corresponding SynsetSearchBox
-const SynsetSearchResults = dataContainerFor('SynsetSearchResults', selectSynsetsForSearchBox);
+//   source :: String, the .id of the corresponding SynsetSearchForm
+const SynsetSearchResults = dataContainerFor('SynsetSearchResults', selectSynsetsForSearchForm);
 
 export { SynsetSearchResults };
 
 // Renders search history as buttons inside a <nav> element.
 // props:
-//   source :: String, the .id of the corresponding SynsetSearchBox
+//   source :: String, the .id of the corresponding SynsetSearchForm
 //   onlyUnique (optional) :: Bool, whether to only display a list of unique search terms
 //   onlySuccessful (optional) :: Bool, whether to only display searches that returned results
 //   persist (optional) :: Bool, whether to use browser localStorage to persist search history
@@ -182,7 +175,7 @@ class SynsetSearchHistoryNav extends React.Component {
 }
 
 function historyStateToProps(state, ownProps) {
-    return selectSearchBoxState(state, ownProps.source);
+    return selectSearchFormState(state, ownProps.source);
 }
 
 function historyDispatchToProps(dispatch, ownProps) {

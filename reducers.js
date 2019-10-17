@@ -20,7 +20,7 @@
 // consuming applications
 import { combineReducers } from 'redux';
 
-export { synsetSearchBoxes } from './components/SynsetSearch/reducers';
+export { synsetSearches } from './components/SynsetSearch/reducers';
 
 // Data containers
 export { dataContainers } from './components/DataContainer/reducers';

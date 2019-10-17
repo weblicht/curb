@@ -15,9 +15,6 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
-// SynsetSearchBox/reducers.js
-// State management for SynsetSearchBox state 
-
 import { actionTypes } from './actions';
 import { makeByIdReducer } from '../../helpers';
 import { ValidationError } from '../../validation';
@@ -25,7 +22,7 @@ import { ValidationError } from '../../validation';
 import SI from 'seamless-immutable';
 
 // internal state for a particular search box:
-const searchBoxInnerState = SI({
+const searchFormInnerState = SI({
     ignoreCase: false,
     currentSearchTerm: '',
     history: [],
@@ -34,10 +31,10 @@ const searchBoxInnerState = SI({
     alertClass: undefined, // 'info', 'warning', 'success', etc.: Bootstrap class for alert message
     error: undefined
 })
-export { searchBoxInnerState as defaultSearchBoxState }; 
+export { searchFormInnerState as defaultSearchFormState }; 
 
 // manages private state for an individual search box
-function searchBoxInnerReducer(state = searchBoxInnerState, action) {
+function searchFormInnerReducer(state = searchFormInnerState, action) {
     switch (action.type) {
     // we have actions both to TOGGLE and SET ignore case because
     // TOGGLE is best suited to easily handling clicks on the
@@ -58,6 +55,7 @@ function searchBoxInnerReducer(state = searchBoxInnerState, action) {
     case actionTypes.SYNSET_SEARCH_SUBMITTED: {
         return state.merge({
             currentSearchTerm: '',
+            synsets: [],
             alert: undefined,
             alertClass: undefined
         })
@@ -92,10 +90,10 @@ function searchBoxInnerReducer(state = searchBoxInnerState, action) {
 }
 
 // manage overall search boxes, results, and history state by their ids:
-const searchBoxesById = makeByIdReducer(searchBoxInnerReducer,
+const searchFormsById = makeByIdReducer(searchFormInnerReducer,
                                         actionTypes);
 
-export { searchBoxesById as synsetSearchBoxes };        
+export { searchFormsById as synsetSearches };        
 
        
  

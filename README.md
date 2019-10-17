@@ -119,11 +119,11 @@ from this library into your root Redux reducer.  For convenience, the
 reducers for all the components have been imported into the top-level
 `reducers.js`, so you can import them like this:
 ```
-import { synsetSearchBoxes, dataContainers, apiData } from '@sfstuebingen/germanet-common/reducers';
+import { synsetSearches, dataContainers, apiData } from '@sfstuebingen/germanet-common/reducers';
 
 const rootReducer = {
    ...
-   synsetSearchBoxes,
+   synsetSearches,
    dataContainers,
    apiData,
    ...
