@@ -17,7 +17,7 @@
 
 // SynsetSearch/component.jsx
 
-import { doSearch, updateSearchTerm, toggleIgnoreCase, setIgnoreCase } from './actions';
+import { doSearch, updateSearchTerm, toggleIgnoreCase, setIgnoreCase, reloadHistory } from './actions';
 import { selectSearchBoxState,
          selectSynsetsForSearchBox } from './selectors';
 import { Button, Checkbox, TextInput, Card } from '../GenericDisplay/component';
@@ -115,59 +115,77 @@ export { SynsetSearchResults };
 //   level (optional, defaults to 3)
 //   extras
 //   bodyExtras 
-function SynsetSearchHistoryBox(props) {
+class SynsetSearchHistoryBox extends React.Component {
 
-    // the reducer tracks the complete search history; we start by
-    // filtering the complete history down to a subset, in accordance
-    // with the given props
-    var itemsToDisplay = props.history;
-    if (props.onlyUnique) {
-        var seenWords = [];
-        itemsToDisplay = itemsToDisplay.filter(
-            item => {
-                if (seenWords.includes(item.word)) {
-                    return false;
-                } else {
-                    seenWords.push(item.word);
-                    return true;
+    constructor(props) {
+        super(props);
+    }
+
+    componentDidMount() {
+        if (this.props.persist) {
+            this.props.reloadHistory();
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        // store the history in browser localStorage so it can be retrieved 
+        // after page refreshes; see reloadHistory in actions.js. 
+        if (this.props.persist) {
+            localStorage.setItem(this.props.source + '.searchHistory',
+                                 JSON.stringify(this.props.history));
+        }
+    }
+
+    render() {
+        // the reducer tracks the *complete* search history (as does
+        // local storage); we start by filtering the complete history
+        // down to a subset, in accordance with the given props
+        var itemsToDisplay = this.props.history;
+        if (this.props.onlyUnique) {
+            var seenWords = [];
+            itemsToDisplay = itemsToDisplay.filter(
+                item => {
+                    if (seenWords.includes(item.word)) {
+                        return false;
+                    } else {
+                        seenWords.push(item.word);
+                        return true;
+                    }
                 }
-            }
-        );
-    }
-    if (props.onlySuccessful) {
-        itemsToDisplay = itemsToDisplay.filter(item => item.numResults > 0);
-    }
-    if (props.limit) {
-        itemsToDisplay = itemsToDisplay.slice(0, props.limit);
-    }
+            );
+        }
+        if (this.props.onlySuccessful) {
+            itemsToDisplay = itemsToDisplay.filter(item => item.numResults > 0);
+        }
+        if (this.props.limit) {
+            itemsToDisplay = itemsToDisplay.slice(0, this.props.limit);
+        }
+        
+        
+        var content;
+        if (!(itemsToDisplay && itemsToDisplay.length)) {
+            content = <p>No search history to display.</p>;
+        } else {
+            content = (
+                <nav>
+                  {itemsToDisplay.map(
+                      item => <Button text={item.word}
+                                      onClick={this.props.redoSearch(item.word, item.ignoreCase)}
+                                      className={this.props.buttonClassName}
+                                      extras={this.props.buttonExtras} />
+                  )}
+                </nav>
+            );
+        }
 
-    // store the filtered history in browser localStorage, so it can be retrieved 
-    // after page refreshes; see reloadHistory in actions.js:
-    if (props.persist) {
-        localStorage.setItem(props.source + '.searchHistory', JSON.stringify(itemsToDisplay));
-    }
-    
-    if (!(itemsToDisplay && itemsToDisplay.length)) {
         return (
-            <Card title="History" level={3}>
-              <p>No search history to display.</p>
+            <Card title={this.props.title || "History"} level={this.props.level || 3}
+                  extras={this.props.extras} bodyExtras={this.props.bodyExtras}>
+              {content}
             </Card>
         );
-    }
 
-    return (
-        <Card title={props.title || "History"} level={props.level || 3}
-              extras={props.extras} bodyExtras={props.bodyExtras}>
-          <nav>
-            {itemsToDisplay.map(
-                 item => <Button text={item.word}
-                                 onClick={props.redoSearch(item.word, item.ignoreCase)}
-                                 className={props.buttonClassName}
-                                 extras={props.buttonExtras} />
-            )}
-          </nav>
-        </Card>
-    );
+    }
 
 }
 
@@ -182,7 +200,8 @@ function historyDispatchToProps(dispatch, ownProps) {
             dispatch(doSearch(ownProps.source, term, igcase));
             dispatch(updateSearchTerm(ownProps.source, term));
             dispatch(setIgnoreCase(ownProps.source, igcase)); 
-        }
+        },
+        reloadHistory: () => dispatch(reloadHistory(ownProps.source))
     };
 }
 
