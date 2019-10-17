@@ -101,6 +101,7 @@ const SynsetSearchResults = dataContainerFor('SynsetSearchResults', selectSynset
 
 export { SynsetSearchResults };
 
+// Renders search history as buttons inside a <nav> element.
 // props:
 //   source :: String, the .id of the corresponding SynsetSearchBox
 //   onlyUnique (optional) :: Bool, whether to only display a list of unique search terms
@@ -108,14 +109,13 @@ export { SynsetSearchResults };
 //   persist (optional) :: Bool, whether to use browser localStorage to persist search history
 //   limit (optional) :: Number, a maximum number of history items to display, *after*
 //     filtering for unique and successful items (if requested)
-//   buttonClassName (optional), className for history buttons
-//   buttonExtras (optional), extras for history buttons
-// The following props, if given, will be forwarded to the <Card> component that wraps the history controls:
-//   title (optional, defaults to "History")
-//   level (optional, defaults to 3)
-//   extras
-//   bodyExtras 
-class SynsetSearchHistoryBox extends React.Component {
+//   className, extras (optional), className and extras for the <nav> element 
+//   buttonClassName, buttonExtras (optional), className and extras for history buttons
+//   emptyMessage (optional), a message to display when there is no search history
+//     Defaults to "No search history to display."
+//   emptyClassName, emptyExtras (optional), classNames and extras for the <div> used to
+//     display the message when there is no search history 
+class SynsetSearchHistoryNav extends React.Component {
 
     constructor(props) {
         super(props);
@@ -161,28 +161,20 @@ class SynsetSearchHistoryBox extends React.Component {
             itemsToDisplay = itemsToDisplay.slice(0, this.props.limit);
         }
         
+        const empty = <div className={classNames(this.props.emptyClass, this.props.emptyExtras)}>
+                        {this.props.emptyMessage || "No search history to display."}
+                      </div>;
+        const buttons = itemsToDisplay.map(
+            item => <Button text={item.word}
+                            onClick={this.props.redoSearch(item.word, item.ignoreCase)}
+                            className={this.props.buttonClassName}
+                            extras={this.props.buttonExtras} />
+        );
         
-        var content;
-        if (!(itemsToDisplay && itemsToDisplay.length)) {
-            content = <p>No search history to display.</p>;
-        } else {
-            content = (
-                <nav>
-                  {itemsToDisplay.map(
-                      item => <Button text={item.word}
-                                      onClick={this.props.redoSearch(item.word, item.ignoreCase)}
-                                      className={this.props.buttonClassName}
-                                      extras={this.props.buttonExtras} />
-                  )}
-                </nav>
-            );
-        }
-
         return (
-            <Card title={this.props.title || "History"} level={this.props.level || 3}
-                  extras={this.props.extras} bodyExtras={this.props.bodyExtras}>
-              {content}
-            </Card>
+            <nav className={classNames(this.props.class, this.props.extras)}>
+              {(itemsToDisplay && itemsToDisplay.length) ? buttons : empty }
+            </nav>
         );
 
     }
@@ -205,5 +197,5 @@ function historyDispatchToProps(dispatch, ownProps) {
     };
 }
 
-SynsetSearchHistoryBox = connect(historyStateToProps, historyDispatchToProps)(SynsetSearchHistoryBox);
-export { SynsetSearchHistoryBox };
+SynsetSearchHistoryNav = connect(historyStateToProps, historyDispatchToProps)(SynsetSearchHistoryNav);
+export { SynsetSearchHistoryNav };
