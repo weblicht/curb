@@ -515,19 +515,27 @@ export function Select(props) {
 //       These objects represent the tabs to be displayed.
 //       The objects should have the following fields:
 //          id, an identifier for the tab and its associated pane
-//          chosen :: Bool, whether the tab is chosen (i.e., open)
+//          chosen :: Bool, whether the tab is chosen (i.e., open).
+//            "active" will automatically be added to the tab button's classes 
+//            if this property is true.
 //          buttonText ::  String, the text for the tab button
-//          buttonExtras, extra classes for the tab button
+//          buttonExtras, extra classes for the tab button.
 //          content :: the rendered content to be placed in the tab pane
 //          contentExtras, extra classes for the tab pane
 //       It is the caller's responsibility to ensure that exactly one object
 //       has .chosen === true.  No tab will be chosen by default.
 //    choose, a callback to call with the data object's ID
 //       when a tab button is clicked
-//    tabsClassName (optional), className for tab buttons container
-//       Defaults to 'nav-tabs'. See Bootstrap documentation for other useful options: 
+//    tabsClassName (optional), className for nav container wrapping
+//       the tab buttons Defaults to 'nav nav-tabs'. See Bootstrap
+//       documentation for other useful options:
 //       https://getbootstrap.com/docs/4.0/components/navs/
-//    tabsExtras (optional), extras for tabs container
+//    tabsExtras (optional), extras for nav tabs container
+//    buttonClassName (optional), className for tab buttons.
+//       Defaults to "nav-item nav-link".
+//    buttonExtras (optional), default extras for all tab buttons.
+//       The .buttonExtras value of each individual tab object will be
+//       *added* to this prop.
 //    paneClassName (optional), className for each tab pane div
 //    paneExtras (optional), extras for each tab pane div
 export function TabbedPanes(props) {
@@ -542,13 +550,13 @@ export function TabbedPanes(props) {
 
     return (
         <>
-          <nav className={classNames("nav", // always required
-                                     props.tabsClassName || "nav-tabs",
+          <nav className={classNames(props.tabsClassName || "nav nav-tabs",
                                      props.tabsExtras)}>
             {props.data.map(
                 item => 
-                    <a className={classNames("nav-item nav-link",
+                    <a className={classNames(props.buttonClassName || "nav-item nav-link",
                                              { active: item.chosen },
+                                             props.buttonExtras,
                                              item.buttonExtras
                                             )}
                        id={item.id + "-tab"}
