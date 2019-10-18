@@ -1,7 +1,7 @@
 {
   "name": "@sfstuebingen/germanet-common",
   "homepage": "http://www.sfs.uni-tuebingen.de/GermaNet/",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Common React components for GermaNet-related web UIs",
   "module": "index.js",
   "author": "Richard Lawrence",
