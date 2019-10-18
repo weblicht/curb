@@ -175,11 +175,10 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     // and/or updates a chart.
     const hierarchy = d3.hierarchy(data);
 
-    // Basic dimensions for the chart.  flipScalar is used to orient
-    // various elements either upward or downward, 
+    // Some constants needed below.  flipScalar is used to orient
+    // various elements either upward or downward.  config.margin is
+    // referenced frequently, so we give it its own variable.
     const flipScalar = (config.flip ? -1 : 1);
-    const width = config.width; 
-    const height = config.height * flipScalar;
     const margin = config.margin;
 
     // This performs the layout of the tree.  We use the D3's
@@ -722,7 +721,7 @@ export class VerticalDoubleTreeGraph extends React.Component {
                 class: 'upward'
             },
             flip: true,
-            height: dim.treeHeight,
+            height: dim.canvasHeight,
             width: dim.width,
             margin: dim.margin
         };
@@ -738,7 +737,7 @@ export class VerticalDoubleTreeGraph extends React.Component {
                 class: 'downward'
             },
             flip: false,
-            height: dim.treeHeight,
+            height: dim.canvasHeight,
             width: dim.width,
             margin: dim.margin
         };
