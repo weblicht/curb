@@ -1,5 +1,45 @@
 * 1.x
 
+** 1.2.0 
+
+The main changes in 1.2.0 involve the SynsetSearch components, which
+have been extensively reworked to make them more flexible and easier
+to style.  Some of these changes are *not backwards compatible*; thus
+the minor version number bump.
+
+  - SynsetSearchBox has been renamed to SynsetSearchForm and no longer
+    wraps the contained form in a Card.  Renaming this component also
+    meant renaming a variety of reducers, selectors, etc. The main
+    thing to know is that the reducer which consuming libraries must
+    install at the top level is now called *synsetSearches* (instead
+    of 'synsetSearchBoxes').
+  - SynsetSearchHistoryBox has been renamed to SynsetSearchHistoryNav
+    and no longer wraps the contained nav elements in a Card. This
+    component has also changed to a class component and will
+    automatically reload history from browser storage when the persist
+    prop is true.
+  - There is a new SynsetSearchAlert component that allows displaying
+    an alert (anywhere on the page) when a search fails to return
+    results.
+    
+The other major change is in APIWrapper.  API-wrapped components
+(e.g., all the built-in data containers) will now:
+
+   - not throw an error at mount time if there is not yet enough
+     information to make an API request
+   - make a new request whenever their props change
+
+The latter change implements behavior which was expected all along,
+and should be considered a bugfix, even though it technically
+introduces new behavior; see commit a963c0c for an explanation.
+
+There were also a few more minor changes:
+
+  - WiktDefsAsList now renders more like ILIRecordsAsList
+  - props that affect styling and appearance became better exposed in
+    a few places
+  - various bugs were fixed
+
 ** 1.1.0
 
 The data format returned by backend API has changed; hence the jump of
