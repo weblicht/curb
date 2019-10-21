@@ -16,25 +16,11 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 import { conRelsQueries } from './actions';
+import { makeSimpleApiReducer } from '../APIWrapper';
 
 import SI from 'seamless-immutable';
 
 const queryActionTypes = conRelsQueries.actionTypes;
 
-export function conRels(state = SI({}), action) {
-    switch (action.type) {
-    case queryActionTypes.CON_RELS_RETURNED: {
-        // the data format from the backend is presently a bit
-        // confusing: there is a "synsetId" field which corresponds to
-        // the *other* relatum (i.e., not the synset ID that was used
-        // to make the request). Thus, we reshape it a bit here for
-        // clarity.
-        const originatingId = action.params.synsetId;
-        const conRelsData = action.data;
-        return SI.setIn(state, ["bySynsetId", originatingId],
-                        conRelsData);
-    }
-    default:
-        return state;
-    }
-}
+export const conRels = makeSimpleApiReducer(queryActionTypes, "synsetId");
+
