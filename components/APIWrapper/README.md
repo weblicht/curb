@@ -1,6 +1,6 @@
 # APIWrapper
 
-**Note**: this README is directed at programmers working interally on
+**Note**: this README is directed at programmers working internally on
 this library (rather than programmers who are *using* this library
 from another application), since the whole point is that external
 users of this library shouldn't have to worry about the details of
