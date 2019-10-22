@@ -410,6 +410,12 @@ function D3VerticalTreeGraph(svgNode, data, config) {
             // scale to fit into the view window, along whichever
             // dimension is greater.
             const fitFactor = Math.min(xScalingFactor, yScalingFactor);
+
+            // It can happen that the fitFactor is Infinity (namely,
+            // when both the treeHeight and treeWidth are 0, perhaps
+            // because we're still waiting for the backend to return
+            // data).  In that case we set a default scale of 1.
+            const k = fitFactor !== Infinity ? fitFactor : 1;
             
             // Finally, we apply the translation and the scaling
             // factor to the given (tree-coordinate) zoom transform,
@@ -419,7 +425,7 @@ function D3VerticalTreeGraph(svgNode, data, config) {
             // fit into the window.
             return transform
                 .translate(xScale(0), yScale(0))
-                .scale(fitFactor);
+                .scale(k);
         };
     }
 
@@ -432,51 +438,86 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     // 1) automatically scaling the chart to fit the view window
     //    when it is initially drawn, or when it is expands or
     //    shrinks as a result of user interaction
-    // 2) allowing the user to explicitly zoom in or out
-
+    // 2) allowing the user to explicitly zoom in or out by scrolling
+    // 
     // However, it is jarring and annoying to have the zoom level
-    // automatically get reset to include the entire tree if you have
+    // automatically get reset to include the entire chart if you have
     // already decided to zoom in on a portion of it.  Thus, whenever
-    // the user first zooms, we set an attribute on the chart
-    // container, and we do not automatically zoom to fit the chart if
-    // that attribute has been previously set.
-    if (!chartContainer.attr("data-user-set-zoom")) {
-        const allNodes = nodeContainer.selectAll("g");
-        const fitTransformer = transformToFit(allNodes);
+    // the user first zooms, we set an attribute on the svg, and we do
+    // not automatically zoom to fit the chart if that attribute has
+    // been previously set, until the user explicitly restores
+    // automatic zooming.  The following functions implement this
+    // behavior.
 
-        // The zoom handler function.  This function is only called
-        // when the user explicitly zooms, so we set the
-        // "data-user-set-zoom" attribute on the chart container to
-        // indicate this.
-        function zoomed() {
-            chartContainer.attr("data-user-set-zoom", true);
-            const transform = fitTransformer(d3.event.transform);
-            chartContainer.attr("transform", transform.toString());
+    // zoomed is the zoom handler function, invoked by the zoom
+    // behavior on all zoom events
+    function zoomed() {
+        const transform = d3.event.transform;
+
+        // when zoom event handler is invoked by zoom.transform, its
+        // sourceEvent field is null; but when the user explicitly
+        // zooms via the mouse, there is an underlying sourceEvent
+        // object.  Thus, to prevent auto-zooming when the user has
+        // already explicitly zoomed, we set this attribute just in
+        // case the sourceEvent is not null.
+        if (d3.event.sourceEvent !== null) {
+            svg.attr("data-user-set-zoom", true);
         }
-
-        // This creates the zoom behavior object and sets the zoomed()
-        // function as its event handler.
-        const zoom = d3.zoom();
-        zoom.on('zoom', zoomed);
-
-        // This makes the svg node the listener for zoom events, so we
-        // can zoom from anywhere inside the chart.  (We don't use the
-        // chartContainer itself as the listener because g elements
-        // can only listen for events inside children that have a
-        // "fill" attribute; this would prevent zooming when the mouse
-        // is over a region of empty space.)
-        svg.call(zoom);
-
-        // Finally, we run the automatic scaling.  We take whatever
-        // transform is currently applied to the chart, which will be
-        // the identity transform if no zoom transform has previously
-        // been set, and map it to view window coordinates.  Then we
-        // transition the chart to the new transform.
-        const initialTransform = fitTransformer(d3.zoomTransform(svg.node()));
-        chartContainer.transition()
-            .duration(config.duration)
-            .attr("transform", initialTransform.toString());
+        chartContainer.attr("transform", transform.toString());
     }
+
+    // reset is a click handler to remove the "data-user-set-zoom"
+    // attribute and return to automatic zooming.
+    function reset() {
+        // it's important that we set the attribute to null, rather
+        // than false: null removes the attribute from the DOM; false
+        // gets converted to a string, which in turn will be read back
+        // as truth-y if we say if (!svg.attr("data-user-set-zoom")) ...
+        // and so the conditional below will fail to run autoZoom on redraws
+        svg.attr("data-user-set-zoom", null);
+        autoZoom();
+    }
+
+    // autoZoom runs a zoom transition that automatically zooms to a
+    // scale that will fit the entire chart inside the view window
+    function autoZoom() {
+        // treeToView is a function that maps a d3 zoom transform in
+        // tree coordinates to another transform in view window
+        // coordinates which will fit all the nodes:
+        const allNodes = nodeContainer.selectAll("g");
+        const treeToView = transformToFit(allNodes);
+
+        // We always map the identity transform to view window
+        // coordinates, so that the tree root ends up back at (0,0):
+        const transform = treeToView(d3.zoomIdentity);
+
+        // This schedules the actual transition:
+        svg.transition()
+            .duration(config.duration)
+            .call(zoom.transform, transform);
+    }
+
+    // This creates the zoom behavior object and sets the zoomed()
+    // function as its event handler.
+    const zoom = d3.zoom();
+    zoom.on('zoom', zoomed);
+    
+    // This makes the svg node the listener for zoom events, so we can
+    // zoom from anywhere inside the chart.  (We don't use the
+    // chartContainer itself as the listener because g elements can
+    // only listen for events inside children that have a "fill"
+    // attribute; this would prevent zooming when the mouse is over a
+    // region of empty space.)  We also bind the reset function to the
+    // double click event here, so that it overrides the zoom object's
+    // default handler (which zooms in).
+    svg.call(zoom)
+       .on("dblclick.zoom", reset);
+
+    // Finally, we run the automatic zooming, if the user has not
+    // previously zoomed.
+    if (!svg.attr("data-user-set-zoom")) {
+        autoZoom();
+    } 
 
     // We now move on to drawing the LINKS between the nodes.  Again,
     // we need a key function for binding the data objects to DOM
