@@ -19,6 +19,7 @@ import { isVisible } from '../../helpers';
 
 import * as d3 from 'd3';
 import React from 'react';
+import { isEqual } from 'lodash';
 
 // *******************************************************************
 // READ THIS FIRST:
@@ -693,7 +694,7 @@ export class VerticalTreeGraph extends React.Component {
     }
     
     componentDidUpdate(prevProps) {
-        if (prevProps.tree != this.props.tree) {
+        if (!isEqual(prevProps.tree, this.props.tree)) {
             this.drawTree();
         }
     }
@@ -797,8 +798,8 @@ export class VerticalDoubleTreeGraph extends React.Component {
         // state change, and not just when the data actually changes.
         // May want to do a deep comparison if performance becomes a
         // problem.
-        if (prevProps.upwardTree != this.props.upwardTree ||
-            prevProps.downwardTree != this.props.downwardTree) {
+        if (!isEqual(prevProps.upwardTree, this.props.upwardTree) ||
+            !isEqual(prevProps.downwardTree, this.props.downwardTree)) {
             this.drawTrees();
         }
     }
