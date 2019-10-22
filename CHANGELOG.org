@@ -1,5 +1,10 @@
 * 1.x
 
+** 1.2.1 
+
+This is a minor release that adds a useful feature to the graphs:
+double-click to reset the graph state and restore automatic zooming.
+
 ** 1.2.0 
 
 The main changes in 1.2.0 involve the SynsetSearch components, which
