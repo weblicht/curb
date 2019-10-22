@@ -804,7 +804,12 @@ export class VerticalDoubleTreeGraph extends React.Component {
     }
 
     render() {
-        return (<GraphSkeleton svgRef={this.svgRef} dimensions={this.dimensions()}/>);
+        // adding the root ID as a key lets React know it should
+        // re-render the graph skeleton (and hence the underlying SVG)
+        // when the root node changes, i.e., when we're drawing a new
+        // graph:
+        const key = this.props.upwardTree.id;
+        return (<GraphSkeleton key={key} svgRef={this.svgRef} dimensions={this.dimensions()}/>);
     }
 
 }
