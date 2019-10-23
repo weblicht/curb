@@ -358,8 +358,8 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     // transform in tree coordinates, such as a zoom transform, into a
     // transform in view window coordinates, which can be applied to
     // the chart container.  Since this mapping is relatively
-    // complicated and needs to be performed in at least two places,
-    // we wrap it in a function and return that function.
+    // complicated, we wrap it in a function and return that function so
+    // it can be reused.
     function transformToFit(nodeSelection) {
         return function (transform) {
             // Since we are using the .nodeSize layout, which assigns
