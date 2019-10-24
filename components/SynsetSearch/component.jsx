@@ -188,7 +188,7 @@ class SynsetSearchHistoryNav extends React.Component {
             itemsToDisplay = itemsToDisplay.slice(0, this.props.limit);
         }
         
-        const empty = <div className={classNames(this.props.emptyClass, this.props.emptyExtras)}>
+        const empty = <div className={classNames(this.props.emptyClassName, this.props.emptyExtras)}>
                         {this.props.emptyMessage || "No search history to display."}
                       </div>;
         const buttons = itemsToDisplay.map(
