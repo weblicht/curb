@@ -16,7 +16,7 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 import { makeActionsForContainer } from './actions';
-import { dataContainerDefaultState } from './reducers';
+import { selectContainerState } from './selectors';
 import { InternalError } from '../../errors';
 
 import React from 'react';
@@ -119,25 +119,6 @@ function containerFor(type, name, dataSelector, idFromItem) {
     DataContainer.displayName = (name || 'Unnamed') + 'Container';
 
     // Connect the container with state from Redux store:
-
-    // we want to allow data containers that don't have their own
-    // unique .containerId, because they may be instantiated by other
-    // components which may not be in a position to choose an ID for
-    // them.  But the choose/select actions and associated state
-    // depend on a container ID, so we only add functional versions of
-    // these props if a container ID was supplied.
-
-    function selectContainerState(globalState, ownProps) {
-        // we always return dataContainerDefaultState, instead of
-        // undefined, to ensure that we can always read props like
-        // selectedItemIds downstream, even if there is no state for
-        // this component in the store:
-        try {
-            return globalState.dataContainers.byId[ownProps.containerId] || dataContainerDefaultState;
-        } catch (e) {
-            return dataContainerDefaultState;
-        }
-    }
 
     function mapStateToProps(globalState, ownProps) {
         // TODO: allow passing data as a prop from a higher
