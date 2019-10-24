@@ -19,7 +19,7 @@ the minor version number bump.
     install at the top level is now called *synsetSearches* (instead
     of 'synsetSearchBoxes').
   - SynsetSearchHistoryBox has been renamed to SynsetSearchHistoryNav
-    and no longer wraps the contained nav elements in a Card. This
+    and no longer wraps the contained nav element in a Card. This
     component has also changed to a class component and will
     automatically reload history from browser storage when the persist
     prop is true.
@@ -47,7 +47,7 @@ There were also a few more minor changes:
 
 ** 1.1.0
 
-The data format returned by backend API has changed; hence the jump of
+The data format returned by the backend API has changed; hence the jump of
 the minor version number.  In addition to accommodating and
 documenting these API changes, the major changes in this version are:
 
