@@ -33,3 +33,12 @@ export function selectContainerState(globalState, ownProps) {
         return dataContainerDefaultState;
     }
 }
+
+// convenience accessor for the chosenItemId in a given container 
+export function selectChosenIdIn(globalState, containerId) {
+    try {
+        return globalState.dataContainers.byId[containerId].chosenItemId;
+    } catch (e) {
+        return undefined;
+    } 
+}
