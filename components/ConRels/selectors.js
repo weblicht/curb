@@ -30,6 +30,12 @@ export function selectConRels(globalState, props) {
  
 function selectConRelsTree(globalState, props, relation) {
 
+    // Avoid trying to construct the tree when data is unavailable.
+    // We need at least the synset ID of the root node to construct the tree.
+    if (!props.queryParams || !props.queryParams.synsetId) {
+        return undefined;
+    }
+
     const rootSynsetId = props.queryParams.synsetId;
 
     // for a given synsetId and list of orth forms, return a node in
