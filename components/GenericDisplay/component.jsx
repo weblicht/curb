@@ -527,7 +527,7 @@ export function Select(props) {
 //    choose, a callback to call with the data object's ID
 //       when a tab button is clicked
 //    tabsClassName (optional), className for nav container wrapping
-//       the tab buttons Defaults to 'nav nav-tabs'. See Bootstrap
+//       the tab buttons. Defaults to 'nav nav-tabs'. See Bootstrap
 //       documentation for other useful options:
 //       https://getbootstrap.com/docs/4.0/components/navs/
 //    tabsExtras (optional), extras for nav tabs container
@@ -538,6 +538,11 @@ export function Select(props) {
 //       *added* to this prop.
 //    paneClassName (optional), className for each tab pane div
 //    paneExtras (optional), extras for each tab pane div
+//    panesContainerClassName (optional), className for container div that
+//       wraps the divs for individual panes.  Defaults to "tab-content";
+//       you probably should not change this.
+//    panesContainerExtras (optional), extras for container div that
+//       wraps the divs for individual panes.
 export function TabbedPanes(props) {
     if (!(props.data && props.data.length)) return null;
 
@@ -570,7 +575,8 @@ export function TabbedPanes(props) {
                 
             )}
           </nav>
-          <div className="tab-content">
+          <div className={classNames(props.panesContainerClassName || "tab-content",
+                                     props.panesContainerExtras)}>
             {props.data.map(
                 item =>
                     <div className={classNames(props.paneClassName || "tab-pane",
