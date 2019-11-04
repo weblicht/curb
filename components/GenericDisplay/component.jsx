@@ -236,8 +236,7 @@ export function DataSelect(props) {
 //   itemClassName (optional), passed to item formatting component as className
 //   itemExtras (optional), passed to item formatting component as extras
 //
-//   TabbedPanes style props (tabsClassName, tabsExtras, paneClassName, paneExtras),
-//      if given, will be passed on to TabbedPanes component.
+//   TabbedPanes style props, if given, will be passed on to TabbedPanes component.
 export function DataTabbedPanes(props) {
     if (!(props.data && props.data.length)) return null;
 
@@ -258,8 +257,13 @@ export function DataTabbedPanes(props) {
                      choose={props.choose}
                      tabsClassName={props.tabsClassName}
                      tabsExtras={props.tabExtras}
+                     buttonClassName={props.buttonClassName}
+                     buttonExtras={props.buttonExtras}
                      paneClassName={props.paneClassName}
-                     paneExtras={props.paneExtras}/>
+                     paneExtras={props.paneExtras}
+                     panesContainerClassName={props.panesContainerClassName}
+                     panesContainerExtras={props.panesContainerExtras}
+        />
     );
 }
 
