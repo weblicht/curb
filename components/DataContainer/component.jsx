@@ -18,6 +18,7 @@
 import { makeActionsForContainer } from './actions';
 import { selectContainerState } from './selectors';
 import { InternalError } from '../../errors';
+import { isComponent } from '../../helpers';
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -107,7 +108,7 @@ function containerFor(type, name, dataSelector, idFromItem) {
             throw new InternalError(`Unknown data container type: ${type}`);
         }
 
-        if (typeof props.displayAs === 'function') {
+        if (isComponent(props.displayAs)) {
             const Renderer = props.displayAs;
             return (
                 <Renderer {...props} data={dataWithMetadata} />
