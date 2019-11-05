@@ -60,6 +60,24 @@ export function withNullAsString(data, nullString = '') {
     }
 }
 
+// isComponent :: anything -> Bool
+// Tests whether a given value can be used as a React component.
+// 
+// I haven't found a definitively correct way to do this, so the test
+// is only a rough heuristic: any function passes, as do objects of
+// the sort returned by react-redux's connect().
+export function isComponent(value) {
+    const valueType = typeof(value);
+    return (
+        // any function (including pure classes) counts as a component:
+        valueType === 'function' ||
+        // react-redux's connect() returns an object, not a function; but it has
+        // a function embedded in it:
+        (valueType === 'object' && value.hasOwnProperty('WrappedComponent') &&
+         typeof(value.WrappedComponent) === 'function')
+    );
+}
+
 // isVisible :: DOM Node -> Bool
 // Borrowed from jQuery; see https://stackoverflow.com/questions/19669786/check-if-element-is-visible-in-dom
 export function isVisible(elem) {
