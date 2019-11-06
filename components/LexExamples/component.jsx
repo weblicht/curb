@@ -41,12 +41,17 @@ export const EXAMPLE_ALL_FIELDS = EXAMPLE_FIELD_MAP.map(entry => entry[0]);
 //   data :: DataObject, an example 
 // className and extras props, if given, will be passed on to ListItem
 function ExampleAsListItem(props) {
+    // examples do not always have a frame type; don't display the ndash
+    // if this one doesn't:
+    const frameTypeWithDash = props.data.frameType
+          ? props.data.frameType + " \u2013 " // &ndash;
+          : null;
+
     return (
-        // TODO: is this a reasonable default?
         <ListItem id={props.data.id}
                   className={props.className}
                   extras={props.extras}>
-          {props.data.frameType} &ndash; {props.data.text}  
+          {frameTypeWithDash} {props.data.text}  
         </ListItem>
     );
 }
