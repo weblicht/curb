@@ -739,12 +739,10 @@ export class VerticalDoubleTreeGraph extends React.Component {
     dimensions() {
         const width = this.props.width;
         const canvasHeight = this.props.height;
-        const treeHeight = canvasHeight / 2;
         const margin = this.props.margin;
         return {
             width,
             canvasHeight,
-            treeHeight,
             margin,
         };
     }
