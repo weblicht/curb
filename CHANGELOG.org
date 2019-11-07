@@ -1,5 +1,21 @@
 * 1.x
 
+** 1.2.2 
+   
+This is a minor release that fixes a few bugs and adds a few
+backwards-compatible features.  The important changes are:
+
+  - the selector function for data container state,
+    selectContainerState, is now defined in DataContainer/selectors.js
+    and can be imported by consuming applications
+  - there is also a new selector function there, selectChosenIdIn, to
+    select the ID of the chosen item in a data container
+  - there is a new isComponent helper to test whether a value can be
+    used as a React component
+  - the error action type defined by makeQueryActions has been renamed
+    to <prefix>_QUERY_ERROR
+  - the margin around svg elements for graphs has been removed 
+
 ** 1.2.1 
 
 This is a minor release that adds a useful feature to the graphs:
