@@ -47,7 +47,7 @@ export function makeQueryActions(prefix, endpoint,
 
     const requested = prefix + '_REQUESTED';
     const returned = prefix + '_RETURNED';
-    const errored = prefix + '_FETCH_ERROR';
+    const errored = prefix + '_QUERY_ERROR';
     const actionTypes = actionTypesFromStrings([
         requested,
         returned,
