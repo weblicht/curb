@@ -200,7 +200,6 @@ function D3VerticalTreeGraph(svgNode, data, config) {
     const svg = d3.select(svgNode)
           .style("max-width", "100%")
           .style("height", "auto")
-          .style("margin", margin.toString()+'px')
           .attr("font-family", "sans-serif")
           .attr("font-size", 10);
 
