@@ -103,7 +103,11 @@ the root node object.
 
 For both types of containers, if the data is not yet in the Redux
 store (e.g., if it has not yet been fetched from the API), the
-selector function should return `undefined`.
+selector function should return `undefined`.  If on the other hand the
+data is available but *empty*, the selector function should return a
+defined-but-empty value, such as `[]`.  This allows rendering a
+different interface when data is unavailable with the
+`displayUnavailable` prop; see below.
 
 ### "Selecting" and "Choosing" data objects
 
@@ -270,3 +274,24 @@ container's `displayAs` prop.  Data containers thus make it easy to define
 *just the portion of the rendering which is specific to your
 application*.
 
+### Rendering containers when data is not available
+
+The component passed as the container's `displayAs` prop will only be
+rendered when the data for the container is *available*: that is, when
+the container's selector function does not return `undefined`.  If you
+need to render something even when data is not available, pass a
+component as the value of the `displayUnavailable` prop.
+
+The `displayUnavailable` component, if given, *only* renders when the
+data is `=== undefined`, and not when the data is defined-but-empty
+(e.g., an empty array).  This allows you to render a different user
+interface when e.g. you are still waiting for data to be returned by
+the backend, vs. when the backend has returned but there is no data to
+display. The `displayUnavailable` component receives all the same prop
+values that the `displayAs` component would (except of course `data`).
+
+If `displayUnavailable` is not a component, the data container will
+not render anything (i.e., it will render as `null`) until data is
+available.  Thus, you do not need to) check whether `props.data` is
+undefined inside your `displayAs` component.  (You may, however, still
+need to check whether it is defined-but-empty.)

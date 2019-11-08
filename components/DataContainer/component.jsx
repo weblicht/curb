@@ -92,7 +92,16 @@ function containerFor(type, name, dataSelector, idFromItem) {
     // The actual component:
     
     function DataContainer(props) {
-        if (props.data === undefined) return null;
+        if (props.data === undefined) {
+            // Allow rendering something (e.g. a "Waiting..." message)
+            // when data is not available; see README for motivation:
+            if (isComponent(props.displayUnavailable)) {
+                const EmptyRenderer = props.displayUnavailable;
+                return <EmptyRenderer {...props} />;
+            }
+
+            return null;
+        }
         
         var dataWithMetadata;
         switch (type) {
