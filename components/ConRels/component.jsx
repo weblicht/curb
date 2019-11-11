@@ -145,6 +145,7 @@ function makeNodeClickHandler(props) {
 //   height
 //   nodes
 //   links 
+//   forceRedraw
 function HnymsGraph(props){
     return (
         <VerticalDoubleTreeGraph upwardTree={props.data.children[0]}
@@ -154,6 +155,7 @@ function HnymsGraph(props){
                                  height={props.height}
                                  nodes={props.nodes}
                                  links={props.links}
+                                 forceRedraw={props.forceRedraw}
                                  nodeClickHandler={props.nodeClickHandler || makeNodeClickHandler(props)} />
     );
 }
@@ -167,6 +169,7 @@ function HyponymsGraph(props){
                            height={props.height}
                            nodes={props.nodes}
                            links={props.links}
+                           forceRedraw={props.forceRedraw}
                            nodeClickHandler={props.nodeClickHandler || makeNodeClickHandler(props)}/>
     );
 }
@@ -180,6 +183,7 @@ function HypernymsGraph(props){
                            height={props.height}
                            nodes={props.nodes}
                            links={props.links}
+                           forceRedraw={props.forceRedraw}
                            nodeClickHandler={props.nodeClickHandler || makeNodeClickHandler(props)}/>
 
     );

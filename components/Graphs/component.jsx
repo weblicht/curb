@@ -693,6 +693,12 @@ export class VerticalTreeGraph extends React.Component {
     }
     
     componentDidUpdate(prevProps) {
+        // See related comment in VerticalDoubleTreeGraph: 
+        if (this.props.forceRedraw) {
+            this.drawTree();
+            return;
+        }
+
         if (!isEqual(prevProps.tree, this.props.tree)) {
             this.drawTree();
         }
@@ -791,6 +797,20 @@ export class VerticalDoubleTreeGraph extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
+        // D3VerticalTreeGraph avoids drawing the graph when the SVG
+        // DOM node is not visible.  But there is no way inside React
+        // to notice that this node has *become* visible except via a
+        // change in props or state; thus, we allow components higher
+        // up the hierarchy to send down a forceRedraw prop if the
+        // graph should unconditionally be redrawn. This is useful
+        // when e.g. the graph appears on an unselected tab in a
+        // tabbed interface, and thus it is not visible when the
+        // component first renders.
+        if (this.props.forceRedraw) {
+            this.drawTrees();
+            return;
+        }
+
         // TODO: this still re-draws too often, seemingly on every
         // state change, and not just when the data actually changes.
         // May want to do a deep comparison if performance becomes a
