@@ -53,8 +53,7 @@ function selectConRelsTree(globalState, props, relation) {
             id: synsetId,
             name: synsetId + ': ' + orthForms.join(', '),
             children
-        })
-
+        });
     }
 
     // for a given synsetId, returns conrels where this is the
@@ -116,8 +115,13 @@ export function selectHypernymsTree(globalState, props) {
 }
 
 export function selectHnymsTrees(globalState, props) {
+    // data counts as unavailable for this tree of combined relations
+    // if either the hypernyms or the hyponyms are undefined.
     const hypernyms = selectHypernymsTree(globalState, props); 
+    if (hypernyms === undefined) return undefined;
     const hyponyms = selectHyponymsTree(globalState, props); 
+    if (hyponyms === undefined) return undefined;
+
     const children = [hypernyms, hyponyms];
     return {
         id: 'DUMMY_ROOT',
