@@ -22,6 +22,7 @@ import { isComponent } from '../../helpers';
 
 import React from 'react';
 import { connect } from 'react-redux';
+import SI from 'seamless-immutable';
 
 const CONTAINER_TYPES = {
     // props.data is an array (or other iterable) of data objects:
@@ -107,6 +108,14 @@ function containerFor(type, name, dataSelector, idFromItem) {
         switch (type) {
         case CONTAINER_TYPES.ROWS: {
             dataWithMetadata = addMetadataToRows(props.data, props);
+            // for now, it only makes sense to sort data in row
+            // containers; and we do this after adding metadata, in
+            // case the sort wants to take that into account.
+            if (props.sortComparison) {
+                // sort() is a mutating method, so we need to get a
+                // mutable copy if we were given an immutable one:
+                dataWithMetadata = SI.asMutable(dataWithMetadata).sort(props.sortComparison);
+            }
             break;
         }
         case CONTAINER_TYPES.TREE: {
@@ -159,13 +168,13 @@ function containerFor(type, name, dataSelector, idFromItem) {
                 unchoose: itemId => dispatch(actions.unchoose(itemId)),
                 select: itemId => dispatch(actions.select(itemId)),
                 unselect: itemId => dispatch(actions.unselect(itemId)), 
+                sortWith: compare => dispatch(actions.sortWith(compare)),
                 reset: () => dispatch(actions.reset())
             };
         } else {
             function warn(method) {
-                return function (itemId) {
-                    throw new InternalError(`.${method}() was called with itemId = ${itemId}`+
-                                            ` on a container with no .containerId`);
+                return function () {
+                    throw new InternalError(`.${method}() was called on a container with no .containerId`);
                 };
             }
             return {
@@ -173,9 +182,8 @@ function containerFor(type, name, dataSelector, idFromItem) {
                 unchoose: warn('unchoose'),
                 select: warn('select'),
                 unselect: warn('unselect'),
-                reset: function() {
-                    throw new InternalError('.reset() was called on a container with no .containerId');
-                }
+                sortWith: warn('sortWith'),
+                reset: warn('reset')
             };
         }
     }

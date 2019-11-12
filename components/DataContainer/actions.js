@@ -24,6 +24,7 @@ export const actionTypes = actionTypesFromStrings([
     'DATA_CONTAINER_UNCHOOSE',
     'DATA_CONTAINER_SELECT', // i.e., possibly multiple selections
     'DATA_CONTAINER_UNSELECT',
+    'DATA_CONTAINER_SORT_WITH',
     'DATA_CONTAINER_RESET'
 ])
 
@@ -57,6 +58,13 @@ export function unselect(containerId, itemId) {
            };
 }
 
+export function sortWith(containerId, compare) {
+    return { type: actionTypes.DATA_CONTAINER_SORT_WITH,
+             id: containerId,
+             sortComparison: compare 
+    }
+}
+
 export function reset(containerId) {
     return { type: actionTypes.DATA_CONTAINER_RESET,
              id: containerId
@@ -73,6 +81,7 @@ export function makeActionsForContainer(containerId) {
         unchoose: itemId => unchoose(containerId, itemId),
         select: itemId => select(containerId, itemId),
         unselect: itemId => unselect(containerId, itemId),
+        sortWith: compare => sortWith(containerId, compare),
         reset: () => reset(containerId)
     }
 }

@@ -274,6 +274,49 @@ container's `displayAs` prop.  Data containers thus make it easy to define
 *just the portion of the rendering which is specific to your
 application*.
 
+### Sorting data in a container
+
+It is often useful to sort the data in a data container in different
+ways.  You can, of course, statically sort the data before displaying
+it inside the data container's `displayAs` component.  But it is also
+often useful to sort based on state that depends on user interactions,
+like clicking a button or choosing a sort order from a dropdown.  To
+support this, the DataContainer component provides a `sortWith`
+control prop (to containers that have a `containerId`).  This prop
+allows you to record a sorting *comparison function* in the data
+container's state.  The comparison function detemines how the data is
+sorted.
+
+When a data container has a sorting comparison function, the data is
+sorted before it is passed to the `displayAs` component.  (It is
+sorted *after* adding the `selected` and `chosen` metadata fields to
+the data, so your sorting comparison can make use of those.)  Sorting
+is currently only implemented for row containers.
+
+Internally, the comparison function is passed to
+[Array.sort()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)
+and must conform to its interface: it should accept two objects, and
+return a negative number if the first object should appear earlier in
+the result set, and a positive number if the second object should
+appear earlier.  The `comparisonOn` function in [helpers.js](../../)
+makes it easy to create such comparison functions for the common case
+where you want to compare two objects based on a property that they
+both share.
+
+For example, suppose you want to provide a button that sorts a data
+container of [LexUnit](../LexUnit) objects based on their `.orthForm`
+property. You can do that like this:
+```
+import { comparisonOn } from '@sfstuebingen/germanet-common/helpers';
+import { Button } from '@sfstuebingen/germanet-common/components';
+
+// somewhere inside your container's displayAs component, where the
+// .sortWith prop is available: 
+const orthFormComparison = comparisonOn('orthForm');
+
+<Button text="Sort by orth form" onClick={e => props.sortWith(orthFormComparison)} />
+```
+
 ### Rendering containers when data is not available
 
 The component passed as the container's `displayAs` prop will only be

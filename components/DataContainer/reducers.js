@@ -27,6 +27,7 @@ import SI from 'seamless-immutable';
 const dataContainerPrivState = SI({
     chosenItemId: undefined,
     selectedItemIds: [],
+    sortComparison: undefined,
 });
 
 export { dataContainerPrivState as dataContainerDefaultState };
@@ -65,6 +66,12 @@ function dataContainerPrivReducer(state = dataContainerPrivState, action) {
 
         return state.merge({
             selectedItemIds: state.selectedItemIds.filter(itemId => itemId !== unselectedId)
+        });
+    }
+
+    case actionTypes.DATA_CONTAINER_SORT_WITH: {
+        return state.merge({
+            sortComparison: action.sortComparison,
         });
     }
 
