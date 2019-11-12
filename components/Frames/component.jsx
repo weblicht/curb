@@ -59,19 +59,11 @@ function FrameAsListItem(props) {
 //      Defaults to FrameAsListItem
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
-// These props, if given, will also be passed on to DataList:
+// Other props will also be passed on to DataList, including:
 //   className, extras, itemClassName, itemExtras   
 function FramesAsList(props) {
     return (
-        <DataList data={props.data} idFor={props.idFor}
-                  choose={props.choose} unchoose={props.unchoose}
-                  select={props.select} unselect={props.unselect}
-                  ordered={props.ordered}
-                  displayItemAs={props.displayItemAs || FrameAsListItem}
-                  className={props.className}
-                  extras={props.extras}
-                  itemClassName={props.itemClassName}
-                  itemExtras={props.itemExtras} />
+        <DataList {...props} displayItemAs={props.displayItemAs || FrameAsListItem} />
     );
 }
 
@@ -80,25 +72,21 @@ function FramesAsList(props) {
 //   data :: [ DataObject ], the frames 
 //   fieldMap (optional) :: [ [String, String] ], maps frame field names to their display names
 //   displayFields (optional) :: [ String ], the field names to be displayed
+//   sortFields (optional) :: [ String ], field names to display sort buttons for
+//   sortWith (required for sortFields) :: callback that receives sort comparison function
 //   displayItemAs (optional) :: Component to render an frame as a table row
 //      Defaults to DataTableRow.
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
-// These props, if given, will also be passed on to DataTable:
+// Other props will also be passed on to DataTable, including:
 //   className, extras
 //   headClassName, headExtras
 //   bodyClassName, bodyExtras 
 function FramesAsTable(props) {
     return (
-        <DataTable data={props.data} idFor={props.idFor}
-                   choose={props.choose} unchoose={props.unchoose}
-                   select={props.select} unselect={props.unselect}
+        <DataTable {...props}
                    fieldMap={props.fieldMap || FRAME_FIELD_MAP}
-                   displayFields={props.displayFields || FRAME_ALL_FIELDS}
-                   displayItemAs={props.displayItemAs}
-                   className={props.className} extras={props.extras}
-                   headClassName={props.headClassName} headExtras={props.headExtras}
-                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
+                   displayFields={props.displayFields || FRAME_ALL_FIELDS} />
     );
 }
  

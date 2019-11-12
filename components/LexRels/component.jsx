@@ -56,19 +56,11 @@ function LexRelAsListItem(props) {
 //      Defaults to LexRelAsListItem
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
-// These props, if given, will also be passed on to DataList:
+// Other props will also be passed on to DataList, including:
 //   className, extras, itemClassName, itemExtras   
 function LexRelsAsList(props) {
     return (
-        <DataList data={props.data}
-                  ordered={props.ordered}
-                  choose={props.choose} unchoose={props.unchoose}
-                  select={props.select} unselect={props.unselect}
-                  displayItemAs={props.displayItemAs || LexRelAsListItem}
-                  className={props.className}
-                  extras={props.extras}
-                  itemClassName={props.itemClassName}
-                  itemExtras={props.itemExtras} />
+        <DataList {...props} displayItemAs={props.displayItemAs || LexRelAsListItem} />
     );
 }
 
@@ -79,21 +71,15 @@ function LexRelsAsList(props) {
 //   displayItemAs (optional) :: Component to render a LexRel as a table row
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
-// These props, if given, will also be passed on to DataTable:
+// Other props will also be passed on to DataTable, including:
 //   className, extras
 //   headClassName, headExtras
 //   bodyClassName, bodyExtras 
 function LexRelsAsTable(props) {
     return (
-        <DataTable data={props.data} idFor={props.idFor}
-                   choose={props.choose} unchoose={props.unchoose}
-                   select={props.select} unselect={props.unselect}
+        <DataTable {...props}
                    fieldMap={props.fieldMap || LEX_REL_FIELD_MAP}
-                   displayFields={props.displayFields || LEX_REL_ALL_FIELDS}
-                   displayItemAs={props.displayItemAs}
-                   className={props.className} extras={props.extras}
-                   headClassName={props.headClassName} headExtras={props.headExtras}
-                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
+                   displayFields={props.displayFields || LEX_REL_ALL_FIELDS} />
     );
 }
 

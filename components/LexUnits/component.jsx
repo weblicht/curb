@@ -85,20 +85,11 @@ function LexUnitAsListItem(props) {
 //     Defaults to LexUnitAsListItem.
 //     Data container control props (.choose, etc.), if given, will be passed on
 //     to this component.
-// These props, if given, will also be passed on to DataList:
+// Other props will also be passed on to DataList, including:
 //   className, extras, itemClassName, itemExtras   
 function LexUnitsAsList(props) {
     return (
-        <DataList data={props.data} idFor={props.idFor}
-                  choose={props.choose} unchoose={props.unchoose}
-                  select={props.select} unselect={props.unselect}
-                  ordered={props.ordered}
-                  displayItemAs={props.displayItemAs || LexUnitAsListItem} 
-                  className={props.className}
-                  extras={props.extras}
-                  itemClassName={props.itemClassName}
-                  itemExtras={props.itemExtras} />
-
+        <DataList {...props} displayItemAs={props.displayItemAs || LexUnitAsListItem} />
     );
 }
                                  
@@ -106,11 +97,11 @@ function LexUnitsAsList(props) {
 //   data :: [ Object ], the lex units 
 //   displayItemAs (optional) :: Component to render a lexunit as an option
 //     Defaults to LexUnitAsOption
+// Other props will also be passed on to DataSelect
 function LexUnitsAsSelect(props) {
     return (
-        <DataSelect data={props.data}
+        <DataSelect {...props}
                     disabledOption='Select a lexical unit'
-                    extras='lexunits-container'
                     displayAs={props.displayItemAs || LexUnitAsOption} />
     );
 }
@@ -122,21 +113,15 @@ function LexUnitsAsSelect(props) {
 //   displayItemAs (optional) :: Component to render a lexunit as a table row
 //     Data container control props (.choose, etc.), if given, will be passed on
 //     to this component.
-// These props, if given, will also be passed on to DataTable:
+// Other props will also be passed on to DataTable, including:
 //   className, extras
 //   headClassName, headExtras
 //   bodyClassName, bodyExtras 
 function LexUnitsAsTable(props) {
     return (
-        <DataTable data={props.data} idFor={props.idFor}
-                   choose={props.choose} unchoose={props.unchoose}
-                   select={props.select} unselect={props.unselect}
+        <DataTable {...props}
                    fieldMap={props.fieldMap || LU_FIELD_MAP}
-                   displayFields={props.displayFields || LU_ALL_FIELDS}
-                   displayItemAs={props.displayItemAs}
-                   className={props.className} extras={props.extras}
-                   headClassName={props.headClassName} headExtras={props.headExtras}
-                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
+                   displayFields={props.displayFields || LU_ALL_FIELDS} />
     );
 }
 

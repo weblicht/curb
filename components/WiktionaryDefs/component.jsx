@@ -74,19 +74,11 @@ function WiktDefsAsDefList(props) {
 //      Defaults to WiktDefAsListItem
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
-// These props, if given, will also be passed on to DataList:
+// Other props will also be passed on to DataList, including:
 //   className, extras, itemClassName, itemExtras   
 function WiktDefsAsList(props) {
     return (
-        <DataList data={props.data} idFor={props.idFor}
-                  choose={props.choose} unchoose={props.unchoose}
-                  select={props.select} unselect={props.unselect}
-                  ordered={props.ordered}
-                  displayItemAs={props.displayItemAs || WiktDefAsListItem}
-                  className={props.className}
-                  extras={props.extras}
-                  itemClassName={props.itemClassName}
-                  itemExtras={props.itemExtras} />
+        <DataList {...props} displayItemAs={props.displayItemAs || WiktDefAsListItem} />
     );
 }
 
@@ -98,21 +90,15 @@ function WiktDefsAsList(props) {
 //      Defaults to DataTableRow.
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
-// These props, if given, will also be passed on to DataTable:
+// Other props will also be passed on to DataTable, including:
 //   className, extras
 //   headClassName, headExtras
 //   bodyClassName, bodyExtras 
 function WiktDefsAsTable(props) {
     return (
-        <DataTable data={props.data} idFor={props.idFor}
-                   choose={props.choose} unchoose={props.unchoose}
-                   select={props.select} unselect={props.unselect}
+        <DataTable {...props}
                    fieldMap={props.fieldMap || WIKTDEF_FIELD_MAP}
-                   displayFields={props.displayFields || WIKTDEF_ALL_FIELDS}
-                   displayItemAs={props.displayItemAs}
-                   className={props.className} extras={props.extras}
-                   headClassName={props.headClassName} headExtras={props.headExtras}
-                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
+                   displayFields={props.displayFields || WIKTDEF_ALL_FIELDS} />
     );
 }
 

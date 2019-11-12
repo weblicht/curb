@@ -112,13 +112,7 @@ function SynsetAsTableRow(props) {
             ]));
 
     return (
-        <DataTableRow displayFields={displayFields} data={displayData}
-                      idFor={props.idFor}
-                      choose={props.choose} unchoose={props.unchoose}
-                      select={props.select} unselect={props.unselect}
-                      onClick={props.onClick}
-                      className={props.className}
-                      extras={props.extras}/>
+        <DataTableRow {...props} data={displayData} displayFields={displayFields}  />
     );
 }
 
@@ -131,19 +125,11 @@ function SynsetAsTableRow(props) {
 //      Defaults to SynsetAsListItem
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
-// These props, if given, will also be passed on to DataList:
+// Other props will also be passed on to DataList, including:
 //   className, extras, itemClassName, itemExtras   
 function SynsetsAsList(props) {
     return (
-        <DataList data={props.data} idFor={props.idFor}
-                  choose={props.choose} unchoose={props.unchoose}
-                  select={props.select} unselect={props.unselect}
-                  displayItemAs={props.displayItemAs || SynsetAsListItem}
-                  ordered={props.ordered}
-                  className={props.className}
-                  extras={props.extras}
-                  itemClassName={props.itemClassName}
-                  itemExtras={props.itemExtras} />
+        <DataList {...props} displayItemAs={props.displayItemAs || SynsetAsListItem} />
     );
 }
 
@@ -157,12 +143,10 @@ function SynsetsAsList(props) {
 //      make sense in the context of a unique-choice <select> element
 //   displayItemAs (optional) :: Component to render a synset as an option
 //      Defaults to SynsetAsOption
+// Other props will also be passed on to DataSelect
 function SynsetsAsSelect(props) {
     return (
-        <DataSelect data={props.data}
-                    id={props.id}
-                    choose={props.choose} 
-                    extras="synsets-container"
+        <DataSelect {...props}
                     disabledOption="Select a synset"
                     displayItemAs={props.displayItemAs || SynsetAsOption}/> 
     );
@@ -177,21 +161,16 @@ function SynsetsAsSelect(props) {
 //      Defaults to SynsetAsTableRow.
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
-// These props, if given, will also be passed on to DataTable:
+// Other props will also be passed on to DataTable, including:
 //   className, extras
 //   headClassName, headExtras
 //   bodyClassName, bodyExtras 
 function SynsetsAsTable(props) {
     return (
-        <DataTable data={props.data} idFor={props.idFor}
-                   choose={props.choose} unchoose={props.unchoose}
-                   select={props.select} unselect={props.unselect}
+        <DataTable {...props}
                    fieldMap={props.fieldMap || SYNSET_FIELD_MAP}
                    displayFields={props.displayFields || SYNSET_ALL_FIELDS}
-                   displayItemAs={props.displayItemAs || SynsetAsTableRow}
-                   className={props.className} extras={props.extras}
-                   headClassName={props.headClassName} headExtras={props.headExtras}
-                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
+                   displayItemAs={props.displayItemAs || SynsetAsTableRow} />
     );
 }
     

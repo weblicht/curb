@@ -59,20 +59,11 @@ function ConRelAsListItem(props) {
 //      Defaults to ConRelAsListItem
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
-// These props, if given, will also be passed on to DataList:
+// Other props will also be passed on to DataList, including:
 //   className, extras, itemClassName, itemExtras   
 function ConRelsAsList(props) {
     return (
-        <DataList data={props.data}
-                  ordered={props.ordered}
-                  choose={props.choose} unchoose={props.unchoose}
-                  select={props.select} unselect={props.unselect}
-                  displayItemAs={props.displayItemAs || ConRelAsListItem}
-                  className={props.className}
-                  extras={props.extras}
-                  itemClassName={props.itemClassName}
-                  itemExtras={props.itemExtras}
-        />
+        <DataList {...props} displayItemAs={props.displayItemAs || ConRelAsListItem} />
     );
 }
 
@@ -80,24 +71,20 @@ function ConRelsAsList(props) {
 //   data :: [ DataObject ], the conrels
 //   fieldMap (optional) :: [ [String, String] ], maps ConRel field names to their display names
 //   displayFields (optional) :: [ String ], the field names to be displayed
+//   sortFields (optional) :: [ String ], field names to display sort buttons for
+//   sortWith (required for sortFields) :: callback that receives sort comparison function
 //   displayItemAs (optional) :: Component to render a ConRel as a table row
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
-// These props, if given, will also be passed on to DataTable:
+// Other props will also be passed on to DataTable, including:
 //   className, extras
 //   headClassName, headExtras
 //   bodyClassName, bodyExtras 
 function ConRelsAsTable(props) {
     return (
-        <DataTable data={props.data} idFor={props.idFor}
-                   choose={props.choose} unchoose={props.unchoose}
-                   select={props.select} unselect={props.unselect}
+        <DataTable {...props}
                    fieldMap={props.fieldMap || CON_REL_FIELD_MAP}
-                   displayFields={props.displayFields || CON_REL_ALL_FIELDS}
-                   displayItemAs={props.displayItemAs}
-                   className={props.className} extras={props.extras}
-                   headClassName={props.headClassName} headExtras={props.headExtras}
-                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
+                   displayFields={props.displayFields || CON_REL_ALL_FIELDS} />
     );
 }
 

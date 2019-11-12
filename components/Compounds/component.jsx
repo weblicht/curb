@@ -76,7 +76,7 @@ function CompoundAsTableRow(props) {
 
 // props:
 //   data :: DataObject, the compound 
-// These props, if given, will also be passed on to DataTable:
+// Other props will also be passed on to DataTable, including:
 //   className, extras
 //   headClassName, headExtras
 //   bodyClassName, bodyExtras 
@@ -94,11 +94,9 @@ function CompoundAsGrid(props) {
     const constituents = [head, mod1, mod2];
     
     return (
-        <DataTable data={constituents} idFor={obj => obj.id}
-                   fieldMap={fieldMap} displayFields={displayFields}
-                   className={props.className} extras={props.extras}
-                   headClassName={props.headClassName} headExtras={props.headExtras}
-                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
+        <DataTable {...props}
+                   data={constituents} idFor={obj => obj.id}
+                   fieldMap={fieldMap} displayFields={displayFields} />
     );
 }
 
@@ -106,18 +104,11 @@ function CompoundAsGrid(props) {
 
 // props:
 //   data :: [ DataObject ], the compounds 
-// These props, if given, will also be passed on to DataList:
+// Other props will also be passed on to DataList, including:
 //   className, extras, itemClassName, itemExtras   
 function CompoundsAsList(props) {
     return (
-        <DataList data={props.data} idFor={props.idFor}
-                  choose={props.choose} unchoose={props.unchoose}
-                  select={props.select} unselect={props.unselect}
-                  displayItemAs={props.displayItemAs || CompoundAsGrid}
-                  className={props.className}
-                  extras={props.extras}
-                  itemClassName={props.itemClassName}
-                  itemExtras={props.itemExtras} />
+        <DataList {...props} displayItemAs={props.displayItemAs || CompoundAsGrid} />
     );
 }
 
@@ -125,25 +116,22 @@ function CompoundsAsList(props) {
 //   data :: [ DataObject ], the compounds 
 //   fieldMap (optional) :: [ [String, String] ], maps compound field names to their display names
 //   displayFields (optional) :: [ String ], the field names to be displayed
+//   sortFields (optional) :: [ String ], field names to display sort buttons for
+//   sortWith (required for sortFields) :: callback that receives sort comparison function
 //   displayItemAs (optional) :: Component to render a compound as a table row
 //      Defaults to DataTableRow.
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
-// These props, if given, will also be passed on to DataTable:
+// Other props will also be passed on to DataTable, including:
 //   className, extras
 //   headClassName, headExtras
 //   bodyClassName, bodyExtras 
 function CompoundsAsTable(props) {
     return (
-        <DataTable data={props.data} idFor={props.idFor}
-                   choose={props.choose} unchoose={props.unchoose}
-                   select={props.select} unselect={props.unselect}
+        <DataTable {...props}
                    fieldMap={props.fieldMap || COMPOUND_FIELD_MAP}
                    displayFields={props.displayFields || COMPOUND_ALL_FIELDS}
-                   displayItemAs={props.displayItemAs || CompoundAsTableRow}
-                   className={props.className} extras={props.extras}
-                   headClassName={props.headClassName} headExtras={props.headExtras}
-                   bodyClassName={props.bodyClassName} bodyExtras={props.bodyExtras} />
+                   displayItemAs={props.displayItemAs || CompoundAsTableRow} />
     );
 }
  
