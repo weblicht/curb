@@ -60,6 +60,29 @@ export function withNullAsString(data, nullString = '') {
     }
 }
 
+// comparisonOn :: (String, Bool) -> ( (Object, Object) -> {-1, 0, 1} )
+// Builds a comparison function for two objects that can be
+// passed e.g. to Array.sort().
+// params:
+//   fieldName: the property on which the two objects should be compared
+//   descending (optional): if true, returns a comparison function that
+//     sorts in descending order (default is ascending)
+export function comparisonOn(fieldName, descending = false) {
+    return function compare(obj1, obj2){
+        if (obj1[fieldName] < obj2[fieldName]) {
+            // a return value of -1 means that obj1 should come first
+            // in the sort order, while 1 means that obj2 should come
+            // first; thus, if we are descending, obj2 should come
+            // first in this case. Similarly below.
+            return descending ? 1 : -1;
+        } else if (obj1[fieldName] > obj2[fieldName]) {
+            return descending ? -1 : 1;
+        } else {
+            return 0;
+        }
+    };
+}
+
 // isComponent :: anything -> Bool
 // Tests whether a given value can be used as a React component.
 // 
