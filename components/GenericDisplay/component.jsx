@@ -18,7 +18,7 @@
 // GenericDisplay/component.jsx
 // Definition of generic display components that are reused elsewhere
 
-import { withNullAsString } from '../../helpers';
+import { comparisonOn, withNullAsString } from '../../helpers';
 import { InternalError } from '../../errors';
 
 import React from 'react';
@@ -271,10 +271,28 @@ export function DataTabbedPanes(props) {
 //   fieldMap :: [ [String, String] ], array mapping data field names to display names
 //   displayFields :: [ String ], array of data fields to be displayed
 //     This should be a subset of the keys in fieldMap.
-//   className (optional)
-//   extras (optional
+//   sortFields (optional) :: [ String ], array of data fields to
+//     display sort buttons for. This should be a subset of
+//     displayFields.  Requires the sortWith prop.
+//   sortWith (required if sortFields is given) :: callback
+//     This function will be called with the comparison function to use for sorting the
+//     data in the order the user requests.
+//   className (optional), class name for table header
+//   extras (optional), extras for table header
 export function DataTableHeaders(props) {
     const fieldMapObj = Object.fromEntries(props.fieldMap);
+
+    function sortButtons(field) {
+        if (!props.sortWith || !props.sortFields || !props.sortFields.includes(field)) return null;
+
+        const ascending = e => props.sortWith(comparisonOn(field, false));
+        const descending = e => props.sortWith(comparisonOn(field, true));
+        return <span className="ml-2">
+                 {<a onClick={ascending} className="ml-1">&#9650;</a>} 
+                 {<a onClick={descending} className="ml-1">&#9660;</a>}
+               </span>;
+    }
+
     return (
         // no need for withDefault here because we don't need to set a
         // default class on table headers, but the user can pass
@@ -282,7 +300,10 @@ export function DataTableHeaders(props) {
         <thead className={classNames(props.className, props.extras)}>
           <tr>
             {props.displayFields.map(
-                field => <th key={field} scope="col">{fieldMapObj[field]}</th>
+                field => <th key={field} scope="col">
+                           {fieldMapObj[field]}
+                           {sortButtons(field)}
+                         </th>
             )}
           </tr>
         </thead>
@@ -320,6 +341,11 @@ export function DataTableRow(props) {
 //      Defaults to DataTableRow.
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+//   sortFields (optional) :: [ String ], array of fields to add sort buttons for in header
+//      Should be a subset of displayFields.
+//   sortWith (required for sortFields) :: callback,
+//      This function will be called with the comparison function to use for sorting the
+//      data in the order the user requests.
 //   className (optional), defaults to 'table'
 //   extras (optional), extra classes for table element
 //   headClassName (optional), className for thead element
@@ -335,6 +361,8 @@ export function DataTable(props) {
         <table className={withDefault('table', props)}>
           <DataTableHeaders fieldMap={props.fieldMap}
                             displayFields={props.displayFields}
+                            sortFields={props.sortFields}
+                            sortWith={props.sortWith}
                             className={props.headClassName}
                             extras={props.headExtras}
           />
@@ -343,6 +371,7 @@ export function DataTable(props) {
                 row => <RowComponent data={row} idFor={props.idFor}
                                      choose={props.choose} unchoose={props.unchoose}
                                      select={props.select} unselect={props.unselect}
+                                     sortWith={props.sortWith} reset={props.reset}
                                      displayFields={props.displayFields}/>
             )}
           </tbody>
