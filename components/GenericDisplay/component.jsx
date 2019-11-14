@@ -325,7 +325,15 @@ export function DataTableRow(props) {
                                   props.extras)}
             onClick={props.onClick}>
               {props.displayFields.map(
-                  (field) => <td>{ withNullAsString(props.data[field]) }</td>
+                  (field) => {
+                      if (Array.isArray(props.data[field])) {
+                          // attempt to nicely format fields containing an array of data, in
+                          // case no one higher up the hierarchy handled this:
+                          return <td>{props.data[field].filter(d => d !== null).join(', ')}</td>;
+                      } else {
+                          return <td>{ withNullAsString(props.data[field]) }</td>;
+                      }
+                  }
               )}
         </tr>
     );
