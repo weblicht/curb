@@ -22,7 +22,7 @@ import SI from 'seamless-immutable';
 
 const queryActionTypes = compoundsQueries.actionTypes;
 
-// converts a 'notSplitted' data field code to a more workable Boolean
+// converts a 'splitCode' data field code to a more workable Boolean
 function isCompound(code) {
     switch (code) {
     case 1:
