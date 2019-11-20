@@ -58,6 +58,7 @@ export function Button(props) {
 //   onChange :: Event handler function
 //   checked :: Bool
 //   label :: String
+//   disabled (optional) :: Bool
 //   className (optional), defaults to 'form-check-input'
 //   extras (optional), extra classes for checkbox input
 //   labelClassName (optional), defaults to 'form-check-label'
@@ -70,6 +71,7 @@ export function Checkbox(props) {
                  className={withDefault('form-check-input', props)}
                  onChange={props.onChange}
                  checked={props.checked}
+                 disabled={props.disabled || false}
           />
           <label className={
               withDefault('form-check-label', {
@@ -90,6 +92,7 @@ export function Checkbox(props) {
 //   value (optional) :: String
 //   placeholder (optional) :: String
 //   autoFocus (optional) :: Bool
+//   disabled (optional) :: Bool
 //   className (optional), defaults to 'form-control'
 //   extras (optional), extra classes for text input
 //   labelClassName (optional),  defaults to 'sr-only'
@@ -112,6 +115,7 @@ export function TextInput(props) {
                  value={props.value || ''}
                  placeholder={props.placeholder || ''}
                  autoFocus={props.autoFocus || false}
+                 disabled={props.disabled || false}
           />
         </React.Fragment>
     );
@@ -199,11 +203,13 @@ export function DataList(props) {
 //     a component to display a single data object as an option in the select
 //     Note: The option's value attribute should be a String to pass to
 //     the choose prop
+//   disabled (optional) :: Bool, disables the entire select element
 //   disabledOption (optional) :: String,
 //     a message to use as an initial, disabled option in the select
 //
-//   Style props for Select (className, extras, labelClassName, labelExtras), if
-//     given, will be passed on to Select component
+//   Other props for Select (disabled, className, extras,
+//     labelClassName, labelExtras), if given, will be passed on to
+//     Select component
 export function DataSelect(props) {
     if (!(props.data && props.data.length)) return null;
     const ItemComponent = props.displayItemAs;
@@ -211,6 +217,7 @@ export function DataSelect(props) {
     return (
         <Select id={props.id} label={props.label}
                 choose={props.choose}
+                disabled={props.disabled}
                 className={props.className} extras={props.extras}
                 labelClassName={props.labelClassName}
                 labelExtras={props.labelExtras}>
@@ -526,6 +533,7 @@ export function ListItem(props) {
 //     Defaults to props.children.
 //   choose :: (String) -> (anything), a callback to call with an item value
 //     when that item is selected
+//   disabled (optional) :: Bool
 //   className (optional), defaults to 'custom-select' 
 //   extras (optional), extra classes for select
 //   labelClassName (optional),  defaults to 'sr-only'
@@ -544,7 +552,8 @@ export function Select(props) {
           </label>
           <select name={props.id}
                   className={withDefault('custom-select', props)}
-                  onChange={chooseItem}>
+                  onChange={chooseItem}
+                  disabled={props.disabled || false}>
             {props.data || props.children}
           </select>
         </>
