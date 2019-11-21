@@ -22,37 +22,38 @@ take the approach of keeping your form logic *inside* React and
 helping you manage the associated state. They are generic solutions
 that expose all the different things you might want to do with form
 state to your React code. This is great if you need to do things like
-complicated field-level validation with custom error messages, and you
-want to do those things inside React. But they don't reduce the
+instantaneous field-level validation with custom error messages, and
+you want to do those things inside React. But they don't reduce the
 verbosity of dealing with forms in React.
 
-The opposite approach would be to use [uncontrolled
+The opposite approach is to use [uncontrolled
 components](https://reactjs.org/docs/uncontrolled-components.html),
 and just let the browser handle displaying the form, managing its
 state, and validating its data as far as possible. For many cases,
-where the form is relatively simple, this approach is sufficient. The
-main problem is that this approach doesn't work well with single-page
-applications: submitting a form causes the browser to navigate to a
-new URL. You can provide an event handler that prevents this; but then
-how do you submit the form's data? And what if you want to do
-something else with that data before you submit it? You somehow need
-to get the form data back *into* your React code when the user submits
-the form, so you can use that data to make a request and render things
-like error messages.
+this approach is sufficient. The main problem is that it doesn't work
+well with single-page applications: submitting a form causes the
+browser to navigate to a new URL. You can provide an event handler
+that prevents this; but then how do you submit the form's data? And
+what if you want to do something else with that data before you submit
+it? You somehow need to get the form data back *into* your React code
+when the user submits the form, so you can use that data to make a
+request and render things like error messages.
 
 That is the main problem that the components here solve. The approach
-is to let you build forms with uncontrolled components, letting the
-browser manage their state as the user interacts with them. But it
-provides a simple way of getting the form data back into your code
-*when the user submits the form*, so you can do what you like with it:
-validate it further, add some additional data, submit it to the
-server, or whatever else. Essentially, the form state is a black box
-that your application doesn't know about until the user clicks submit.
+lets you build forms with uncontrolled components, letting the browser
+manage their state as the user interacts with them, and perform
+field-level validation when the user tries to submit. But it provides
+a simple way of getting the form data back into your code *when the
+user submits the form*, so you can do what you like with it: validate
+it further, add some additional data, submit it to the server, render
+error messages for the user, or whatever else. Essentially, the form
+state is a black box that your React application doesn't know about
+until the user clicks submit. Welcome back to the early 2000s!
 
 ## Components defined here
 
-`Form`: displays a form, validates data on submission, and dispatches
-Redux actions with the validated data and any validation errors
+`Form`: displays a form, and manages passing the form data on
+submission to callbacks that you provide
 
 `Button`: displays a button
 
@@ -70,14 +71,14 @@ validation feedback
 
 ## Recipe
 
-You create a `Form` with three callbacks:
+You create a `Form` and give it three callbacks:
 
-     - `validator`, which will receive the unvalidated form data
-     - `submitTo`, which will receive the validated form data
-     - `errorsTo`, which will receive any validation errors 
+   - `validator`, which will receive the unvalidated form data
+   - `submitTo`, which will receive the validated form data
+   - `errorsTo`, which will receive any validation errors 
      
 When the form is submitted, an object containing the form data is
-first passed to a validator callback. The validator should return an
+first passed to the validator callback. The validator should return an
 object to be passed to the submitTo callback, or raise a
 ValidationError, which will be passed to the errorsTo callback.
 
