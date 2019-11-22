@@ -280,5 +280,5 @@ export function FormAlerts(props) {
           ? props.errors.map(e => <Alert type='danger' text={e}/>)
           : [];
 
-    return successAlert.concat(warningAlerts).concat(errorAlerts);
+    return successAlert.concat(errorAlerts).concat(warningAlerts);
 }
