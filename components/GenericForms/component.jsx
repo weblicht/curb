@@ -19,11 +19,11 @@
 // Definition of generic display components that are reused elsewhere
 
 import { withNullAsString } from '../../helpers';
-import { ValidationError } from '../../validation';
+import { ValidationErrors } from '../../validation';
+import { Alert } from '../GenericDisplay/component';
 
 import React from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 
 // helper for constructing className prop.  The convention is:
 // props.className, if given, *replaces* the default class name;
@@ -34,19 +34,24 @@ function withDefault(dfault, props) {
 }
 
 // props:
-//   validator (optional) :: Object -> Object. Receives the form data after submit.
-//     Should return an object that will be passed to the submitAction.  
-//     If the form data is invalid, it should throw a ValidationError
-//     with an object that maps field names to error messages.
 //   submitTo :: Object -> (anything). Callback that should receive the object
 //     containing validated form data.
-//   errorsTo :: Object -> (anything). Callback that should receive an object
-//     representing errors encountered in validation.
+//   validator (optional) :: Object -> Object. Receives the form data after submit.
+//     Should return an object that will be passed to the submitAction.  
+//     If the form data is invalid, it should throw a ValidationErrors
+//     object to prevent submission of the data to the submitTo callback.
+//     Defaults to the identity function (i.e., all data is valid).
+//   errorsTo (optional) :: Object -> (anything). Callback that should receive
+//     any ValidationErrors object thrown by the validator.
 //   className (optional), extras (optional): combined to create the className
 //     for the <form> (no default)
-function Form(props) {
-    
-    const validator = props.validator || (data => data); 
+export function Form(props) {
+
+    // remove props that we can't send on to the <form> element:
+    const { submitTo, validator, errorsTo, className, extras, ...rest } = props;
+
+    const validate = (typeof validator === 'function') ? validator : (data => data); 
+    const fwdError = (typeof errorsTo === 'function') ? errorsTo : (errors => null);
 
     function dispatchData(e) {
         e.preventDefault();
@@ -57,15 +62,17 @@ function Form(props) {
         // see: https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
         const formData = new FormData(e.target);
 
-        // transform the FormData object into a regular object for ease of use:
+        // transform the FormData object into a regular object which
+        // maps field names to data, for ease of use inside the
+        // validator and submitTo callbacks:
         const data = Object.fromEntries(formData.entries());
 
         try {
-            const validatedData = validator(data);
-            props.submitTo(validatedData);
+            const validatedData = validate(data);
+            submitTo(validatedData);
         } catch (e) {
-            if (e instanceof ValidationError) {
-                props.errorsTo(e); // TODO: also send the data?
+            if (e instanceof ValidationErrors) {
+                fwdError(e); 
             } else {
                 throw e;
             }
@@ -73,16 +80,15 @@ function Form(props) {
     }
 
     return (
-        <form {...props} 
+        <form {...rest} 
               onSubmit={dispatchData}
-              className={classNames(props.className, props.extras)}>
+              className={classNames(className, extras)}>
           {props.children}
         </form>
     );
 }
 
 // props:
-//   id :: String
 //   type (optional) :: String, defaults to 'button'
 //   text (optional) :: String to use as button text; defaults to props.children
 //   className (optional), defaults to 'btn'
@@ -90,25 +96,28 @@ function Form(props) {
 // All other props will be passed down to <button>, such as:
 //   onClick 
 //   disabled
-//   
 export function Button(props) {
+    // remove props that we can't send on to the <button> element:
+    const { type, text, className, extras, ...rest } = props;
+
     return (
-        <button {...props}
-                name={props.id} 
-                type={props.type || 'button'}
+        <button {...rest}
+                type={type || 'button'}
                 className={withDefault('btn', props)}
                 onClick={props.disabled ? undefined : props.onClick}>
-            {props.text || props.children}
-          </button>
+          {text || props.children}
+        </button>
     );
 }
 
+// props: same as Button
 export function ResetButton(props) {
     return (
         <Button {...props} type='reset' />
     );
 }
 
+// props: same as Button
 export function SubmitButton(props) {
     return (
         <Button {...props} type='submit' />
@@ -116,7 +125,6 @@ export function SubmitButton(props) {
 }
 
 // props:
-//   id :: String
 //   label :: String
 //   feedback (optional) :: String, message to display below checkbox 
 //   className (optional), defaults to 'form-check-input'
@@ -133,35 +141,33 @@ export function SubmitButton(props) {
 //    disabled
 //    required 
 export function Checkbox(props) {
+    // remove the props that we can't send down to the <input> element:
+    const { label, feedback,
+            className, extras,
+            labelClassName, labelExtras,
+            feedbackClassName, feedbackExtras,
+            ...rest } = props;
+
     return (
         <React.Fragment>
-          <input {...props}
+          <input {...rest}
                  type='checkbox'
                  className={withDefault('form-check-input', props)}
           />
-          <label className={
-              withDefault('form-check-label', {
-                  className: props.labelClassName,
-                  extras: props.labelExtras
-              })}
-                 htmlFor={props.id}>
-            {props.label}
+          <label className={classNames(labelClassName || 'form-check-label', labelExtras)}
+                 htmlFor={rest.name}>
+            {label}
           </label>
           {props.feedback &&
-            <small className={
-               withDefault('form-text', {
-                   className: props.feedbackClassName,
-                   extras: props.feedbackExtras
-               })}>
-               {props.feedback}
-             </small>
+           <small className={classNames(feedbackClassName || 'form-text', feedbackExtras)}>
+             {props.feedback}
+           </small>
           }
         </React.Fragment>
     );
 }
  
 // props:
-//   id :: String
 //   label :: String
 //   type (optional) :: String, defaults to 'text' (but could be 'email', 'url', etc.) 
 //   feedback (optional) :: String, message to display below checkbox 
@@ -181,36 +187,33 @@ export function Checkbox(props) {
 //   required
 //   pattern
 export function TextInput(props) {
+    // remove the props that we can't send down to the <input> element:
+    const { label, type, feedback,
+            className, extras,
+            labelClassName, labelExtras,
+            feedbackClassName, feedbackExtras,
+            ...rest } = props;
+
     return (
         <React.Fragment>
-          <label className={
-              withDefault('sr-only', {
-                  className: props.labelClassName,
-                  extras: props.labelExtras
-              })}
-                 htmlFor={props.id}>
-            {props.label}
+          <label className={classNames(labelClassName || 'sr-only', labelExtras)}
+                 htmlFor={rest.name}>
+            {label}
           </label>
-          <input {...props}
-                 type={props.type || 'text'}
-                 name={props.id}
+          <input {...rest}
+                 type={type || 'text'}
                  className={withDefault('form-control', props)}
           />
           {props.feedback &&
-            <small className={
-               withDefault('form-text', {
-                   className: props.feedbackClassName,
-                   extras: props.feedbackExtras
-               })}>
-               {props.feedback}
-             </small>
+           <small className={classNames(feedbackClassName || 'form-text', feedbackExtras)}>
+             {props.feedback}
+           </small>
           }
         </React.Fragment>
     );
 }
 
 // props:
-//   id :: String
 //   label :: String
 //   data (optional) :: [ Object ]
 //     The options to be displayed in the select element.
@@ -229,6 +232,13 @@ export function TextInput(props) {
 
 // All other props will be passed to <select>, such as:
 export function Select(props) {
+    // remove the props we can't send down to the <select> element:
+    const { label, data, choose, feedback,
+            className, extras,
+            labelClassName, labelExtras,
+            feedbackClassName, feedbackExtras,
+            ...rest } = props;
+    
     function chooseItem(e) {
         const itemId = e.target.value;
         props.choose(itemId);
@@ -241,26 +251,38 @@ export function Select(props) {
  
     return (
         <>
-          <label className={classNames(props.labelClassName || 'sr-only', props.labelExtras)}
-                 htmlFor={props.id}>
-            {props.label}
+          <label className={classNames(labelClassName || 'sr-only', labelExtras)}
+                 htmlFor={rest.name}>
+            {label}
           </label>
-          <select {...props}
-                  name={props.id}
+          <select {...rest}
                   onChange={onChange}
                   className={withDefault('custom-select', props)}>
-            {props.data || props.children}
+            {data || props.children}
           </select>
           {props.feedback &&
-            <small className={
-               withDefault('form-text', {
-                   className: props.feedbackClassName,
-                   extras: props.feedbackExtras
-               })}>
-               {props.feedback}
-             </small>
+           <small className={classNames(feedbackClassName || 'form-text', feedbackExtras)}>
+             {props.feedback}
+           </small>
           }
         </>
     );
 }
 
+// props:
+//   success (optional) :: String, message to be displayed as a success Alert 
+//   warnings (optional) :: [String], messages to be displayed as warning Alerts
+//   errors (optional) :: [String], messages to be displayed as danger Alerts
+export function FormAlerts(props) {
+    const successAlert = props.success
+          ? [<Alert type='success' text={props.success}/>]
+          : [];
+    const warningAlerts = props.warnings && props.warnings.length
+          ? props.warnings.map(w => <Alert type='warning' text={w}/>)
+          : [];
+    const errorAlerts = props.errors && props.errors.length
+          ? props.errors.map(e => <Alert type='danger' text={e}/>)
+          : [];
+
+    return successAlert.concat(warningAlerts).concat(errorAlerts);
+}
