@@ -55,6 +55,9 @@ until the user clicks submit. Welcome back to the early 2000s!
 `Form`: displays a form, and manages passing the form data on
 submission to callbacks that you provide
 
+`FormAlerts`: displays warning, danger, and success alerts associated
+with a form
+
 `Button`: displays a button
 
 `ResetButton`: displays a button that resets the containing form to its default state
@@ -73,14 +76,15 @@ validation feedback
 
 You create a `Form` and give it three callbacks:
 
-   - `validator`, which will receive the unvalidated form data
    - `submitTo`, which will receive the validated form data
-   - `errorsTo`, which will receive any validation errors 
+   - `validator` (optional), which will receive the unvalidated form data
+   - `errorsTo` (optional), which will receive any validation errors 
      
 When the form is submitted, an object containing the form data is
 first passed to the validator callback. The validator should return an
-object to be passed to the submitTo callback, or raise a
-ValidationError, which will be passed to the errorsTo callback.
+object to be passed to the submitTo callback, or throw a
+ValidationErrors object, which will be passed to the errorsTo
+callback.
 
 A useful pattern:
 
@@ -96,3 +100,5 @@ A useful pattern:
   3. have your errorsTo function set state in the parent component
      that can be used to re-render the form with any validation error
      messages
+     
+     
