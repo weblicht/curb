@@ -11,6 +11,8 @@ These components are generally short wrappers around raw HTML
 elements.  Their purposes is to provide default styling information
 and a useful props interface.
 
+`Alert`: wrap some content in a div with an appropriate Bootstrap
+alert class
 
 `Card`: wrap some content in a Bootstrap card div and add a title
 

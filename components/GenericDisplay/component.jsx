@@ -33,6 +33,26 @@ function withDefault(dfault, props) {
     return classNames(props.className || dfault, props.extras);
 }
 
+// props:
+//   type (optional) :: String representing a (Bootstrap 4) alert class,
+//      e.g. 'warning', 'danger' or 'success'; defaults to 'info'
+//   text (optional) :: String, defaults to props.children
+//   className (optional), defaults to 'alert' plus the alert class
+//      determined by props.type
+//   extras (optional), extras for alert div
+export function Alert(props) {
+    const type = props.type ? 'alert-' + props.type : 'alert-info';
+
+    // type gets rolled into the className, so that props.className
+    // can override *both* alert classes:
+    const fullClassName = `alert ${type}`;
+    
+    return (
+        <div className={withDefault(fullClassName, props)} role="alert">
+          {props.text || props.children}
+        </div>
+    ); 
+}
 
 // props:
 //   title (optional) :: String
