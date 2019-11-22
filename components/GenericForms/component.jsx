@@ -15,11 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
-// GenericDisplay/component.jsx
-// Definition of generic display components that are reused elsewhere
-
-import { withNullAsString } from '../../helpers';
-import { ValidationErrors } from '../../validation';
+import { ValidationErrors } from './validation';
 import { Alert } from '../GenericDisplay/component';
 
 import React from 'react';
