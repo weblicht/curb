@@ -16,10 +16,12 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 import { ValidationErrors } from './validation';
+import { InternalError } from '../../errors';
 import { Alert } from '../GenericDisplay/component';
 
 import React from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 // helper for constructing className prop.  The convention is:
 // props.className, if given, *replaces* the default class name;
@@ -83,6 +85,111 @@ export function Form(props) {
         </form>
     );
 }
+
+// props:
+//   submitAction: a Redux thunk action creator that accepts form data and returns the Promise
+//     associated with an axios request.
+//   validator (optional): a validator function that will be passed on to <Form>
+// children: a ManagedForm should have exactly one child, which should
+//   act as a render function: it will receive an object representing
+//   the form state as input, which it can use to render the body of
+//   the form. The output of this function will be wrapped in a <Form>
+//   element, so it should not use <Form> itself.
+class ManagedForm extends React.Component {
+    constructor(props){
+        super(props);
+        this.defaultState = {
+            submitting: false,
+            submitSuccess: false,
+            submitFailure: false,
+            submittedData: undefined,
+            serverResponse: undefined,
+            formErrors: [],
+            fieldErrors: {},
+        };
+        this.state = this.defaultState;
+
+        this.validationErrors = this.validationErrors.bind(this);
+        this.requestErrors = this.requestErrors.bind(this);
+        this.reset = this.reset.bind(this);
+        this.submit = this.submit.bind(this);
+    }
+
+    // handler for validation errors raised before the request is submitted: 
+    validationErrors(errors) {
+        // errors will be a ValidationErrors object with .formErrors and .fieldErrors: 
+        this.setState({ formErrors: errors.formErrors,
+                        fieldErrors: errors.fieldErrors });
+    }
+
+    // handler for errors that arise during the request-response cycle:
+    requestErrors(error) {
+        if (error.response) {
+            // the server responded, but with a response code outside
+            // of 2xx; we don't try to figure out here what happened,
+            // but we make the response available to the children so
+            // they can:
+            this.setState({ submitFailure: true,
+                            serverResponse: error.response });
+        } else if (error.request) {
+            // the server didn't respond, so there's nothing else for
+            // us to record here:
+            this.setState({ submitFailure: true });
+        } else {
+            // the error occurred in setting up the request; it
+            // probably represents a frontend programming error and we
+            // should notify someone about it:
+            throw error;
+        }
+    }
+
+    // manages the request-response cycle:
+    submit(data) {
+        this.setState({ submitting: true, submittedData: data });
+        this.props.doSubmit(data)
+            .then(response => {
+                this.setState({ submitting: false, submitSuccess: true, serverResponse: response });
+            })
+            .catch(error => this.requestErrors(error));
+    }
+
+    // passed down to children so they can clear the form, including any errors, if desired:
+    reset(e) {
+        // Note: we *don't* call e.preventDefault here, so that it can
+        // be passed as the onClick prop of a ResetButton, and the
+        // click event will still reset the uncontrolled elements on a
+        // form back to their default values
+        this.setState(this.defaultState);
+    }
+
+    render() {
+        if (typeof this.props.children !== 'function') {
+            throw new InternalError("ManagedForm requires a render function as its only child");
+        }
+
+        const formState = {
+            ...this.state,
+            reset: this.reset
+        };
+
+        return (
+            <Form validator={this.props.validator} submitTo={this.submit} errorsTo={this.validationErrors}>
+              {this.props.children(formState)}
+            </Form>
+        );
+
+    }
+}
+
+function managedFormDispatchToProps(dispatch, ownProps) {
+    return {
+        doSubmit: data => dispatch(ownProps.submitTo(data))
+    };
+}
+
+ManagedForm = connect(undefined, managedFormDispatchToProps)(ManagedForm);
+export { ManagedForm }
+
 
 // props:
 //   type (optional) :: String, defaults to 'button'
