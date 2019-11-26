@@ -106,17 +106,22 @@ of passing the form data to callbacks when the user submits the form.
 submission of form data to the server. 
 
 `ManagedForm` is a shortcut for the typical case where you want to do
-all five of the tasks above, and don't need a lot of control over all
-the state in the form. But you can use `Form` by itself if you need to
-customize how that state is represented, or if you need more precise
-control over what happens when form data is submitted.
+all five of the tasks above, and don't need a lot of control over how
+the form state (validation errors, network errors, etc.) gets
+represented. But you can use `Form` by itself if you need to customize
+how that state is represented, or if you need more precise control
+over what happens when form data is submitted.
 
 The input fields in a `Form` are its children. Besides these children,
 `Form` accepts three callbacks as props:
 
-   - `submitTo`, which will receive the validated form data
-   - `validator` (optional), which will receive the unvalidated form data
-   - `errorsTo` (optional), which will receive any validation errors 
+   1. `validator` (optional), which will receive the unvalidated form
+      data when the form is submitted
+   2. `submitTo`, which will receive the form data after it is
+      processed by the `validator` (or the raw form data as it was
+      submitted, if there is no `validator`)
+   3. `errorsTo` (optional), which will receive any validation errors
+      thrown by the `validator`
 
 When the form is submitted, an object containing all the form data is
 first passed to the `validator` callback. The validator should return
@@ -128,19 +133,24 @@ For example, here's a form that just uses these callbacks to validate
 that its two inputs are not both empty, and logs the data or
 errors to the console:
 ```
-function logSubmission(data) {
-    console.log("Form data submitted!");
-    console.log(data);
-}
-
+// Raw form data comes here first when the form is submitted: 
 function validate(data) {
     if (!data.someField && !data.otherField) {
-        throw ValidationErrors(["Some field and Other field cannot both be blank"]);
+        throw new ValidationErrors(["Some field and Other field cannot both be blank"]);
     }
     
     return data;
 }
 
+// If the validation function returns, this function receives the
+// validated data next:
+function logSubmission(data) {
+    console.log("Form data submitted!");
+    console.log(data);
+}
+
+// If the validation function throws a ValidationErrors object, this function 
+// receives the error object:
 function logErrors(errors) {
     console.log("Form validation error!");
     errors.formErrors.map(e => console.log(e));
@@ -196,7 +206,7 @@ function LexUnitEditingForm(props) {
         <ManagedForm submitTo={updateLexUnit}>
           { formState => 
             <>
-              <FormAlerts success={formState.submitSuccess ? "Your changes were saved" : undefined}
+              <FormAlerts success={formState.submitSuccess && "Your changes were saved"}
                           warnings={formState.formErrors} />
               <input name="orthForm" type="text" defaultValue={props.data.orthForm} required={true}/>
               <ResetButton text="Reset" onClick={formState.reset} />
@@ -252,14 +262,47 @@ individual input elements in the form. Their props interfaces follow
 the same conventions as those in the
 [GenericDisplay](../GenericDisplay) directory, and allow easy styling
 with [Bootstrap 4 form classes](https://getbootstrap.com/docs/4.3/components/forms/).
+
+The main input components are `Checkbox`, `Select`, and `TextInput`.
+These all accept:
+
+  - a `label` prop that will be used to generate an HTML label for the
+    associated input element
+  - a `feedback` prop that will be displayed below the input element;
+    you can use this to display instructions or field-level validation
+    errors 
+  - `className` and `extras` props for styling the main input element
+    (see the [conventions for these props](../GenericDisplay#styling)
+    in the GenericDisplay directory), and related props for styling
+    its label and feedback
+    
+They also pass other props (e.g., `required`) to the underlying React
+DOM elements, which enables field validation by the browser.
+
+To use these as uncontrolled components, nothing else is required. If
+you want to set initial values for them when the form is first
+rendered (which will also be restored by a `ResetButton`), use the
+`defaultValue` prop.
+
+There are also a few other components for common tasks when rendering
+forms:
+
+  - the `Options` component can be used to easily generate the options for
+    a `Select` from an array of data
+
+  - the `FormAlerts` component provides an easy way to display a
+    series of alert messages (e.g., validation errors) together
+    somewhere in a form
+
+See their definitions for details about their props.
   
 ### Validation
 
 You are encouraged to use the validation
 [attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Attributes)
-of input elements, such as `minLength` or `pattern`, as much as
-possible to perform field-level validation via the [browser constraint
-validation
+of input elements, such as `required`, `minLength` and `pattern`, as
+much as possible to perform field-level validation via the [browser
+constraint validation
 API](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#the-constraint-validation-api).
 This helps you reduce the amount of boilerplate validation code that
 you need to write in React: you get free validation from the browser
@@ -274,27 +317,43 @@ can't be performed automatically by the browser.
 The validation function will receive the data from the whole form as
 an object. This object will map the `name` attributes of your form's
 input elements to the values entered by the user into those inputs.
+For example, if your form has an input like
+```
+<TextInput name="paraphrase" />
+```
+and the user types "funky" into that text input, your validation
+function will receive an object that looks like
+```
+{ paraphrase: "funky", ... }
+```
+when the form is submitted.
+
 You can use the validation function to do any necessary
-post-processing on the data. The important thing to remember is:
-**whatever your validation function returns will be directly
-submitted** to your submission callback (the `submitTo` prop), and
-thus (normally) to the server.
+post-processing on the data between when the user submits the form and
+when the browser actually sends the form data to the server.
+
+The important thing to remember is: **whatever your validation
+function returns will be directly submitted** to your submission
+callback (the `submitTo` prop), and thus (normally) to the server.
 
 Your validation function must therefore *not return* if the data is
-invalid and should not be submitted. Instead, it should throw a
-`ValidationErrors` object, which represents the errors in the form
+invalid and should not be sent to the server. Instead, it should throw
+a `ValidationErrors` object, which represents the errors in the form
 data as it was submitted.
 
-`ValidationErrors` objects can represent two types of errors:
+`ValidationErrors` objects contain representations of two types of errors:
 
-  1. field errors, which concern data in a particular field;
-  2. form errors, which are not specific to any field, but concern the
-     form as a whole
+  1. **field** errors, which concern data in a particular field; these
+     are represented as an *object* which maps field names to error
+     messages
+  2. **form** errors, which are not specific to any field, but concern
+     the form as a whole; these are represented as an *array* of error
+     messages
      
 You *must* throw an object of this type to prevent form submission (no
 other type of error will be caught by `Form` or `ManagedForm`). See
 the definition of the class in [validation.js](./validation.js) for
-details on how to use these objects to record form errors.
+details on how to use these objects to record validation errors.
 
 In a `ManagedForm`, the form and field errors inside a
 `ValidationErrors` object thrown by your validation function will be
