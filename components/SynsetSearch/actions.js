@@ -73,24 +73,8 @@ export function reloadHistory(id) {
 
 // Thunk action creators: these return thunks that perform async requests
 
-function validateSearchTerm(term) {
-    if (term === '') { // TODO: is this the only condition for a valid search term?
-        throw new ValidationError('Please enter a valid word or Id');
-    } else {
-        return true;
-    }
-}
-
 export function doSearch(id, term, ignoreCase) {
     return function (dispatch) {
-
-        try {
-            validateSearchTerm(term);
-        } catch (validationErr) {
-            dispatch(updateError(validationErr.message));
-            return;
-        }
-
         const params = { word: term, ignoreCase }
         const config = { params };
         dispatch(submitSearch(id, params));
