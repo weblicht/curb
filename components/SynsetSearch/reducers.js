@@ -17,7 +17,6 @@
 
 import { actionTypes } from './actions';
 import { makeByIdReducer } from '../../helpers';
-import { ValidationError } from '../../validation';
 
 import SI from 'seamless-immutable';
 
