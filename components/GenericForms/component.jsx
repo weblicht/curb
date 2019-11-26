@@ -238,7 +238,8 @@ export function SubmitButton(props) {
 //      Defaults to 'form-text'
 //   feedbackExtras (optional), extras for feedback message
 // All other props will be passed down to <input>, such as:
-//    name
+//    name (required, determines field name in form submission)
+//    id (required for properly associating the <label>; defaults to name)
 //    defaultChecked
 //    onChange
 //    disabled
@@ -251,14 +252,27 @@ export function Checkbox(props) {
             feedbackClassName, feedbackExtras,
             ...rest } = props;
 
+    // We need an ID to associate the label with the checkbox, because
+    // Bootstrap styling doesn't work with a <label> that is wrapped
+    // around its associated input element. We could technically run
+    // into problems here by setting the input's id attribute to a
+    // value that isn't unique on the page, since this would make the
+    // HTML invalid. But the risk that this will cause problems seems
+    // low, and the benefit is that you don't have to write e.g.
+    // <Checkbox id="editedCheckbox" name="edited" />, which is
+    // verbose and redundant. This comment also applies to the other
+    // places where id is set using name below.
+    const id = rest.id || rest.name;
+
     return (
         <React.Fragment>
           <input {...rest}
                  type='checkbox'
+                 id={id}
                  className={withDefault('form-check-input', props)}
           />
           <label className={classNames(labelClassName || 'form-check-label', labelExtras)}
-                 htmlFor={rest.name}>
+                 htmlFor={id}>
             {label}
           </label>
           {props.feedback &&
@@ -276,12 +290,15 @@ export function Checkbox(props) {
 //   feedback (optional) :: String, message to display below checkbox 
 //   className (optional), defaults to 'form-control'
 //   extras (optional), extra classes for text input
-//   labelClassName (optional),  defaults to 'sr-only'
+//   labelClassName (optional),  no default 
 //   labelExtras (optional), extra classes for label 
 //   feedbackClassName (optional), className for feedback message
 //      Defaults to 'form-text'
 //   feedbackExtras (optional), extras for feedback message
 // All other props will be passed to <input>, such as:
+//   name (required, determines field name in form submission)
+//   id (required for properly associating the <label>; defaults to name)
+//   name
 //   onChange
 //   defaultValue
 //   placeholder
@@ -297,14 +314,18 @@ export function TextInput(props) {
             feedbackClassName, feedbackExtras,
             ...rest } = props;
 
+    // See comment in Checkbox, above:
+    const id = rest.id || rest.name;
+
     return (
         <React.Fragment>
-          <label className={classNames(labelClassName || 'sr-only', labelExtras)}
-                 htmlFor={rest.name}>
+          <label className={classNames(labelClassName, labelExtras)}
+                 htmlFor={id}>
             {label}
           </label>
           <input {...rest}
                  type={type || 'text'}
+                 id={id}
                  className={withDefault('form-control', props)}
           />
           {props.feedback &&
@@ -327,13 +348,21 @@ export function TextInput(props) {
 //   disabled (optional) :: Bool
 //   className (optional), defaults to 'custom-select' 
 //   extras (optional), extra classes for select
-//   labelClassName (optional),  defaults to 'sr-only'
+//   labelClassName (optional), no default
 //   labelExtras (optional), extra classes for label 
 //   feedbackClassName (optional), className for feedback message
 //      Defaults to 'form-text'
 //   feedbackExtras (optional), extras for feedback message
-
 // All other props will be passed to <select>, such as:
+//   name (required, determines field name in form submission)
+//   id (required for properly associating the <label>; defaults to name)
+//   name
+//   onChange
+//   defaultValue
+//   placeholder
+//   autoFocus
+//   disabled
+//   required
 export function Select(props) {
     // remove the props we can't send down to the <select> element:
     const { label, data, choose, feedback,
@@ -341,6 +370,9 @@ export function Select(props) {
             labelClassName, labelExtras,
             feedbackClassName, feedbackExtras,
             ...rest } = props;
+
+    // See comment in Checkbox, above:
+    const id = rest.id || rest.name;
     
     function chooseItem(e) {
         const itemId = e.target.value;
@@ -354,11 +386,12 @@ export function Select(props) {
  
     return (
         <>
-          <label className={classNames(labelClassName || 'sr-only', labelExtras)}
-                 htmlFor={rest.name}>
+          <label className={classNames(labelClassName, labelExtras)}
+                 htmlFor={id}>
             {label}
           </label>
           <select {...rest}
+                  id={id}
                   onChange={onChange}
                   className={withDefault('custom-select', props)}>
             {data || props.children}
