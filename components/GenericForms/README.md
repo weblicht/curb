@@ -271,10 +271,13 @@ These all accept:
   - a `feedback` prop that will be displayed below the input element;
     you can use this to display instructions or field-level validation
     errors 
+  - an `asGroup` prop that, if true, will cause the input element and
+    its label to be wrapped in a div with the Bootstrap `form-group`
+    class (or another class that you specify)
   - `className` and `extras` props for styling the main input element
     (see the [conventions for these props](../GenericDisplay#styling)
     in the GenericDisplay directory), and related props for styling
-    its label and feedback
+    its label, feedback, and form group wrapper div
     
 They also pass other props (e.g., `required`) to the underlying React
 DOM elements, which enables field validation by the browser.

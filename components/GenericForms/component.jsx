@@ -233,6 +233,9 @@ export function SubmitButton(props) {
 // props:
 //   label :: String
 //   feedback (optional) :: String, message to display below checkbox 
+//   asGroup (optional) :: Bool. If true, the checkbox and its label will be
+//     wrapped in a <div> with classes indicating they form a group;
+//     otherwise, they will be rendered as a React.Fragment
 //   className (optional), defaults to 'form-check-input'
 //   extras (optional), extra classes for checkbox input
 //   labelClassName (optional), defaults to 'form-check-label'
@@ -240,6 +243,9 @@ export function SubmitButton(props) {
 //   feedbackClassName (optional), className for feedback message
 //      Defaults to 'form-text'
 //   feedbackExtras (optional), extras for feedback message
+//   groupClassName (optional), className for group div if asGroup is true;
+//      defaults to 'form-group'
+//   groupExtras (optional), extras for group div if asGroup is true.
 // All other props will be passed down to <input>, such as:
 //    name (required, determines field name in form submission)
 //    id (required for properly associating the <label>; defaults to name)
@@ -268,7 +274,8 @@ export function Checkbox(props) {
     const id = rest.id || rest.name;
 
     return (
-        <React.Fragment>
+        <FragmentOrGroup asGroup={props.asGroup}
+                         className={props.groupClassName} extras={props.groupExtras}>
           <input {...rest}
                  type='checkbox'
                  id={id}
@@ -283,14 +290,18 @@ export function Checkbox(props) {
              {props.feedback}
            </small>
           }
-        </React.Fragment>
+        </FragmentOrGroup>
     );
+
 }
  
 // props:
 //   label :: String
 //   type (optional) :: String, defaults to 'text' (but could be 'email', 'url', etc.) 
 //   feedback (optional) :: String, message to display below checkbox 
+//   asGroup (optional) :: Bool. If true, the <input> and its label will be
+//     wrapped in a <div> with classes indicating they form a group;
+//     otherwise, they will be rendered as a React.Fragment
 //   className (optional), defaults to 'form-control'
 //   extras (optional), extra classes for text input
 //   labelClassName (optional),  no default 
@@ -298,6 +309,9 @@ export function Checkbox(props) {
 //   feedbackClassName (optional), className for feedback message
 //      Defaults to 'form-text'
 //   feedbackExtras (optional), extras for feedback message
+//   groupClassName (optional), className for group div if asGroup is true;
+//      defaults to 'form-group'
+//   groupExtras (optional), extras for group div if asGroup is true.
 // All other props will be passed to <input>, such as:
 //   name (required, determines field name in form submission)
 //   id (required for properly associating the <label>; defaults to name)
@@ -321,7 +335,8 @@ export function TextInput(props) {
     const id = rest.id || rest.name;
 
     return (
-        <React.Fragment>
+        <FragmentOrGroup asGroup={props.asGroup}
+                         className={props.groupClassName} extras={props.groupExtras}>
           <label className={classNames(labelClassName, labelExtras)}
                  htmlFor={id}>
             {label}
@@ -336,7 +351,7 @@ export function TextInput(props) {
              {props.feedback}
            </small>
           }
-        </React.Fragment>
+        </FragmentOrGroup>
     );
 }
 
@@ -348,6 +363,9 @@ export function TextInput(props) {
 //   choose (optional) :: (String) -> (anything), a callback to call with an item value
 //     when that item is selected. If this function is given it will be used to create
 //     the underlying <select>'s onChange prop. 
+//   asGroup (optional) :: Bool. If true, the <select> and its label will be
+//     wrapped in a <div> with classes indicating they form a group;
+//     otherwise, they will be rendered as a React.Fragment
 //   className (optional), defaults to 'custom-select' 
 //   extras (optional), extra classes for select
 //   labelClassName (optional), no default
@@ -355,6 +373,9 @@ export function TextInput(props) {
 //   feedbackClassName (optional), className for feedback message
 //      Defaults to 'form-text'
 //   feedbackExtras (optional), extras for feedback message
+//   groupClassName (optional), className for group div if asGroup is true;
+//      defaults to 'form-group'
+//   groupExtras (optional), extras for group div if asGroup is true.
 // All other props will be passed to <select>, such as:
 //   name (required, determines field name in form submission)
 //   id (required for properly associating the <label>; defaults to name)
@@ -387,7 +408,9 @@ export function Select(props) {
     const onChange = props.onChange || (props.choose ? chooseItem : undefined);
  
     return (
-        <>
+        <FragmentOrGroup asGroup={props.asGroup}
+                         className={props.groupClassName}
+                         extras={props.groupExtras}>
           <label className={classNames(labelClassName, labelExtras)}
                  htmlFor={id}>
             {label}
@@ -403,7 +426,7 @@ export function Select(props) {
              {props.feedback}
            </small>
           }
-        </>
+        </FragmentOrGroup>
     );
 }
 
@@ -447,4 +470,20 @@ export function FormAlerts(props) {
           : [];
 
     return successAlert.concat(errorAlerts).concat(warningAlerts);
+}
+
+// This is just a helper for now, and not exported for public use.
+// props:
+//   asGroup :: Bool, if true wraps props.children in a form-group div
+//   className, extras: as usual
+function FragmentOrGroup(props) {
+    if (props.asGroup) {
+        return (
+            <div className={withDefault('form-group', props)}>
+              {props.children}
+            </div>
+        );
+    }
+
+    return <>{props.children}</>;
 }
