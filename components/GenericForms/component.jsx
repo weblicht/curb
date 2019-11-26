@@ -36,7 +36,7 @@ function withDefault(dfault, props) {
 //   submitTo :: Object -> (anything). Callback that should receive the object
 //     containing validated form data.
 //   validator (optional) :: Object -> Object. Receives the form data after submit.
-//     Should return an object that will be passed to the submitAction.  
+//     Should return an object that will be passed to the submitTo callback.  
 //     If the form data is invalid, it should throw a ValidationErrors
 //     object to prevent submission of the data to the submitTo callback.
 //     Defaults to the identity function (i.e., all data is valid).
@@ -88,9 +88,9 @@ export function Form(props) {
 }
 
 // props:
-//   submitAction: a Redux thunk action creator that accepts form data and returns the Promise
+//   submitTo: a Redux thunk action creator that accepts form data and returns the Promise
 //     associated with an axios request.
-//   validator (optional): a validator function that will be passed on to <Form>
+//   other props will be passed on to <Form>
 // children: a ManagedForm should have exactly one child, which should
 //   act as a render function: it will receive an object representing
 //   the form state as input, which it can use to render the body of
@@ -174,7 +174,9 @@ class ManagedForm extends React.Component {
         };
 
         return (
-            <Form validator={this.props.validator} submitTo={this.submit} errorsTo={this.validationErrors}>
+            <Form {...this.props} // including validator
+                  submitTo={this.submit}
+                  errorsTo={this.validationErrors}>
               {this.props.children(formState)}
             </Form>
         );
@@ -346,7 +348,6 @@ export function TextInput(props) {
 //   choose (optional) :: (String) -> (anything), a callback to call with an item value
 //     when that item is selected. If this function is given it will be used to create
 //     the underlying <select>'s onChange prop. 
-//   disabled (optional) :: Bool
 //   className (optional), defaults to 'custom-select' 
 //   extras (optional), extra classes for select
 //   labelClassName (optional), no default
