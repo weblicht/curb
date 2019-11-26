@@ -79,6 +79,8 @@ with a form
 `Select`: displays an HTML select element with a corresponding label
 and validation feedback
 
+`Options`: displays an array of values as HTML option elements
+
 `TextInput`: displays a text input with a corresponding label and
 validation feedback
 

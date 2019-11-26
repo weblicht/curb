@@ -17,6 +17,7 @@
 
 import { ValidationErrors } from './validation';
 import { InternalError } from '../../errors';
+import { withNullAsString } from '../../helpers';
 import { Alert } from '../GenericDisplay/component';
 
 import React from 'react';
@@ -401,6 +402,30 @@ export function Select(props) {
              {props.feedback}
            </small>
           }
+        </>
+    );
+}
+
+// props: 
+//   data :: [Object]
+//   valueFrom (optional) :: Object -> String, function to convert a
+//     data object to the corresponding value to be submitted with the
+//     form. Defaults to converting the object with .toString().
+//   textFrom (optional) :: Object -> String, function to convert a
+//     data object to the corresponding value to be displayed inside
+//     the <select>. Defaults to converting the object with
+//     .toString().
+export function Options(props) {
+    if (!props.data || !props.data.length) return null;
+
+    const asValue = props.valueFrom || (d => withNullAsString(d));
+    const asText = props.textFrom || (d => withNullAsString(d));
+
+    return (
+        <>
+        {props.data.map(
+            (d, i) => <option key={asValue(d) + i} value={asValue(d)}>{asText(d)}</option>
+        )}
         </>
     );
 }
