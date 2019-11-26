@@ -20,7 +20,7 @@
 import { doSearch, updateSearchTerm, toggleIgnoreCase, setIgnoreCase, reloadHistory } from './actions';
 import { selectSearchFormState,
          selectSynsetsForSearchForm } from './selectors';
-import { Button, Checkbox, TextInput } from '../GenericDisplay/component';
+import { Button, Checkbox, TextInput } from '../GenericForms/component';
 import { dataContainerFor } from '../DataContainer/component';
 
 import classNames from 'classnames';
@@ -51,13 +51,15 @@ function SynsetSearchForm(props) {
     return ( 
         <form className={classNames(props.className || "form-inline", props.extras)}
               onSubmit={onSubmit}>
-          <TextInput id={`${props.id}-searchTerm`} label="Search for"
+          <TextInput id={`${props.id}-searchTerm`}
+                     label="Search for" labelClassName="sr-only"
                      value={props.currentSearchTerm}
                      onChange={onSearchTermChange}
                      autoFocus={true}
                      placeholder="Enter a word or Synset Id"
                      className={props.inputClassName}
                      extras={props.inputExtras}
+                     required={true}
           />
           <Button text="Find" onClick={onSubmit}
                   className={props.buttonClassName}
