@@ -162,10 +162,10 @@ class ManagedForm extends React.Component {
 
     // passed down to children so they can clear the form, including any errors, if desired:
     reset(e) {
-        // Note: we *don't* call e.preventDefault here, so that it can
-        // be passed as the onClick prop of a ResetButton, and the
-        // click event will still reset the uncontrolled elements on a
-        // form back to their default values
+        // Note: we *don't* call e.preventDefault here, so that this
+        // handler can be passed as the onClick prop of a ResetButton,
+        // and the click event will still reset the uncontrolled
+        // elements on a form back to their default values
         this.setState(this.defaultState);
     }
 
