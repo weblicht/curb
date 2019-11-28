@@ -90,7 +90,10 @@ export function Form(props) {
 // props:
 //   submitTo: a Redux thunk action creator that accepts form data and returns the Promise
 //     associated with an axios request.
-//   other props will be passed on to <Form>
+//   onSuccess (optional): a callback to be called after the form has been submitted
+//     successfully, (i.e., the request made by submitTo completes with a 200-level
+//     response). 
+// other props, including validator, will be passed on to <Form>.
 // children: a ManagedForm should have exactly one child, which should
 //   act as a render function: it will receive an object representing
 //   the form state as input, which it can use to render the body of
@@ -150,6 +153,9 @@ class ManagedForm extends React.Component {
         this.props.doSubmit(data)
             .then(response => {
                 this.setState({ submitting: false, submitSuccess: true, serverResponse: response });
+                if (typeof this.props.onSuccess === 'function') {
+                    this.props.onSuccess();
+                }
             })
             .catch(error => this.requestErrors(error));
     }
@@ -174,7 +180,7 @@ class ManagedForm extends React.Component {
         };
 
         // remove the props that we can't send down to the <Form>:
-        const { submitTo, doSubmit, ...formProps } = this.props;
+        const { submitTo, doSubmit, onSuccess, ...formProps } = this.props;
 
         return (
             <Form {...formProps} // includes validator

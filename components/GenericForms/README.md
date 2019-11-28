@@ -174,7 +174,7 @@ any further errors that result. `ManagedForm` helps with this.
 `ManagedForm` wraps `Form` and provides its own implementation of the
 `submitTo` and `errorsTo` props, which keep track of the state related
 to form submission and the roundtrip to the server. `ManagedForm`
-accepts two props:
+accepts these props:
 
   - `submitTo`: unlike in `Form`, where this prop can be an arbitrary
      callback, in `ManagedForm` it *must* be a Redux thunk action
@@ -182,7 +182,13 @@ accepts two props:
      will automatically call `dispatch` on this thunk on form
      submission. The thunk should return the Promise associated with
      the axios request that submits this data to the server.
+  - `onSuccess` (optional): a callback to be called after the form has
+     been submitted successfully (i.e., the request made by `submitTo`
+     completes with a 200-level response). You can use this, for
+     example, to refresh components that depend on data modified by
+     the form.
   - `validator` (optional): a validator function (same as for `Form`)
+
 
 To give you access to the form state when rendering its body (e.g., so
 you can display any errors as alerts, or disable the submit button
