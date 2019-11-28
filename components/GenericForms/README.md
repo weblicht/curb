@@ -201,9 +201,7 @@ Here is a more realistic example that demonstrates how to use `ManagedForm`:
 ```
 function updateLexUnit(formData) {
     return function(dispatch) {
-        return axios.post('/api/lexunits', formData)
-                    .then(response => dispatch({type: 'LEX_UNIT_UPDATED',
-                                                data: response.data}));
+        return axios.post('/api/lexunits', formData);
     };
 }
 
@@ -370,3 +368,26 @@ available as properties of the form state. You can use these to render
 messages to the user, either at the level of the whole form or as
 feedback on individual fields.
   
+### Form state and uncontrolled components
+
+Because of the way that React's rendering interacts with uncontrolled
+components, you may find that your form state goes "stale". This can
+happen when e.g.
+
+  1. the form renders with some data from the parent component used to
+     populate the `defaultValue` props of its fields
+  2. the user changes one of those values (so it is no longer
+     default), but doesn't submit the form
+  3. the user then takes some other action that causes the form to
+     re-render from new data in the parent component
+     
+In that case, the field that the user modified will not update with
+the new data.  That's because the user has set its `value`, and React
+will not use the newly-set `defaultValue` to overwrite the user-set
+`value` when re-rendering an uncontrolled component.
+
+The solution to this kind of problem is to set the `key` on the
+`ManagedForm` or `Form` that changes when the data in the parent
+component changes. This forces React to create a new form, instead of
+updating the existing form. For more on this, see [this React blog
+post](https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-uncontrolled-component-with-a-key).
