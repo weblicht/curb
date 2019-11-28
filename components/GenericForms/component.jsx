@@ -173,8 +173,11 @@ class ManagedForm extends React.Component {
             reset: this.reset
         };
 
+        // remove the props that we can't send down to the <Form>:
+        const { submitTo, doSubmit, ...formProps } = this.props;
+
         return (
-            <Form {...this.props} // including validator
+            <Form {...formProps} // includes validator
                   submitTo={this.submit}
                   errorsTo={this.validationErrors}>
               {this.props.children(formState)}
@@ -255,10 +258,11 @@ export function SubmitButton(props) {
 //    required 
 export function Checkbox(props) {
     // remove the props that we can't send down to the <input> element:
-    const { label, feedback,
+    const { label, feedback, asGroup,
             className, extras,
             labelClassName, labelExtras,
             feedbackClassName, feedbackExtras,
+            groupClassName, groupExtras,
             ...rest } = props;
 
     // We need an ID to associate the label with the checkbox, because
@@ -274,8 +278,7 @@ export function Checkbox(props) {
     const id = rest.id || rest.name;
 
     return (
-        <FragmentOrGroup asGroup={props.asGroup}
-                         className={props.groupClassName} extras={props.groupExtras}>
+        <FragmentOrGroup asGroup={asGroup} className={groupClassName} extras={groupExtras}>
           <input {...rest}
                  type='checkbox'
                  id={id}
@@ -325,18 +328,18 @@ export function Checkbox(props) {
 //   pattern
 export function TextInput(props) {
     // remove the props that we can't send down to the <input> element:
-    const { label, type, feedback,
+    const { label, type, feedback, asGroup,
             className, extras,
             labelClassName, labelExtras,
             feedbackClassName, feedbackExtras,
+            groupClassName, groupExtras,
             ...rest } = props;
 
     // See comment in Checkbox, above:
     const id = rest.id || rest.name;
 
     return (
-        <FragmentOrGroup asGroup={props.asGroup}
-                         className={props.groupClassName} extras={props.groupExtras}>
+        <FragmentOrGroup asGroup={asGroup} className={groupClassName} extras={groupExtras}>
           <label className={classNames(labelClassName, labelExtras)}
                  htmlFor={id}>
             {label}
@@ -388,10 +391,11 @@ export function TextInput(props) {
 //   required
 export function Select(props) {
     // remove the props we can't send down to the <select> element:
-    const { label, data, choose, feedback,
+    const { label, data, choose, feedback, asGroup,
             className, extras,
             labelClassName, labelExtras,
             feedbackClassName, feedbackExtras,
+            groupClassName, groupExtras,
             ...rest } = props;
 
     // See comment in Checkbox, above:
@@ -408,9 +412,7 @@ export function Select(props) {
     const onChange = props.onChange || (props.choose ? chooseItem : undefined);
  
     return (
-        <FragmentOrGroup asGroup={props.asGroup}
-                         className={props.groupClassName}
-                         extras={props.groupExtras}>
+        <FragmentOrGroup asGroup={asGroup} className={groupClassName} extras={groupExtras}>
           <label className={classNames(labelClassName, labelExtras)}
                  htmlFor={id}>
             {label}
