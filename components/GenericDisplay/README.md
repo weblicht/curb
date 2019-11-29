@@ -11,8 +11,8 @@ These components are generally short wrappers around raw HTML
 elements.  Their purposes is to provide default styling information
 and a useful props interface.
 
-
-`Button`: display a button
+`Alert`: wrap some content in a div with an appropriate Bootstrap
+alert class
 
 `Card`: wrap some content in a Bootstrap card div and add a title
 
@@ -21,8 +21,6 @@ a `Card`
 
 `CardHeader`: wrap some content in a Bootstrap card header div within
 a `Card`
-
-`Checkbox`: display a checkbox and corresponding label
 
 `DefList`: given a list of terms and a co-indexed list of definitions,
 generate an HTML definition list.
@@ -40,10 +38,6 @@ its only row
 prop
 
 `ListItem`: display a list item within a list
-
-`Select`: display an HTML select element
-
-`TextInput`: display a text input with a corresponding label
 
 ### Data container display components
 

@@ -18,6 +18,7 @@
 // GenericDisplay/component.jsx
 // Definition of generic display components that are reused elsewhere
 
+import { Select } from '../GenericForms/component';
 import { comparisonOn, withNullAsString } from '../../helpers';
 import { InternalError } from '../../errors';
 
@@ -33,92 +34,24 @@ function withDefault(dfault, props) {
 }
 
 // props:
-//   id :: String
-//   text (optional) :: String to use as button text; defaults to props.children
-//   onClick :: Event handler function
-//   type (optional) :: String, defaults to 'button'
-//   disabled (optional) :: Bool, defaults to false.
-//     Disabled buttons are styled differently by Bootstrap CSS and cannot handle click events.
-//   className (optional), defaults to 'btn'
-//   extras (optional), extra classes for button input
-export function Button(props) {
-    return (
-          <button type={props.type || 'button'}
-                  name={props.id}
-                  className={withDefault('btn', props)}
-                  disabled={props.disabled}
-                  onClick={props.disabled ? undefined : props.onClick}>
-            {props.text || props.children}
-          </button>
-    );
-}
+//   type (optional) :: String representing a (Bootstrap 4) alert class,
+//      e.g. 'warning', 'danger' or 'success'; defaults to 'info'
+//   text (optional) :: String, defaults to props.children
+//   className (optional), defaults to 'alert' plus the alert class
+//      determined by props.type
+//   extras (optional), extras for alert div
+export function Alert(props) {
+    const type = props.type ? 'alert-' + props.type : 'alert-info';
 
-// props:
-//   id :: String
-//   onChange :: Event handler function
-//   checked :: Bool
-//   label :: String
-//   disabled (optional) :: Bool
-//   className (optional), defaults to 'form-check-input'
-//   extras (optional), extra classes for checkbox input
-//   labelClassName (optional), defaults to 'form-check-label'
-//   labelExtras (optional), extra classes for label 
-export function Checkbox(props) {
+    // type gets rolled into the className, so that props.className
+    // can override *both* alert classes:
+    const fullClassName = `alert ${type}`;
+    
     return (
-        <React.Fragment>
-          <input type='checkbox'
-                 name={props.id}
-                 className={withDefault('form-check-input', props)}
-                 onChange={props.onChange}
-                 checked={props.checked}
-                 disabled={props.disabled || false}
-          />
-          <label className={
-              withDefault('form-check-label', {
-                  className: props.labelClassName,
-                  extras: props.labelExtras
-              })}
-                 htmlFor={props.id}>
-            {props.label}
-          </label>
-        </React.Fragment>
-    );
-}
- 
-// props:
-//   id :: String
-//   label :: String
-//   onChange :: Event handler function
-//   value (optional) :: String
-//   placeholder (optional) :: String
-//   autoFocus (optional) :: Bool
-//   disabled (optional) :: Bool
-//   className (optional), defaults to 'form-control'
-//   extras (optional), extra classes for text input
-//   labelClassName (optional),  defaults to 'sr-only'
-//   labelExtras (optional), extra classes for label 
-export function TextInput(props) {
-    return (
-        <React.Fragment>
-          <label className={
-              withDefault('sr-only', {
-                  className: props.labelClassName,
-                  extras: props.labelExtras
-              })}
-                 htmlFor={props.id}>
-            {props.label}
-          </label>
-          <input type='text'
-                 name={props.id}
-                 className={withDefault('form-control', props)}
-                 onChange={props.onChange}
-                 value={props.value || ''}
-                 placeholder={props.placeholder || ''}
-                 autoFocus={props.autoFocus || false}
-                 disabled={props.disabled || false}
-          />
-        </React.Fragment>
-    );
+        <div className={withDefault(fullClassName, props)} role="alert">
+          {props.text || props.children}
+        </div>
+    ); 
 }
 
 // props:
@@ -522,41 +455,6 @@ export function ListItem(props) {
             onClick={props.onClick}>
           {props.data || props.children}
         </li>
-    );
-}
-
-// props:
-//   id :: String
-//   label :: String
-//   data (optional) :: [ Object ]
-//     The options to be displayed in the select element.
-//     Defaults to props.children.
-//   choose :: (String) -> (anything), a callback to call with an item value
-//     when that item is selected
-//   disabled (optional) :: Bool
-//   className (optional), defaults to 'custom-select' 
-//   extras (optional), extra classes for select
-//   labelClassName (optional),  defaults to 'sr-only'
-//   labelExtras (optional), extra classes for label 
-export function Select(props) {
-    function chooseItem(e) {
-        const itemId = e.target.value;
-        props.choose(itemId);
-    }
- 
-    return (
-        <>
-          <label className={classNames(props.labelClassName || 'sr-only', props.labelExtras)}
-                 htmlFor={props.id}>
-            {props.label}
-          </label>
-          <select name={props.id}
-                  className={withDefault('custom-select', props)}
-                  onChange={chooseItem}
-                  disabled={props.disabled || false}>
-            {props.data || props.children}
-          </select>
-        </>
     );
 }
 

@@ -15,13 +15,4 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
-// validation.js
-// Utilities for dealing with user-input validation
-
-class ValidationError {
-    constructor(msg) {
-        this.message = msg;
-    }
-}
-
-export { ValidationError };
+export * from './component';

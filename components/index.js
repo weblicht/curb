@@ -21,6 +21,7 @@ export * from './DataContainer/component';
 export * from './Frames/component';
 export * from './Graphs/component';
 export * from './GenericDisplay/component';
+export * from './GenericForms/component';
 export * from './ILIRecords/component';
 export * from './LexExamples/component';
 export * from './LexRels/component';
