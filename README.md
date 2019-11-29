@@ -6,7 +6,8 @@ implementing the following pattern:
   1. Fetching data objects from a backend API into the Redux store
      (see [APIWrapper](./components/APIWrapper))
   2. Selecting data objects from the store into a container (see [DataContainer](./components/DataContainer))
-  3. Rendering the data in a container into a UI (see [GenericDisplay](./components/GenericDisplay))
+  3. Rendering the data in a container into a UI (see
+     [GenericDisplay](./components/GenericDisplay) and [GenericForms](./components/GenericForms))
 
 It also implements this pattern for the different types of data
 objects in the [GermaNet](http://www.sfs.uni-tuebingen.de/GermaNet/) API, namely
@@ -151,3 +152,18 @@ the name of the component's directory:
 import { LexUnitsContainer, LexUnitsAsList } from '@sfstuebingen/germanet-common/components';
 ```
 
+### API path
+
+By default, the library expects to make API calls to endpoints that
+fall under `/api`, e.g., `/api/synsets`. You can customize this by
+setting either `window.GERMANET_API_PREFIX` (recommended for new or
+external projects) or `window.APP_CONTEXT_PATH` (for existing
+applications at the SfS) to a prefix for these endpoints. Note that
+you should do this before loading the library's code. For example, if
+you set
+```
+window.GERMANET_API_PREFIX = '/germanet';
+```
+then API requests will go to endpoints like `/germanet/api/synsets`.
+If you need more control over the exact path, you should edit the
+`urlRoot` variable in the top-level constants.js module.
