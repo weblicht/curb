@@ -469,8 +469,8 @@ export function Options(props) {
 
 // props:
 //   success (optional) :: String, message to be displayed as a success Alert 
+//   error (optional) :: String, message to be displayed as a danger Alert
 //   warnings (optional) :: [String], messages to be displayed as warning Alerts
-//   errors (optional) :: [String], messages to be displayed as danger Alerts
 export function FormAlerts(props) {
     const successAlert = props.success
           ? [<Alert type='success' text={props.success}/>]
@@ -478,11 +478,11 @@ export function FormAlerts(props) {
     const warningAlerts = props.warnings && props.warnings.length
           ? props.warnings.map(w => <Alert type='warning' text={w}/>)
           : [];
-    const errorAlerts = props.errors && props.errors.length
-          ? props.errors.map(e => <Alert type='danger' text={e}/>)
+    const errorAlert = props.error
+          ? [<Alert type='danger' text={props.error}/>]
           : [];
 
-    return successAlert.concat(errorAlerts).concat(warningAlerts);
+    return errorAlert.concat(warningAlerts).concat(successAlert);
 }
 
 // This is just a helper for now, and not exported for public use.
