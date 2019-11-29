@@ -15,7 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
-const urlRoot = "/api"; // window.location.origin;
+const prefix = window.GERMANET_API_PREFIX || window.APP_CONTEXT_PATH || "";
+const urlRoot = prefix + "/api"; // window.location.origin;
 
 // For now, we define only a subset of the endpoints which are already
 // available in gernedit.
