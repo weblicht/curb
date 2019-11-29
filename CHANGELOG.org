@@ -1,5 +1,33 @@
 * 1.x
 
+** 1.2.3
+   
+This release contains major new (but mostly backwards-compatible) features:
+
+  - GenericForms: a new set of components for building forms, which
+    focuses on keeping things simple by using uncontrolled form
+    components and letting the browser handle most form validation.
+    The old form components (Button, Checkbox, TextInput, Select) have
+    been generalized and moved from GenericDisplay into GenericForms.
+    The top-level validation.js has also been moved into GenericForms.
+    SynsetSearchForm has been reworked to use the new components from
+    GenericForms and no longer emits a Redux action on every change of
+    input.
+  - DataContainers gained support for sorting functions. The DataTable
+    component now has basic support for sorting in ascending and
+    descending order on a per-column basis.
+  - DataContainers also gained support for optionally rendering a
+    separate component when data is unavailable.
+    
+Other, more minor changes include:
+
+  - Graphs can now be forced to re-draw by setting their forceRedraw
+    prop from a parent component.
+  - It is now possible to set a prefix for the API endpoints via
+    window.GERMANET_API_PREFIX or window.APP_CONTEXT_PATH.
+  - A number of internal changes fixed bugs and made it easier to
+    extend the components for individual data types with new props.
+
 ** 1.2.2 
    
 This is a minor release that fixes a few bugs and adds a few
