@@ -295,7 +295,7 @@ There are also a few other components for common tasks when rendering
 forms:
 
   - the `Options` component can be used to easily generate the options for
-    a `Select` from an array of data
+    a `Select` from an array of strings or data objects 
 
   - the `FormAlerts` component provides an easy way to display a
     series of alert messages (e.g., validation errors) together
