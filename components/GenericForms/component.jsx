@@ -442,21 +442,26 @@ export function Select(props) {
 //   data :: [Object]
 //   valueFrom (optional) :: Object -> String, function to convert a
 //     data object to the corresponding value to be submitted with the
-//     form. Defaults to converting the object with .toString().
-//   textFrom (optional) :: Object -> String, function to convert a
+//     form. Defaults to using the object's .value property if defined,
+//     or converting the object with .toString().
+//   labelFrom (optional) :: Object -> String, function to convert a
 //     data object to the corresponding value to be displayed inside
-//     the <select>. Defaults to converting the object with
-//     .toString().
+//     the <select>. Defaults to using the object's .label property if
+//     defined, or converting the object with .toString().
 export function Options(props) {
     if (!props.data || !props.data.length) return null;
 
-    const asValue = props.valueFrom || (d => withNullAsString(d));
-    const asText = props.textFrom || (d => withNullAsString(d));
+    const asValue = props.valueFrom || (d => d.hasOwnProperty('value')
+                                        ? d.value
+                                        : withNullAsString(d));
+    const asLabel = props.labelFrom || (d => d.hasOwnProperty('label')
+                                        ? d.label
+                                        : withNullAsString(d));
 
     return (
         <>
         {props.data.map(
-            (d, i) => <option key={asValue(d) + i} value={asValue(d)}>{asText(d)}</option>
+            (d, i) => <option key={asValue(d) + i} value={asValue(d)} label={asLabel(d)}/>
         )}
         </>
     );
