@@ -20,7 +20,7 @@
 import { doSearch, updateSearchTerm, toggleIgnoreCase, setIgnoreCase, reloadHistory } from './actions';
 import { selectSearchFormState,
          selectSynsetsForSearchForm } from './selectors';
-import { Button, Checkbox, TextInput } from '../GenericForms/component';
+import { Button, Checkbox, Form, SubmitButton, TextInput } from '../GenericForms/component';
 import { dataContainerFor } from '../DataContainer/component';
 
 import classNames from 'classnames';
@@ -39,39 +39,41 @@ import { connect } from 'react-redux';
 //     "ignore case" checkbox. Defaults space the button slightly right of the
 //     submit button.
 function SynsetSearchForm(props) {
-    function onSearchTermChange (e) {
-        props.updateSearchTerm(e.target.value);
-    }
 
-    function onSubmit (e) {
-        e.preventDefault();
-        props.doSearch(props.currentSearchTerm, props.ignoreCase);
+    function onSubmit(formData) {
+        props.doSearch(formData.searchTerm, formData.ignoreCase === "on");
     }
 
     return ( 
-        <form className={classNames(props.className || "form-inline", props.extras)}
-              onSubmit={onSubmit}>
+        // setting the key to props.history.length clears the search
+        // term box and validity state after each search is run
+        <Form key={props.history.length} 
+              submitTo={onSubmit}
+              className={classNames(props.className || "form-inline", props.extras)}>
           <TextInput id={`${props.id}-searchTerm`}
+                     name="searchTerm"
                      label="Search for" labelClassName="sr-only"
-                     value={props.currentSearchTerm}
-                     onChange={onSearchTermChange}
+                     type="search"
+                     defaultValue={props.currentSearchTerm}
                      autoFocus={true}
                      placeholder="Enter a word or Synset Id"
                      className={props.inputClassName}
                      extras={props.inputExtras}
                      required={true}
           />
-          <Button text="Find" onClick={onSubmit}
-                  className={props.buttonClassName}
-                  extras={props.buttonExtras || "btn-primary ml-3 my-1"}
+          <SubmitButton text="Find"
+                        className={props.buttonClassName}
+                        extras={props.buttonExtras || "btn-primary ml-3 my-1"}
           />
-          <Checkbox id={`${props.id}-ignoreCase `} label="ignore case"
+          <Checkbox id={`${props.id}-ignoreCase`} label="ignore case"
+                    name="ignoreCase"
+                    asGroup={true}
                     checked={props.ignoreCase}
                     onChange={props.toggleIgnoreCase}
                     className={props.checkboxClassName}
                     extras={props.checkboxExtras || "ml-3 my-1"}
           />
-        </form>
+        </Form>
     );
 }
 
@@ -82,7 +84,6 @@ function searchFormStateToProps(state, ownProps) {
 function searchFormDispatchToProps(dispatch, ownProps) {
     return {
         doSearch: (term, igcase) => dispatch(doSearch(ownProps.id, term, igcase)),
-        updateSearchTerm: (term) => dispatch(updateSearchTerm(ownProps.id, term)),
         toggleIgnoreCase: () => dispatch(toggleIgnoreCase(ownProps.id)),
     };
 }
