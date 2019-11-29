@@ -694,7 +694,7 @@ export class VerticalTreeGraph extends React.Component {
     
     componentDidUpdate(prevProps) {
         // See related comment in VerticalDoubleTreeGraph: 
-        if (this.props.forceRedraw) {
+        if (!prevProps.forceRedraw && this.props.forceRedraw) {
             this.drawTree();
             return;
         }
@@ -806,7 +806,7 @@ export class VerticalDoubleTreeGraph extends React.Component {
         // when e.g. the graph appears on an unselected tab in a
         // tabbed interface, and thus it is not visible when the
         // component first renders.
-        if (this.props.forceRedraw) {
+        if (!prevProps.forceRedraw && this.props.forceRedraw) {
             this.drawTrees();
             return;
         }
