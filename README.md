@@ -28,11 +28,10 @@ without having to define all the boilerplate for fetching that data
 and managing it.
 
 **Note**: if you are reading this README on NPM, the relative links on
-this page will be broken, because they are designed to work with our
-internal GitLab instance at the
-[Seminar für Sprachwissenschaft](https://uni-tuebingen.de/fakultaeten/philosophische-fakultaet/fachbereiche/neuphilologie/seminar-fuer-sprachwissenschaft/arbeitsbereiche/allg-sprachwissenschaft-computerlinguistik/).
-You can read the complete source and documentation by installing the
-package.
+this page will be broken. You can read the complete source and
+documentation on
+[GitHub](https://github.com/Germanet-sfs/germanet-common), or by
+installing the package.
 
 ## Prerequisites
 
