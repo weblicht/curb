@@ -117,6 +117,7 @@ class ManagedForm extends React.Component {
         this.requestErrors = this.requestErrors.bind(this);
         this.reset = this.reset.bind(this);
         this.submit = this.submit.bind(this);
+        this.setState = this.setState.bind(this);
     }
 
     // handler for validation errors raised before the request is submitted: 
@@ -185,7 +186,8 @@ class ManagedForm extends React.Component {
 
         const formState = {
             ...this.state,
-            reset: this.reset
+            reset: this.reset,
+            setState: this.setState
         };
 
         // remove the props that we can't send down to the <Form>:

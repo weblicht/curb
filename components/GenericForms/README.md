@@ -255,6 +255,9 @@ Here are all the properties available on the `formState` object:
     server, if there was one (whether the request was successful or
     not)
   - `reset`: a callback that you can invoke to clear the form state
+  - `setState`: a callback that lets you set your own state values in
+    the `formState`. It works the same as `setState` in React class
+    components.
 
 ### The input fields on the form
 
