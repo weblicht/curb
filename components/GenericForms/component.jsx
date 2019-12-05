@@ -296,20 +296,22 @@ export function Checkbox(props) {
 
     return (
         <FragmentOrGroup asGroup={asGroup} className={groupClassName} extras={groupExtras}>
-          <input {...rest}
-                 type='checkbox'
-                 id={id}
-                 className={withDefault('form-check-input', props)}
-          />
-          <label className={classNames(labelClassName || 'form-check-label', labelExtras)}
-                 htmlFor={id}>
-            {label}
-          </label>
-          {props.feedback &&
-           <small className={classNames(feedbackClassName || 'form-text', feedbackExtras)}>
-             {props.feedback}
-           </small>
-          }
+          <div className="form-check">
+            <input {...rest}
+                   type='checkbox'
+                   id={id}
+                   className={withDefault('form-check-input', props)}
+            />
+            <label className={classNames(labelClassName || 'form-check-label', labelExtras)}
+                   htmlFor={id}>
+              {label}
+            </label>
+            {props.feedback &&
+             <small className={classNames(feedbackClassName || 'form-text', feedbackExtras)}>
+               {props.feedback}
+             </small>
+            }
+          </div>
         </FragmentOrGroup>
     );
 
