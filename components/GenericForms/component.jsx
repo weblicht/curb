@@ -149,10 +149,19 @@ class ManagedForm extends React.Component {
 
     // manages the request-response cycle:
     submit(data) {
-        this.setState({ submitting: true, submittedData: data });
+        this.setState({
+            ...this.defaultState, // clear any state lingering from previous submissions
+            submitting: true,
+            submittedData: data,
+        });
+        
         this.props.doSubmit(data)
             .then(response => {
-                this.setState({ submitting: false, submitSuccess: true, serverResponse: response });
+                // TODO: this is also the place to set formErrors and fieldErrors
+                // with server-side validation errors, once the backend supports it: 
+                this.setState({ submitting: false, submitSuccess: true,
+                                serverResponse: response });
+                 
                 if (typeof this.props.onSuccess === 'function') {
                     this.props.onSuccess();
                 }
