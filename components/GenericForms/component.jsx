@@ -133,12 +133,12 @@ class ManagedForm extends React.Component {
             // of 2xx; we don't try to figure out here what happened,
             // but we make the response available to the children so
             // they can:
-            this.setState({ submitFailure: true,
+            this.setState({ submitting: false, submitFailure: true,
                             serverResponse: error.response });
         } else if (error.request) {
             // the server didn't respond, so there's nothing else for
             // us to record here:
-            this.setState({ submitFailure: true });
+            this.setState({ submitting: false, submitFailure: true });
         } else {
             // the error occurred in setting up the request; it
             // probably represents a frontend programming error and we
