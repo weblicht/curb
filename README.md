@@ -84,8 +84,6 @@ across the library:
     handling functions
   - [helpers.js](./): assorted common utility
     functions
-  - [validation.js](./): validation functions for user
-    input
 
 
 ## Use
