@@ -335,6 +335,6 @@ values that the `displayAs` component would (except of course `data`).
 
 If `displayUnavailable` is not a component, the data container will
 not render anything (i.e., it will render as `null`) until data is
-available.  Thus, you do not need to) check whether `props.data` is
+available.  Thus, you do not need to check whether `props.data` is
 undefined inside your `displayAs` component.  (You may, however, still
 need to check whether it is defined-but-empty.)
