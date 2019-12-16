@@ -21,10 +21,10 @@
 import { defaultSearchFormState } from './reducers';
 
 export function selectSearchFormState(globalState, id) {
-    if ( globalState.synsetSearches.byId === undefined  ) { 
-        return defaultSearchFormState;
-    } else {
+    try { 
         return globalState.synsetSearches.byId[id];
+    } catch (e) {
+        return defaultSearchFormState;
     }
 }
    
