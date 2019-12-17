@@ -16,3 +16,5 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 export * from './component';
+
+export { ValidationErrors } from './validation';
