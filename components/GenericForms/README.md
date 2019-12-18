@@ -186,7 +186,10 @@ accepts these props:
      been submitted successfully (i.e., the request made by `submitTo`
      completes with a 200-level response). You can use this, for
      example, to refresh components that depend on data modified by
-     the form.
+     the form. The callback will be passed the same `formState` object
+     as the child render function (see below), and can be used to call
+     effectful code to update the user interface based on the
+     submitted form data.
   - `validator` (optional): a validator function (same as for `Form`)
 
 
