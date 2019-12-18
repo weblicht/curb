@@ -118,6 +118,17 @@ class ManagedForm extends React.Component {
         this.reset = this.reset.bind(this);
         this.submit = this.submit.bind(this);
         this.setState = this.setState.bind(this);
+        this.formState = this.formState.bind(this);
+    }
+
+    // bundles up the form state object to be passed to the child
+    // render function and the onSuccess callback
+    formState() {
+        return {
+            ...this.state,
+            reset: this.reset,
+            setState: this.setState
+        };
     }
 
     // handler for validation errors raised before the request is submitted: 
@@ -164,7 +175,7 @@ class ManagedForm extends React.Component {
                                 serverResponse: response });
                  
                 if (typeof this.props.onSuccess === 'function') {
-                    this.props.onSuccess();
+                    this.props.onSuccess(this.formState());
                 }
             })
             .catch(error => this.requestErrors(error));
@@ -184,12 +195,6 @@ class ManagedForm extends React.Component {
             throw new InternalError("ManagedForm requires a render function as its only child");
         }
 
-        const formState = {
-            ...this.state,
-            reset: this.reset,
-            setState: this.setState
-        };
-
         // remove the props that we can't send down to the <Form>:
         const { submitTo, doSubmit, onSuccess, ...formProps } = this.props;
 
@@ -197,7 +202,7 @@ class ManagedForm extends React.Component {
             <Form {...formProps} // includes validator
                   submitTo={this.submit}
                   errorsTo={this.validationErrors}>
-              {this.props.children(formState)}
+              {this.props.children(this.formState())}
             </Form>
         );
 
