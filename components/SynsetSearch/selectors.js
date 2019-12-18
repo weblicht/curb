@@ -22,7 +22,7 @@ import { defaultSearchFormState } from './reducers';
 
 export function selectSearchFormState(globalState, id) {
     try { 
-        return globalState.synsetSearches.byId[id];
+        return globalState.synsetSearches.byId[id] || defaultSearchFormState;
     } catch (e) {
         return defaultSearchFormState;
     }
