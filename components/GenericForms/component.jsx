@@ -479,7 +479,7 @@ export function Options(props) {
     return (
         <>
         {props.data.map(
-            (d, i) => <option key={asValue(d) + i} value={asValue(d)} label={asLabel(d)}/>
+            (d, i) => <option key={asValue(d) + i} value={asValue(d)}>{asLabel(d)}</option>
         )}
         </>
     );
