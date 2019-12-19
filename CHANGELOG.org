@@ -1,5 +1,18 @@
 * 1.x
 
+** 1.2.4 
+
+This release contains bug fixes and adds a few minor features to
+the GenericForms components, namely:
+
+  - the formState object in a ManagedForm now exposes a setState()
+    method that allows you to set custom form state 
+  - the formState object is now also passed to the onSuccess callback
+    of a ManagedForm, to allow stateful UI updates that reflect successful
+    form submission and the submitted form data
+  - the Checkbox component now wraps the underlying input element and label
+    in a .form-check class
+
 ** 1.2.3
    
 This release contains major new (but mostly backwards-compatible) features:
