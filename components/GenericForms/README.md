@@ -133,6 +133,8 @@ For example, here's a form that just uses these callbacks to validate
 that its two inputs are not both empty, and logs the data or
 errors to the console:
 ```
+import { ValidationErrors } from '@sfstuebingen/germanet-common/components/GenericForms';
+
 // Raw form data comes here first when the form is submitted: 
 function validate(data) {
     if (!data.someField && !data.otherField) {
