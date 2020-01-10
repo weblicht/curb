@@ -36,7 +36,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ```
 import { ExamplesContainer, ExamplesAsDefList } from '@sfstuebingen/germanet-common/components';
 
-<ExamplesContainer id='theExamples'
+<ExamplesContainer containerId='theExamples'
                    queryParams={{ lexUnitId: someLexUnit.id }}
                    displayAs={ExamplesAsDefList}/>
 ```

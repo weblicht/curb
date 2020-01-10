@@ -40,7 +40,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ```
 import { LexRelsContainer, LexRelsAsTable } from '@sfstuebingen/germanet-common/components';
 
-<LexRelsContainer id='theLexRels'
+<LexRelsContainer containerId='theLexRels'
                   queryParams={{ lexUnitId: someLexUnit.id }}
                   displayAs={LexRelsAsTable}/>
 ```

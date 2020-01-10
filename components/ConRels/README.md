@@ -59,7 +59,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ```
 import { ConRelsContainer, ConRelsAsTable } from '@sfstuebingen/germanet-common/components';
 
-<ConRelsContainer id='theConRels'
+<ConRelsContainer containerId='theConRels'
                   queryParams={{ synsetId: someSynsetId }}
                   displayAs={ConRelsAsTable}/>
 ```

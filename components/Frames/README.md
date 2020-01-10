@@ -32,6 +32,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ```
 import { FramesContainer, FramesAsList } from '@sfstuebingen/germanet-common/components';
 
-<FramesContainer queryParams={{ lexUnitId: someLexUnit.id }}
+<FramesContainer containerId='theFrames'
+                 queryParams={{ lexUnitId: someLexUnit.id }}
                  displayAs={FramesAsList}/>
 ```

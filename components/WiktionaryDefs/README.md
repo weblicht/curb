@@ -44,7 +44,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ```
 import { WiktionaryDefsContainer, WiktDefsAsDefList } from '@sfstuebingen/germanet-common/components';
 
-<WiktionaryDefsContainer id='theWiktionaryDefs'
+<WiktionaryDefsContainer containerId='theWiktionaryDefs'
                          queryParams={{ lexUnitId: someLexUnit.id }}
                          displayAs={WiktDefsAsDefList}/>
 ```

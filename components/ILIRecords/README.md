@@ -42,7 +42,7 @@ props](../DataContainer#user-content-selecting-and-choosing-data-objects) for ch
 ```
 import { ILIRecordsContainer, ILIRecordsAsDefList } from '@sfstuebingen/germanet-common/components';
 
-<ILIRecordsContainer id='theILIRecords'
+<ILIRecordsContainer containerId='theILIRecords'
                      queryParams={{ lexUnitId: someLexUnit.id }}
                      displayAs={ILIRecordsAsDefList}/>
 ```

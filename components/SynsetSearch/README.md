@@ -46,7 +46,7 @@ corresponding search form.
 import { SynsetSearchForm, SynsetSearchResults, SynsetsAsTable } from '@sfstuebingen/germanet-common/components';
 
 <SynsetSearchForm id="mainSearch" />
-<SynsetSearchResults id="mainSearchResults" source="mainSearch" displayAs={SynsetsAsTable}/>
+<SynsetSearchResults containerId="mainSearchResults" source="mainSearch" displayAs={SynsetsAsTable}/>
 ```
 
 ## Reducer
