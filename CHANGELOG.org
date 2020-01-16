@@ -1,5 +1,15 @@
 * 1.x
 
+** 1.2.5 
+This release contains documentation fixes and adds a few minor features to
+the GenericForms components, namely:
+
+  - the ManagedForm component now allows (but does not require)
+    returning a Redux thunk action creator from an onSuccess handler;
+    this provides a general mechanism to allow onSuccess handlers to
+    update UI outside the form itself
+  - the Options component now works better with Firefox
+
 ** 1.2.4 
 
 This release contains bug fixes and adds a few minor features to
