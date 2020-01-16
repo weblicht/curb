@@ -167,7 +167,8 @@ class ManagedForm extends React.Component {
             submittedData: data,
         });
         
-        this.props.doSubmit(data)
+
+        this.props.dispatchThunk(this.props.submitTo(data))
             .then(response => {
                 // TODO: this is also the place to set formErrors and fieldErrors
                 // with server-side validation errors, once the backend supports it: 
@@ -175,7 +176,15 @@ class ManagedForm extends React.Component {
                                 serverResponse: response });
                  
                 if (typeof this.props.onSuccess === 'function') {
-                    this.props.onSuccess(this.formState());
+                    const thunk = this.props.onSuccess(this.formState());
+
+                    // onSuccess might just be called for its local side effects
+                    // and return nothing useful. But users may also return a
+                    // Redux action creator so that successful submission can update
+                    // non-local UI:
+                    if (typeof thunk === 'function') {
+                        this.props.dispatchThunk(thunk);
+                    }
                 }
             })
             .catch(error => this.requestErrors(error));
@@ -209,9 +218,9 @@ class ManagedForm extends React.Component {
     }
 }
 
-function managedFormDispatchToProps(dispatch, ownProps) {
+function managedFormDispatchToProps(dispatch) {
     return {
-        doSubmit: data => dispatch(ownProps.submitTo(data))
+        dispatchThunk: dispatch,
     };
 }
 

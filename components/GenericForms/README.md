@@ -182,7 +182,7 @@ accepts these props:
      callback, in `ManagedForm` it *must* be a Redux thunk action
      creator that accepts form data and returns a thunk. `ManagedForm`
      will automatically call `dispatch` on this thunk on form
-     submission. The thunk should return the Promise associated with
+     submission. The thunk must return the Promise associated with
      the axios request that submits this data to the server.
   - `onSuccess` (optional): a callback to be called after the form has
      been submitted successfully (i.e., the request made by `submitTo`
@@ -191,7 +191,9 @@ accepts these props:
      the form. The callback will be passed the same `formState` object
      as the child render function (see below), and can be used to call
      effectful code to update the user interface based on the
-     submitted form data.
+     submitted form data. Like `submitTo`, the `onSuccess` callback
+     may return a thunk; if it does, `ManagedForm` will automatically
+     dispatch this thunk.
   - `validator` (optional): a validator function (same as for `Form`)
 
 
