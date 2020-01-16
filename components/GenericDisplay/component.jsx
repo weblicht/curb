@@ -148,7 +148,7 @@ export function DataSelect(props) {
     const ItemComponent = props.displayItemAs;
 
     return (
-        <Select id={props.id} label={props.label}
+        <Select name={props.id} label={props.label}
                 choose={props.choose}
                 disabled={props.disabled}
                 className={props.className} extras={props.extras}
