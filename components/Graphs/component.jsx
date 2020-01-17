@@ -15,11 +15,11 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
-import { isVisible } from '../../helpers';
+import { isVisible, comparisonOn } from '../../helpers';
 
 import * as d3 from 'd3';
 import React from 'react';
-import { isEqual } from 'lodash';
+import SI from 'seamless-immutable';
 
 // *******************************************************************
 // READ THIS FIRST:
@@ -699,7 +699,7 @@ export class VerticalTreeGraph extends React.Component {
             return;
         }
 
-        if (!isEqual(prevProps.tree, this.props.tree)) {
+        if (!isEqualNodes(prevProps.tree, this.props.tree)) {
             this.drawTree();
         }
     }
@@ -811,12 +811,8 @@ export class VerticalDoubleTreeGraph extends React.Component {
             return;
         }
 
-        // TODO: this still re-draws too often, seemingly on every
-        // state change, and not just when the data actually changes.
-        // May want to do a deep comparison if performance becomes a
-        // problem.
-        if (!isEqual(prevProps.upwardTree, this.props.upwardTree) ||
-            !isEqual(prevProps.downwardTree, this.props.downwardTree)) {
+        if (!isEqualNodes(prevProps.upwardTree, this.props.upwardTree) ||
+            !isEqualNodes(prevProps.downwardTree, this.props.downwardTree)) {
             this.drawTrees();
         }
     }
@@ -888,3 +884,31 @@ function GraphSkeleton(props) {
     );
 }
  
+// Helper to do a deep comparison of two tree nodes. Two nodes are
+// equal are if they have the same ID and if all of their child nodes
+// (in sorted order by ID) are equal.
+function isEqualNodes(node1, node2) {
+    // these tests handle cases where one or both nodes are null or
+    // undefined:
+    if (typeof node1 !== typeof node2) return false;
+    if (node1 === node2) return true; 
+
+    // We can now assume the two nodes are objects with id and
+    // children properties:
+    if (node1.id !== node2.id) return false;
+
+    if ((node1.children && !node2.children)
+        || (node2.children && !node1.children)) return false;
+    if (node1.children.length !== node2.children.length) return false;
+
+    // make sure we have mutable copies of the children arrays for .sort():
+    const children1 = SI.asMutable(node1.children).sort(comparisonOn('id'));
+    const children2 = SI.asMutable(node2.children).sort(comparisonOn('id'));
+
+    var i;
+    for (i = 0; i < children1.length; i++) {
+        if (!isEqualNodes(children1[i], children2[i])) return false; 
+    }
+
+    return true;
+}
