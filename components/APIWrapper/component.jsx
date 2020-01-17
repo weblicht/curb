@@ -17,7 +17,6 @@
 
 import { InternalError } from '../../errors'; 
 
-import { isEqual } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';  
 
@@ -60,7 +59,7 @@ export function connectWithApiQuery(Component, queryActions, propsToParams) {
         componentDidUpdate(prevProps) {
             const prevParams = makeParams(prevProps);
             const newParams = makeParams(this.props);
-            if (!isEqual(prevParams, newParams) && newParams !== undefined) {
+            if (!isEqualParams(prevParams, newParams) && newParams !== undefined) {
                 this.props.query(newParams);
             }
         }
@@ -86,3 +85,27 @@ export function connectWithApiQuery(Component, queryActions, propsToParams) {
 }
 
 
+// helper to compare two params objects. We assume here that params
+// are of the sort that can be passed to axios and understood by our
+// backend. That means, in particular, that the params objects do not
+// contain nested objects and their internal values are comparable
+// with ===.  
+function isEqualParams(p1, p2) {
+    if (typeof p1 !== typeof p2) return false;
+    if (p1 === p2) return true; 
+
+    // prevent type errors below when one value is null (but the other
+    // isn't, given the test above)
+    if (p1 === null || p2 === null) return false;
+    
+    const p1Keys = Object.keys(p1).sort();
+    const p2Keys = Object.keys(p2).sort();
+    if (p1Keys.length !== p2Keys.length) return false;
+
+    var i, k1, k2;
+    for (i = 0; i < p1Keys.length; i++) {
+        if ((k1 = p1Keys[i]) !== (k2 = p2Keys[i])) return false;
+        if (p1[k1] !== p2[k2]) return false; 
+    } 
+    return true;
+}
