@@ -113,9 +113,8 @@ yourself.
 ### Installing Reducers
 
 To make the library useful, you will need to install several reducers
-from this library into your root Redux reducer.  For convenience, the
-reducers for all the components have been imported into the top-level
-`reducers.js`, so you can import them like this:
+from this library into your root Redux reducer.  You can import them
+from the top-level `reducers.js`:
 ```
 import { synsetSearches, dataContainers, apiData } from '@sfstuebingen/germanet-common/reducers';
 
@@ -127,6 +126,14 @@ const rootReducer = {
    ...
 }
 ```
+
+In addition to handling their specified actions, these top-level
+reducers respond to the global actions for the library (defined in the
+top-level `actions.js`). They will, for example, clear all the state
+that they manage when a `RESET_GERMANET_COMMON` action is emitted. The
+reducers defined in individual component directories do *not* respond
+to these global actions, so you should not import them directly unless
+you want to override how these global actions are handled.
 
 ### Importing and using the components and other code
 

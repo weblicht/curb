@@ -1,4 +1,4 @@
-// Copyright 2019 Richard Lawrence
+// Copyright 2020 Richard Lawrence
 //
 // This file is part of germanet-common.
 //
@@ -16,14 +16,35 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 // reducers.js
-// Re-export component-specific reducers here for convenient import in
+// Top-level reducers for germanet-common that should be imported by
 // consuming applications
+
+import { globalActions } from './actions';
+
+import SI from 'seamless-immutable';
 import { combineReducers } from 'redux';
 
-export { synsetSearches } from './components/SynsetSearch/reducers';
+// Wraps top-level reducers to respond to global actions: 
+function withGlobalActions(reducer) {
+    return function (state, action) {
+        if (action.type === globalActions.RESET_GERMANET_COMMON) {
+            // clear all the state managed by the reducer:
+            return SI({}); 
+        } 
+
+        return reducer(state, action);
+    }
+}
+
+// Defintions of top-level reducers that can be imported by consuming applications:
+
+// Synset searches: 
+import { synsetSearches as _synsetSearches } from './components/SynsetSearch/reducers';
+export const synsetSearches = withGlobalActions(_synsetSearches);
 
 // Data containers
-export { dataContainers } from './components/DataContainer/reducers';
+import { dataContainers as _dataContainers } from './components/DataContainer/reducers';
+export const dataContainers = withGlobalActions(_dataContainers);
 
 // API
 import { compounds } from './components/Compounds/reducers';
@@ -35,8 +56,7 @@ import { lexRels } from './components/LexRels/reducers';
 import { lexUnits } from './components/LexUnits/reducers';
 import { wiktDefs } from './components/WiktionaryDefs/reducers';
 
-// a reducer to handle every component that's connected with the API:
-const fullAPIReducer = combineReducers({
+const fullAPIReducer = withGlobalActions(combineReducers({
     compounds,
     conRels,
     iliRecs,
@@ -45,6 +65,6 @@ const fullAPIReducer = combineReducers({
     lexRels,
     lexUnits,
     wiktDefs,
-})
+}));
 
 export { fullAPIReducer as apiData };
