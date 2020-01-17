@@ -1,4 +1,4 @@
-// Copyright 2019 Richard Lawrence
+// Copyright 2020 Richard Lawrence
 //
 // This file is part of germanet-common.
 //
@@ -415,7 +415,6 @@ export function TextInput(props) {
 // All other props will be passed to <select>, such as:
 //   name (required, determines field name in form submission)
 //   id (required for properly associating the <label>; defaults to name)
-//   name
 //   onChange
 //   defaultValue
 //   placeholder
