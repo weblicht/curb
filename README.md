@@ -38,7 +38,6 @@ installing the package.
 When you use these components from another project, that project
 should have the following NPM packages installed:
   - axios
-  - lodash
   - react
   - react-dom
   - redux
