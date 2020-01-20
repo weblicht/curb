@@ -396,9 +396,7 @@ export function TextInput(props) {
 //   data (optional) :: [ Object ]
 //     The options to be displayed in the select element.
 //     Defaults to props.children.
-//   choose (optional) :: (String) -> (anything), a callback to call with an item value
-//     when that item is selected. If this function is given it will be used to create
-//     the underlying <select>'s onChange prop. 
+
 //   asGroup (optional) :: Bool. If true, the <select> and its label will be
 //     wrapped in a <div> with classes indicating they form a group;
 //     otherwise, they will be rendered as a React.Fragment
@@ -433,16 +431,6 @@ export function Select(props) {
     // See comment in Checkbox, above:
     const id = rest.id || rest.name;
     
-    function chooseItem(e) {
-        const itemId = e.target.value;
-        props.choose(itemId);
-    }
-
-    // Allow the user to provide onChange directly, or to use an
-    // uncontrolled component, but support the 'choose' function if
-    // given, which makes it easier to create a controlled component:
-    const onChange = props.onChange || (props.choose ? chooseItem : undefined);
- 
     return (
         <FragmentOrGroup asGroup={asGroup} className={groupClassName} extras={groupExtras}>
           <label className={classNames(labelClassName, labelExtras)}
@@ -451,7 +439,6 @@ export function Select(props) {
           </label>
           <select {...rest}
                   id={id}
-                  onChange={onChange}
                   className={withDefault('custom-select', props)}>
             {data || props.children}
           </select>

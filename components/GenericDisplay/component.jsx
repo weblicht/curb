@@ -1,4 +1,4 @@
-// Copyright 2019 Richard Lawrence
+// Copyright 2020 Richard Lawrence
 //
 // This file is part of germanet-common.
 //
@@ -127,35 +127,55 @@ export function DataList(props) {
 }
 
 // props:
-//   id :: String
+//   name :: String
 //   label :: String
 //   data :: [ DataObject ]
-//   choose :: String -> (anything), callback to choose an item given its
-//       unique identifier.
-//   displayItemAs :: Object -> HTML option or option group,
-//     a component to display a single data object as an option in the select
-//     Note: The option's value attribute should be a String to pass to
-//     the choose prop
-//   disabled (optional) :: Bool, disables the entire select element
-//   disabledOption (optional) :: String,
-//     a message to use as an initial, disabled option in the select
-//
-//   Other props for Select (disabled, className, extras,
-//     labelClassName, labelExtras), if given, will be passed on to
-//     Select component
+//   displayItemAs :: DataObject -> HTML option or option group,
+//     a component to display a single data object as an option in the select.
+//     NOTE: the value of the option *must* be equal to the data object's
+//     unique identifier.
+//   idFor :: DataObject -> identifier
+//   choose (optional) :: String -> (anything), callback to choose an
+//     item given its unique identifier. If given, this function will
+//     be used to create an onChange handler for the underlying
+//     <select>, such that the choose() callback will be called with
+//     the item's identifier when the user chooses the corresponding
+//     option in the select element.
+//   Other props for Select, if given, will be passed on to Select
+//     component.
+//   Note: the underlying Select component is by default uncontrolled
+//     and is given no defaultValue. If you wish to use a controlled
+//     component you should pass the value prop explicitly.
 export function DataSelect(props) {
     if (!(props.data && props.data.length)) return null;
     const ItemComponent = props.displayItemAs;
 
+    function chooseItem(e) {
+        // == to allow for numerical IDs that have been rendered as strings:
+        const item = props.data.find(d => props.idFor(d) == e.target.value);
+        const itemId = item ? props.idFor(item) : undefined;
+
+        if (itemId && typeof props.choose === 'function') {
+            props.choose(itemId);
+        }
+    }
+
+    // Allow the user to provide onChange directly, but support the
+    // DataContainer choose() function if given, which makes it easier
+    // to create a controlled component:
+    const onChange = props.onChange || (props.choose ? chooseItem : undefined);
+
     return (
-        <Select name={props.id} label={props.label}
-                choose={props.choose}
+        <Select name={props.name}
+                id={props.id}
+                onChange={onChange}
                 disabled={props.disabled}
+                defaultValue={props.defaultValue} value={props.value}
                 className={props.className} extras={props.extras}
-                labelClassName={props.labelClassName}
-                labelExtras={props.labelExtras}>
-          {props.disabledOption && <option value="none" selected disabled>{props.disabledOption}</option>}
-          {props.data.map(item => <ItemComponent data={item}/>)}
+                label={props.label} labelClassName={props.labelClassName} labelExtras={props.labelExtras}
+                feedback={props.feedback} feedbackClassName={props.feedbackClassName} feedbackExtras={props.feedbackExtras}
+                asGroup={props.asGroup} groupClassName={props.groupClassName} groupExtras={props.groupExtras}>
+          {props.data.map(d => <ItemComponent {...props} data={d} />)}
         </Select>
     );
 }
