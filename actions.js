@@ -20,3 +20,7 @@ import { actionTypesFromStrings } from './helpers';
 export const globalActions = actionTypesFromStrings([
     'RESET_GERMANET_COMMON',
 ]);
+
+export function resetGermanetCommon() {
+    return { type: globalActions.RESET_GERMANET_COMMON };
+}

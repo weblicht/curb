@@ -28,8 +28,8 @@ import { combineReducers } from 'redux';
 function withGlobalActions(reducer) {
     return function (state, action) {
         if (action.type === globalActions.RESET_GERMANET_COMMON) {
-            // clear all the state managed by the reducer:
-            return SI({}); 
+            // reducers return their default state if state is undefined: 
+            return reducer(undefined, { type: '_DEFAULT_STATE_PROBE' }); 
         } 
 
         return reducer(state, action);
