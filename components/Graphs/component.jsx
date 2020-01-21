@@ -810,7 +810,6 @@ export class VerticalDoubleTreeGraph extends React.Component {
             this.drawTrees();
             return;
         }
-
         if (!isEqualNodes(prevProps.upwardTree, this.props.upwardTree) ||
             !isEqualNodes(prevProps.downwardTree, this.props.downwardTree)) {
             this.drawTrees();
@@ -885,17 +884,19 @@ function GraphSkeleton(props) {
 }
  
 // Helper to do a deep comparison of two tree nodes. Two nodes are
-// equal are if they have the same ID and if all of their child nodes
-// (in sorted order by ID) are equal.
+// equal are if they have the same ID, they have the same selected
+// status, and all of their child nodes are equal.
 function isEqualNodes(node1, node2) {
     // these tests handle cases where one or both nodes are null or
     // undefined:
     if (typeof node1 !== typeof node2) return false;
     if (node1 === node2) return true; 
 
-    // We can now assume the two nodes are objects with id and
-    // children properties:
+    // We can now assume the two nodes are objects: 
     if (node1.id !== node2.id) return false;
+
+    if ((node1.selected && !node2.selected)
+        || (!node1.selected && node2.selected)) return false;
 
     if ((node1.children && !node2.children)
         || (node2.children && !node1.children)) return false;
@@ -912,3 +913,4 @@ function isEqualNodes(node1, node2) {
 
     return true;
 }
+
