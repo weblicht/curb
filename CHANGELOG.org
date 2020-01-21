@@ -1,14 +1,21 @@
 * 1.x
 
 ** 1.2.5 
-This release contains documentation fixes and adds a few minor features to
-the GenericForms components, namely:
 
+This release contains bug fixes and adds a few minor features, namely:
+
+  - there is a new global RESET_GERMANET_COMMON action to clear all Redux
+    state handled by the library, exported from the top level actions.js 
   - the ManagedForm component now allows (but does not require)
     returning a Redux thunk action creator from an onSuccess handler;
     this provides a general mechanism to allow onSuccess handlers to
     update UI outside the form itself
   - the Options component now works better with Firefox
+  - the DataSelect component now properly passes props down to Select,
+    and Select's choose prop has been moved up to DataSelect 
+
+Some dead code has been removed, and lodash has been removed as a peer
+dependency.  
 
 ** 1.2.4 
 
