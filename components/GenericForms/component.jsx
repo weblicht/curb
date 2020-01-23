@@ -205,7 +205,7 @@ class ManagedForm extends React.Component {
         }
 
         // remove the props that we can't send down to the <Form>:
-        const { submitTo, doSubmit, onSuccess, ...formProps } = this.props;
+        const { submitTo, doSubmit, onSuccess, dispatchThunk, ...formProps } = this.props;
 
         return (
             <Form {...formProps} // includes validator
