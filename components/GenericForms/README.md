@@ -301,6 +301,17 @@ you want to set initial values for them when the form is first
 rendered (which will also be restored by a `ResetButton`), use the
 `defaultValue` prop.
 
+`Checkbox`s are slightly exceptional. The default value of a checkbox
+should be given as its `defaultChecked` prop (rather than
+`defaultValue`). Also, the value of a `Checkbox` field, if checked, is
+(the string) `"on"` in the submitted form data. (This is due to the
+way the browser represents the form state as attributes in the DOM.)
+If you need a real boolean value, remember to convert this value in
+your validator or submission functions, like:
+```
+{ someCheckbox: formData.someCheckbox === "on", ...formData }
+```
+
 There are also a few other components for common tasks when rendering
 forms:
 
