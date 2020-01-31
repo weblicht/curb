@@ -41,9 +41,9 @@ import axios from 'axios';
 //       { id: some_id } or { lexUnitId: some_id }
 //   }
 // }
-export function makeQueryActions(prefix, endpoint,
-                                 paramsTransformer = (params) => undefined,
-                                ) {
+export function makeQueryActions(prefix, endpoint, paramsTransformer) {
+
+    const transformer = paramsTransformer || function (params) { return undefined; }
 
     const requested = prefix + '_REQUESTED';
     const returned = prefix + '_RETURNED';
@@ -55,13 +55,13 @@ export function makeQueryActions(prefix, endpoint,
     ]);
 
     function queryRequested(params) {
-        return { type: actionTypes[requested], params, ...paramsTransformer(params) };
+        return { type: actionTypes[requested], params, ...transformer(params) };
     }
     function queryReturned(params, data) {
-        return { type: actionTypes[returned], params, ...paramsTransformer(params), data };
+        return { type: actionTypes[returned], params, ...transformer(params), data };
     }
     function queryError(params, error) {
-        return { type: actionTypes[errored], params, ...paramsTransformer(params), error };
+        return { type: actionTypes[errored], params, ...transformer(params), error };
     }
 
     function doQuery(params) {

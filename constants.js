@@ -29,6 +29,7 @@ export const apiPath = {
     iliRecords: `${urlRoot}/ili_recs`,
     lexUnits: `${urlRoot}/lexunits`,
     lexRels: `${urlRoot}/lexrels`,
+    hnymPaths: `${urlRoot}/paths`,
     synsets: `${urlRoot}/synsets`,
     wiktDefs: `${urlRoot}/wikt_defs`, 
 };

@@ -16,10 +16,15 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 import { isVisible, comparisonOn } from '../../helpers';
+import { hnymPathQueries } from './actions';
+import { selectHnymPaths } from './selectors';
+import { connectWithApiQuery } from '../APIWrapper';
 
 import * as d3 from 'd3';
 import React from 'react';
+import { connect } from 'react-redux';
 import SI from 'seamless-immutable';
+import { Network } from 'visjs-network';
 
 // *******************************************************************
 // READ THIS FIRST:
@@ -914,3 +919,93 @@ function isEqualNodes(node1, node2) {
     return true;
 }
 
+function VisHierarchicalGraph(containerRef, data, config) {
+    const options = {
+        ...config,
+        layout: {
+            hierarchical: {
+                // these options position root/LCS at top and draws
+                // the graph like a standard tree:
+                direction: "DU", 
+                sortMethod: "directed",
+                nodeSpacing: 200
+            }
+        },
+        nodes: {
+            // add white outline to node labels:
+            strokeWidth: 3,
+            strokeColor: "white",
+            // draw all nodes as dots with labels outside:
+            shape: "dot",
+            size: 10,
+            font: {
+                align: "left",
+            }
+        },
+        edges: {
+            smooth: true, // draws "curvy" edges
+            //arrows: { to: true }, // draws arrow from hyponym to hypernym
+        },
+    };
+    const mutData = SI.asMutable(data, { deep: true }); // vis.js needs mutable data
+    const network = new Network(containerRef, mutData, options);
+    return network;
+}
+
+class NetworkContainer extends React.Component {
+    constructor(props) {
+        super(props);
+        this.containerRef = React.createRef();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.data && this.props.data.length) {
+            var seenIds = [];
+            const allNodes = this.props.data.map(graph => graph.nodes).flat().filter(
+                node => {
+                    if (seenIds.includes(node.id)) return false;
+                    seenIds.push(node.id);
+                    return true;
+                }
+            );
+            var seenEdges = {};
+            const allEdges = this.props.data.map(graph => graph.edges).flat().filter(
+                edge => {
+                    const { from, to } = edge;
+                    if (seenEdges[from] && seenEdges[from].includes(to)) return false;
+                    if (seenEdges[from]) {
+                        seenEdges[from].push(to);
+                    } else {
+                        seenEdges[from] = [to];
+                    }
+                    return true;
+                }
+            );
+            
+            const combinedGraph = {
+                nodes: SI.asMutable(allNodes, { deep: true }),
+                edges: SI.asMutable(allEdges, { deep: true }),
+            };
+
+            VisHierarchicalGraph(this.containerRef.current, combinedGraph, {});
+        }
+    }
+
+    render() {
+        return (
+            <div ref={this.containerRef} className="network-container" style={{ height: '600px'}}>
+            </div>
+        );
+    }
+}
+
+function stateToNetworkContainerProps(state, ownProps) {
+    return {
+        data: selectHnymPaths(state, ownProps)
+    };
+}
+
+NetworkContainer = connect(stateToNetworkContainerProps)(NetworkContainer);
+NetworkContainer = connectWithApiQuery(NetworkContainer, hnymPathQueries.queryActions);
+
+export { NetworkContainer };
