@@ -922,13 +922,42 @@ function isEqualNodes(node1, node2) {
 function VisHierarchicalGraph(containerRef, data, config) {
     const options = {
         ...config,
+        // provides a set of controls to play around with all the settings:
+        // configure: {
+        //     enabled: true,
+        //     filter: "physics",
+        //     showButton: true,
+        //     //container: config.optionsRef
+        // },
+
+        // enables the navigation buttoms and zoom restoration:
+        interaction: {
+            navigationButtons: true,
+            keyboard: true
+        },
         layout: {
             hierarchical: {
+                enabled: true,
                 // these options position root/LCS at top and draws
                 // the graph like a standard tree:
                 direction: "DU", 
                 sortMethod: "directed",
-                nodeSpacing: 200
+                nodeSpacing: 200,
+            }
+        },
+        physics: {
+            enabled: true,
+            solver: "hierarchicalRepulsion",
+            // this is not perfect, but this combination of options
+            // seems to reduce the number of edge crossings a bit in
+            // more complicated graphs, and gives nice looking results
+            // possibly after a few user movements:
+            hierarchicalRepulsion: {
+                centralGravity: 0,
+                springLength: 85,
+                springConstant: 0.4,
+                avoidOverlap: 1,
+                maxVelocity: 55,
             }
         },
         nodes: {
@@ -939,11 +968,15 @@ function VisHierarchicalGraph(containerRef, data, config) {
             shape: "dot",
             size: 10,
             font: {
-                align: "left",
-            }
+                size: 11,
+            },
+            widthConstraint: 150,
         },
         edges: {
-            smooth: true, // draws "curvy" edges
+            // draws "curvy" edges
+            smooth: {
+                type: "cubicBezier",
+            }, 
             //arrows: { to: true }, // draws arrow from hyponym to hypernym
         },
     };
