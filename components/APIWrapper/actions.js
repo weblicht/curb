@@ -16,6 +16,7 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 import { actionTypesFromStrings } from '../../helpers';
+import { APIError, dataIsArrayOfObjects } from './validation';
 
 import axios from 'axios';
 
@@ -29,6 +30,12 @@ import axios from 'axios';
 //     fields. The results of paramsTransformer(params) will be
 //     spliced into action objects returned by the returned action
 //     creators.
+//   dataValidator (optional) :: response data -> Boolean : a function
+//     that validates the data attribute of the response (i.e.,
+//     response.data.data). This function should accept the data and
+//     throw an APIError (see validation.js) if the data is not in the
+//     right format. Otherwise, it should return true. Defaults to a
+//     function that checks whether the data is an array of objects.
 //
 // returns: {
 //   actionTypes: action types object with requested, returned, error types
@@ -41,9 +48,12 @@ import axios from 'axios';
 //       { id: some_id } or { lexUnitId: some_id }
 //   }
 // }
-export function makeQueryActions(prefix, endpoint, paramsTransformer) {
+export function makeQueryActions(prefix, endpoint,
+                                 paramsTransformer,
+                                 dataValidator) {
 
     const transformer = paramsTransformer || function (params) { return undefined; }
+    const validateData = dataValidator || dataIsArrayOfObjects;
 
     const requested = prefix + '_REQUESTED';
     const returned = prefix + '_RETURNED';
@@ -70,11 +80,19 @@ export function makeQueryActions(prefix, endpoint, paramsTransformer) {
             dispatch(queryRequested(params));
 
             function validateResponse(response) {
-                if (!(response.data && response.data.data && Array.isArray(response.data.data))) {
-                    dispatch(queryError(params, 'Server returned a response with no data array'));
-                }
-                else {
+                if (!(response.data && response.data.data)) {
+                    dispatch(queryError(params, 'Server returned a response with no data field'));
+                } 
+
+                try {
+                    validateData(response.data.data);
                     dispatch(queryReturned(params, response.data.data));
+                } catch (e) {
+                    if (e instanceof APIError) {
+                        dispatch(queryError(params, e.message));
+                    } else {
+                        throw e;
+                    }
                 }
             }
 
