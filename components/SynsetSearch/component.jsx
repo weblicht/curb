@@ -20,7 +20,7 @@
 import { doSearch, updateSearchTerm, toggleIgnoreCase, setIgnoreCase, reloadHistory } from './actions';
 import { selectSearchFormState,
          selectSynsetsForSearchForm } from './selectors';
-import { Button, Checkbox, Form, SubmitButton, TextInput } from '../GenericForms/component';
+import { Button, Checkbox, Form, Options, Select, SubmitButton, TextInput } from '../GenericForms/component';
 import { dataContainerFor } from '../DataContainer/component';
 
 import classNames from 'classnames';
@@ -38,41 +38,168 @@ import { connect } from 'react-redux';
 //   checkboxClassName, checkboxExtras (optional), className and extras for the 
 //     "ignore case" checkbox. Defaults space the button slightly right of the
 //     submit button.
+//   advancedEnabled :: Boolean: when true, a link to display advanced search options
+//     is made available and the user's selections for these options are submitted with
+//     the form.
 function SynsetSearchForm(props) {
 
     function onSubmit(formData) {
         props.doSearch(formData.searchTerm, formData.ignoreCase === "on");
     }
 
+    const [showAdvanced, setShowAdvanced] = React.useState(false);
+    function toggleAdvancedOptions(e) {
+        e.preventDefault();
+        setShowAdvanced(!showAdvanced);
+    }
+
+    // we still want to show the ignore case checkbox in the search
+    // form when the advanced options are not enabled; but if they
+    // are, we put it down in the advanced options instead
+    const ignoreCaseOrAdvancedLink = props.advancedEnabled
+          ? <><a href="#" onClick={toggleAdvancedOptions} className="ml-3 my-1">
+                {showAdvanced ? "Hide" : "Show"} search options</a></>
+          : <> 
+              <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
+                        name="ignoreCase"
+                        asGroup={true} groupClassName="col"
+                        checked={props.ignoreCase}
+                        onChange={props.toggleIgnoreCase}
+                        className={props.checkboxClassName}
+                        extras={props.checkboxExtras || "ml-3 my-1"}
+              />
+            </>;
+
+    const wordCategories = [
+        { label: 'Adjectives', value: 'adj' },
+        { label: 'Nouns', value: 'nomen' },
+        { label: 'Verbs', value: 'verben' }
+    ];
+
+    const wordClasses = [
+        'Allgemein',
+        'Bewegung',
+        'Gefuehl',
+        'Geist',
+        'Gesellschaft',
+        'Koerper',
+        'Menge',
+        'natPhaenomen',
+        'Ort',
+        'Pertonym',
+        'Perzeption',
+        'privativ',
+        'Relation',
+        'Substanz',
+        'Verhalten',
+        'Zeit',
+        'Artefakt',
+        'Attribut',
+        'Besitz',
+        'Form',
+        'Geschehen',
+        'Gruppe',
+        'Kognition',
+        'Kommunikation',
+        'Mensch',
+        'Motiv',
+        'Nahrung',
+        'natGegenstand',
+        'Pflanze',
+        'Tier',
+        'Tops',
+        'Koerperfunktion',
+        'Konkurrenz',
+        'Kontakt',
+        'Lokation',
+        'Schoepfung',
+        'Veraenderung',
+        'Verbrauch'
+    ].sort();
+
+    const variants = [
+        { label: 'Current form', value: 'orthForm' },
+        { label: 'Current form, variant spelling', value: 'orthVar' },
+        { label: 'Old form', value: 'oldOrthForm' },
+        { label: 'Old form, variant spelling', value: 'oldOrthVar' }
+    ];
+    
     return ( 
         // setting the key to props.history.length clears the search
         // term box and validity state after each search is run
         <Form key={props.history.length} 
               submitTo={onSubmit}
-              className={classNames(props.className || "form-inline", props.extras)}>
-          <TextInput id={`${props.id}-searchTerm`}
-                     name="searchTerm"
-                     label="Search for" labelClassName="sr-only"
-                     type="search"
-                     defaultValue={props.currentSearchTerm}
-                     autoFocus={true}
-                     placeholder="Enter a word or Synset Id"
-                     className={props.inputClassName}
-                     extras={props.inputExtras}
-                     required={true}
-          />
-          <SubmitButton text="Find"
-                        className={props.buttonClassName}
-                        extras={props.buttonExtras || "btn-primary ml-3 my-1"}
-          />
-          <Checkbox id={`${props.id}-ignoreCase`} label="ignore case"
-                    name="ignoreCase"
-                    asGroup={true}
-                    checked={props.ignoreCase}
-                    onChange={props.toggleIgnoreCase}
-                    className={props.checkboxClassName}
-                    extras={props.checkboxExtras || "ml-3 my-1"}
-          />
+              className={classNames(props.className, props.extras)}>
+          <div className="form-row">
+            <TextInput id={`${props.id}-searchTerm`}
+                       name="searchTerm"
+                       label="Search for" labelClassName="sr-only"
+                       type="search"
+                       defaultValue={props.currentSearchTerm}
+                       autoFocus={true}
+                       placeholder="Enter a word or Synset Id"
+                       className={props.inputClassName}
+                       extras={props.inputExtras}
+                       required={true}
+                       asGroup={true} groupClassName="col"
+            />
+            <SubmitButton text="Find"
+                          className={props.buttonClassName}
+                          extras={props.buttonExtras || "btn-primary ml-3 my-auto"}
+                          asGroup={true} groupClassName="col"
+            />
+            {ignoreCaseOrAdvancedLink}
+          </div>
+          {showAdvanced &&
+           <>
+             <div className="row my-2">
+               <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
+                         name="ignoreCase"
+                         defaultChecked={props.ignoreCase}
+                         asGroup={true} groupClassName="col" 
+                         className={props.checkboxClassName}
+                         extras={props.checkboxExtras}
+               />
+               <Checkbox id={`${props.id}-regEx`} label="Enable regular expressions"
+                         name="regEx"
+                         defaultChecked={props.regEx}
+                         asGroup={true} groupClassName="col" 
+                         className={props.checkboxClassName}
+                         extras={props.checkboxExtras}
+               />
+             </div>
+             <div className="row mb-2">
+               <Select id={`${props.id}-wordCategories`} label="Word category"
+                       multiple={true}
+                       feedback="Narrow search to these categories"
+                       asGroup={true} groupClassName="col">
+                 <Options data={wordCategories}/>
+               </Select>
+               <Select id={`${props.id}-wordCategories`} label="Word class"
+                       multiple={true}
+                       feedback="Narrow search to these classes"
+                       asGroup={true} groupClassName="col">
+                 <Options data={wordClasses}/>
+               </Select>
+               <Select id={`${props.id}-orthFormVariants`} label="Orthographic Variants"
+                       multiple={true}
+                       feedback="Narrow search to these variants"
+                       asGroup={true} groupClassName="col">
+                 <Options data={variants}/>
+               </Select>
+             </div>
+             
+             <div className="row">
+               <TextInput id={`${props.id}-editDistance`} label="Edit distance"
+                          name="editDistance"
+                          type="number"
+                          min={0}
+                          asGroup={true}  groupClassName="col"
+                          placeholder="Enter an integer greater than 0"
+               />
+             </div>
+         </> 
+        }
         </Form>
     );
 }
