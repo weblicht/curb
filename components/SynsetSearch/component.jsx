@@ -74,6 +74,29 @@ function SynsetSearchForm(props) {
         setShowAdvanced(isShown => !isShown);
     }
 
+    const advancedContainerClasses = classNames([
+        // adds position: relative to the div wrapping the options
+        // box, which keeps the top of the options box visually inside
+        // the form (since its position is computed relative to this
+        // wrapper div)
+        "dropdown", 
+    ]);
+
+    const advancedDropdownClasses = classNames({
+        // the advanced options should only be visible when showAdvanced is true:
+        "d-block": showAdvanced,
+        "d-none": !showAdvanced,
+        // adds position: absolute, which allows the options box to
+        // display outside the normal page flow, as well as a z-index and border:
+        "dropdown-menu": true,
+        // adds some padding inside the options box; otherwise form
+        // elements appear immediately at the edge:
+        "p-4": true,
+        // gives the options box a shadow to set it off from the main page: 
+        "shadow-lg": true,
+    });
+        
+    
     // we still want to show the ignore case checkbox in the search
     // form when the advanced options are not enabled; but if they
     // are, we put it down in the advanced options instead
@@ -118,64 +141,65 @@ function SynsetSearchForm(props) {
           </div>
 
           {props.advancedEnabled &&
-           <div className={ classNames(showAdvanced ? "d-block" : "d-none", "mt-2")}>
-             <h5>Search term interpretation</h5>
-             <div className="form-group">
-               <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
-                         name="ignoreCase"
-                         defaultChecked={props.params.ignoreCase}
-                         asGroup={false}
-                         className={props.checkboxClassName}
-                         extras={props.checkboxExtras}
-               />
-               <Checkbox id={`${props.id}-regEx`} label="Enable regular expressions"
-                         name="regEx"
-                         checked={props.params.regEx}
-                         onChange={props.toggleRegexSupport}
-                         asGroup={false} 
-                         className={props.checkboxClassName}
-                         extras={props.checkboxExtras}
-               />
-             </div>
-             <div className="form-group">
-               <TextInput id={`${props.id}-editDistance`} label="Edit distance"
-                          name="editDistance"
-                          type="number"
-                          min={0}
-                          defaultValue={props.params.editDistance}
-                          asGroup={false}  
-                          readOnly={props.params.regEx}
-                          extras="col-4"
-                          placeholder="Enter an integer greater than 0"
-               />
-             </div>
-             <div className="row mb-2">
-
-               <div className="col">
-                 <h5>Word category</h5>
-                 <p className="small text-muted">Empty selection searches all categories.</p>
-                 <Checkbox id={`${props.id}-adjectives`} label="Adjectives"
-                           name="adjectives"
-                           asGroup={false} 
-                           checked={props.params.adjectives}
-                           onChange={props.toggleCategory('adjectives')}
+           <div className={advancedContainerClasses}>
+             <div className={advancedDropdownClasses}>
+               <h5>Search term interpretation</h5>
+               <div className="form-group">
+                 <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
+                           name="ignoreCase"
+                           defaultChecked={props.params.ignoreCase}
+                           asGroup={false}
                            className={props.checkboxClassName}
-                           extras={props.checkboxExtras} />
-                 <Checkbox id={`${props.id}-nouns`} label="Nouns"
-                           name="nouns"
+                           extras={props.checkboxExtras}
+                 />
+                 <Checkbox id={`${props.id}-regEx`} label="Enable regular expressions"
+                           name="regEx"
+                           checked={props.params.regEx}
+                           onChange={props.toggleRegexSupport}
                            asGroup={false} 
-                           checked={props.params.nouns}
-                           onChange={props.toggleCategory('nouns')}
                            className={props.checkboxClassName}
-                           extras={props.checkboxExtras} />
-                 <Checkbox id={`${props.id}-verbs`} label="Verbs"
-                           name="verbs"
-                           asGroup={false} 
-                           checked={props.params.verbs}
-                           onChange={props.toggleCategory('verbs')}
-                           className={props.checkboxClassName}
-                           extras={props.checkboxExtras} />
+                           extras={props.checkboxExtras}
+                 />
                </div>
+               <div className="form-group">
+                 <TextInput id={`${props.id}-editDistance`} label="Edit distance"
+                            name="editDistance"
+                            type="number"
+                            min={0}
+                            defaultValue={props.params.editDistance}
+                            asGroup={false}  
+                            readOnly={props.params.regEx}
+                            extras="col-4"
+                            placeholder="Enter an integer greater than 0"
+                 />
+               </div>
+               <div className="row mb-2">
+                 
+                 <div className="col">
+                   <h5>Word category</h5>
+                   <p className="small text-muted">Empty selection searches all categories.</p>
+                   <Checkbox id={`${props.id}-adjectives`} label="Adjectives"
+                             name="adjectives"
+                             asGroup={false} 
+                             checked={props.params.adjectives}
+                             onChange={props.toggleCategory('adjectives')}
+                             className={props.checkboxClassName}
+                             extras={props.checkboxExtras} />
+                   <Checkbox id={`${props.id}-nouns`} label="Nouns"
+                             name="nouns"
+                             asGroup={false} 
+                             checked={props.params.nouns}
+                             onChange={props.toggleCategory('nouns')}
+                             className={props.checkboxClassName}
+                             extras={props.checkboxExtras} />
+                   <Checkbox id={`${props.id}-verbs`} label="Verbs"
+                             name="verbs"
+                             asGroup={false} 
+                             checked={props.params.verbs}
+                             onChange={props.toggleCategory('verbs')}
+                             className={props.checkboxClassName}
+                             extras={props.checkboxExtras} />
+                 </div>
 
                  <div className="col" >
                    <h5>Word classes</h5>
@@ -184,35 +208,35 @@ function SynsetSearchForm(props) {
                      <WordClassCheckboxes {...props}/>
                    </div>
                  </div>
-               </div>
 
-               <div className="col">
-                 <h5>Orthographic variants</h5>
-                 <p className="small text-muted">Empty selection searches all variants.</p>
-                 <Checkbox id={`${props.id}-orthForm`} label="Current form"
-                           name="orthForm"
-                           defaultChecked={props.params.orthForm}
-                           asGroup={true} groupClassName="col" 
-                           className={props.checkboxClassName}
-                           extras={props.checkboxExtras} />
-                 <Checkbox id={`${props.id}-orthVar`} label="Current form, variant spelling"
-                           name="orthVar"
-                           defaultChecked={props.params.orthVar}
-                           asGroup={true} groupClassName="col" 
-                           className={props.checkboxClassName}
-                           extras={props.checkboxExtras} />
-                 <Checkbox id={`${props.id}-oldOrthForm`} label="Old form"
-                           name="oldOrthForm"
-                           defaultChecked={props.params.oldOrthForm}
-                           asGroup={true} groupClassName="col" 
-                           className={props.checkboxClassName}
-                           extras={props.checkboxExtras} />
-                 <Checkbox id={`${props.id}-oldOrthVar`} label="Old form, variant spelling"
-                           name="oldOrthVar"
-                           defaultChecked={props.params.oldOrthVar}
-                           asGroup={true} groupClassName="col" 
-                           className={props.checkboxClassName}
-                           extras={props.checkboxExtras} />
+                 <div className="col">
+                   <h5>Orthographic variants</h5>
+                   <p className="small text-muted">Empty selection searches all variants.</p>
+                   <Checkbox id={`${props.id}-orthForm`} label="Current form"
+                             name="orthForm"
+                             defaultChecked={props.params.orthForm}
+                             asGroup={true} groupClassName="col" 
+                             className={props.checkboxClassName}
+                             extras={props.checkboxExtras} />
+                   <Checkbox id={`${props.id}-orthVar`} label="Current form, variant spelling"
+                             name="orthVar"
+                             defaultChecked={props.params.orthVar}
+                             asGroup={true} groupClassName="col" 
+                             className={props.checkboxClassName}
+                             extras={props.checkboxExtras} />
+                   <Checkbox id={`${props.id}-oldOrthForm`} label="Old form"
+                             name="oldOrthForm"
+                             defaultChecked={props.params.oldOrthForm}
+                             asGroup={true} groupClassName="col" 
+                             className={props.checkboxClassName}
+                             extras={props.checkboxExtras} />
+                   <Checkbox id={`${props.id}-oldOrthVar`} label="Old form, variant spelling"
+                             name="oldOrthVar"
+                             defaultChecked={props.params.oldOrthVar}
+                             asGroup={true} groupClassName="col" 
+                             className={props.checkboxClassName}
+                             extras={props.checkboxExtras} />
+                 </div>
                </div>
              </div>
            </div>
