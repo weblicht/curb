@@ -51,26 +51,40 @@ function SynsetSearchForm(props) {
 
     // submit handler for form:
     function onSubmit(formData) {
-        const { word, editDistance, ...checkboxes } = formData;
+        const { word, ignoreCase, regEx, editDistance, ...checkboxes } = formData;
 
-        // convert checkbox values to booleans for the backend:
-        const flags = Object.fromEntries(Object.entries(checkboxes).map(
-            ([name, state]) => [name, state === "on"]
-        ));
-
-        const params = {
+        var params = {
             word,
-            editDistance,
-            ...flags  
+            ignoreCase: ignoreCase === "on",
+            regEx: regEx === "on",
+            editDistance
         };
 
         // Silently drop any editDistance value if regex support is
         // on; disabling the field in the UI already makes clear that
-        // this is not supported. Also avoid cluttering the URL with
-        // an empty value.
-        if (params.regEx || !params.editDistance) {
+        // this is not supported.
+        if (params.regEx) {
             delete params.editDistance;
         }
+
+        // convert other checkbox values to comma-separated lists for the backend:
+        var wordCategories = [];
+        var wordClasses = [];
+        var orthFormVariants = [];
+        Object.entries(checkboxes).forEach(
+            ([name, state]) => {
+                if (state !== "on") return;
+                if (WORD_CATEGORY_VALUES.includes(name)) wordCategories.push(name);
+                if (WORD_CLASS_VALUES.includes(name)) wordClasses.push(name);
+                if (ORTH_VARIANT_VALUES.includes(name)) orthFormVariants.push(name);
+            }
+        );
+
+        // avoid adding the keys to the params if the values are
+        // empty, because the backend does not support empty values:
+        if (wordCategories.length) params.wordCategories = wordCategories.join(',');
+        if (wordClasses.length) params.wordClasses = wordClasses.join(',');
+        if (orthFormVariants.length) params.orthFormVariants = orthFormVariants.join(',');
 
         props.doSearch(params);
     }
@@ -184,21 +198,21 @@ function SynsetSearchForm(props) {
                    <h5>Word category</h5>
                    <p className="small text-muted">Empty selection searches all categories.</p>
                    <Checkbox id={`${props.id}-adjectives`} label="Adjectives"
-                             name="adjectives"
+                             name="adj"
                              asGroup={false} 
                              checked={props.params.adjectives}
                              onChange={props.toggleCategory('adjectives')}
                              className={props.checkboxClassName}
                              extras={props.checkboxExtras} />
                    <Checkbox id={`${props.id}-nouns`} label="Nouns"
-                             name="nouns"
+                             name="nomen"
                              asGroup={false} 
                              checked={props.params.nouns}
                              onChange={props.toggleCategory('nouns')}
                              className={props.checkboxClassName}
                              extras={props.checkboxExtras} />
                    <Checkbox id={`${props.id}-verbs`} label="Verbs"
-                             name="verbs"
+                             name="verben"
                              asGroup={false} 
                              checked={props.params.verbs}
                              onChange={props.toggleCategory('verbs')}
@@ -490,3 +504,16 @@ const WORD_CLASS_OPTIONS = [
     { label: 'Zeit', value: 'Zeit', nouns: true, verbs: false, adjectives: true },
 ];
 
+// these values are coded as field names in the form 
+const WORD_CLASS_VALUES = WORD_CLASS_OPTIONS.map(wc => wc.value);
+const WORD_CATEGORY_VALUES = [
+    'adj',
+    'nomen',
+    'verben'
+];
+const ORTH_VARIANT_VALUES = [
+      'orthForm',
+      'orthVar',
+      'oldOrthForm',
+      'oldOrthVar'
+];
