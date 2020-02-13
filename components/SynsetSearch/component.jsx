@@ -125,8 +125,7 @@ function SynsetSearchForm(props) {
                        asGroup={true} groupClassName="col-4" />
             <SubmitButton text="Find"
                           className={props.buttonClassName}
-                          extras={props.buttonExtras || "btn-primary ml-3 my-auto"}
-                          asGroup={true} groupClassName="col" />
+                          extras={props.buttonExtras || "btn-primary ml-3 my-auto"} />
 
             {props.advancedEnabled &&
              <a href="#" onClick={toggleAdvancedOptions} className="ml-3 my-1">
