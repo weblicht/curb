@@ -90,41 +90,6 @@ function SynsetSearchForm(props) {
               />
             </>;
 
-    const wordClassCheckboxes = WORD_CLASS_OPTIONS.map(
-        wc => <Checkbox id={`${props.id}-${wc.value}`} label={labelFor(wc)}
-                        key={wc.value}
-                        name={wc.value}
-                        defaultChecked={props.params[wc.value]}
-                        asGroup={false} 
-                        disabled={isDisabled(wc)}
-                        className={props.checkboxClassName}
-                        extras={props.checkboxExtras}
-              />
-    );
-
-    function labelFor(wordClass) {
-        const categories = [
-            wordClass.nouns ? 'Nouns' : undefined,
-            wordClass.adjectives ? 'Adjectives' : undefined,
-            wordClass.verbs ? 'Verbs' : undefined,
-        ].filter(s => s !== undefined);
-
-        const nvaLabel = `(${categories.join(', ')})`;
-
-        return (<>{wordClass.label} <small className="text-muted">{nvaLabel}</small> </>);
-    }
-
-    function isDisabled(wordClass) {
-        const allUnchecked = !props.params.nouns && !props.params.adjectives && !props.params.verbs;
-
-        if (allUnchecked) return false;
-        if (props.params.nouns && wordClass.nouns) return false;
-        if (props.params.adjectives && wordClass.adjectives) return false;
-        if (props.params.verbs && wordClass.verbs) return false;
-
-        return true;
-    }
-   
     return ( 
         // setting the key to props.history.length clears the search
         // term box and validity state after each search is run
@@ -212,11 +177,12 @@ function SynsetSearchForm(props) {
                            extras={props.checkboxExtras} />
                </div>
 
-               <div className="col" >
-                 <h5>Word classes</h5>
-                 <p className="small text-muted">Empty selection searches all classes.</p>
-                 <div style={{ maxHeight: "20vh", overflow: "scroll" }}>
-                   {wordClassCheckboxes}
+                 <div className="col" >
+                   <h5>Word classes</h5>
+                   <p className="small text-muted">Empty selection searches all classes.</p>
+                   <div style={{ maxHeight: "20vh", overflow: "scroll" }}>
+                     <WordClassCheckboxes {...props}/>
+                   </div>
                  </div>
                </div>
 
@@ -411,7 +377,48 @@ SynsetSearchHistoryNav = connect(historyStateToProps, historyDispatchToProps)(Sy
 export { SynsetSearchHistoryNav };
 
 
-// Constants needed for advanced search form:
+// Helper component to display the checkboxes for all the word classes
+// in the advanced search form.
+// props:
+//   params: search parameters object
+//   checkboxClassName, checkboxExtras
+function WordClassCheckboxes(props) {
+
+    function labelFor(wordClass) {
+        const categories = [
+            wordClass.nouns ? 'Nouns' : undefined,
+            wordClass.adjectives ? 'Adjectives' : undefined,
+            wordClass.verbs ? 'Verbs' : undefined,
+        ].filter(s => s !== undefined);
+
+        const nvaLabel = `(${categories.join(', ')})`;
+
+        return (<>{wordClass.label} <small className="text-muted">{nvaLabel}</small> </>);
+    }
+
+    function isDisabled(wordClass) {
+        const allUnchecked = !props.params.nouns && !props.params.adjectives && !props.params.verbs;
+
+        if (allUnchecked) return false;
+        if (props.params.nouns && wordClass.nouns) return false;
+        if (props.params.adjectives && wordClass.adjectives) return false;
+        if (props.params.verbs && wordClass.verbs) return false;
+
+        return true;
+    }
+
+    return WORD_CLASS_OPTIONS.map(
+        wc => <Checkbox id={`${props.id}-${wc.value}`} label={labelFor(wc)}
+                        key={wc.value}
+                        name={wc.value}
+                        defaultChecked={props.params[wc.value]}
+                        asGroup={false} 
+                        disabled={isDisabled(wc)}
+                        className={props.checkboxClassName}
+                        extras={props.checkboxExtras}
+              />
+    );
+}
 
 const WORD_CLASS_OPTIONS = [
     { label: 'Allgemein', value: 'Allgemein', nouns: false, verbs: true, adjectives: true },
