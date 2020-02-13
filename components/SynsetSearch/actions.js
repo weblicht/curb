@@ -24,37 +24,27 @@ import axios from 'axios';
 
 // these are all per-id actions:
 export const actionTypes = actionTypesFromStrings([
-    'SYNSET_SEARCH_UPDATE_SEARCH_TERM',
     'SYNSET_SEARCH_UPDATE_SEARCH_PARAMS',
-    'SYNSET_SEARCH_SET_IGNORE_CASE',
-    'SYNSET_SEARCH_TOGGLE_IGNORE_CASE',
     'SYNSET_SEARCH_TOGGLE_CATEGORY',
     'SYNSET_SEARCH_TOGGLE_REGEX_SUPPORT',
     'SYNSET_SEARCH_UPDATE_ERROR',
     'SYNSET_SEARCH_SUBMITTED',
     'SYNSET_SEARCH_RESULTS_RETURNED',
-    'SYNSET_SEARCH_BACKEND_FAILURE',
     'SYNSET_SEARCH_RELOAD_HISTORY'
 ])
 
-export function updateSearchTerm(id, searchTerm) {
-    return { type: actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_TERM, id, searchTerm };
-}
 export function updateSearchParams(id, params) {
     return { type: actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_PARAMS, id, params };
 }
-export function toggleIgnoreCase(id) {
-    return { type: actionTypes.SYNSET_SEARCH_TOGGLE_IGNORE_CASE, id };
-}
+
 export function toggleRegexSupport(id) {
     return { type: actionTypes.SYNSET_SEARCH_TOGGLE_REGEX_SUPPORT, id };
 }
-export function setIgnoreCase(id, ignoreCase) {
-    return { type: actionTypes.SYNSET_SEARCH_SET_IGNORE_CASE, id, ignoreCase };
-}
+
 export function toggleCategory(id, category) {
     return { type: actionTypes.SYNSET_SEARCH_TOGGLE_CATEGORY, id, category };
 }
+
 export function updateError(id, error) {
     return { type: actionTypes.SYNSET_SEARCH_UPDATE_ERROR, id, error };
 }
@@ -65,10 +55,6 @@ export function submitSearch(id, params) {
 
 export function receiveResults(id, data, params) {
     return { type: actionTypes.SYNSET_SEARCH_RESULTS_RETURNED, id, data, params };
-}
-
-export function searchFailure(id) {
-    return { type: actionTypes.SYNSET_SEARCH_BACKEND_FAILURE, id };
 }
 
 export function reloadHistory(id) {

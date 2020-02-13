@@ -17,7 +17,11 @@
 
 // SynsetSearch/component.jsx
 
-import { doAdvancedSearch as doSearch, updateSearchParams, setIgnoreCase, reloadHistory, toggleCategory, toggleRegexSupport } from './actions';
+import { doAdvancedSearch as doSearch,
+         updateSearchParams,
+         reloadHistory,
+         toggleCategory,
+         toggleRegexSupport } from './actions';
 import { selectSearchFormState,
          selectSynsetsForSearchForm } from './selectors';
 import { Button, Checkbox, Form, Options, Select, SubmitButton, TextInput } from '../GenericForms/component';

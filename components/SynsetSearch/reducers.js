@@ -54,11 +54,6 @@ export { searchFormInnerState as defaultSearchFormState };
 // manages private state for an individual search box
 function searchFormInnerReducer(state = searchFormInnerState, action) {
     switch (action.type) {
-        // TODO: this is deprecated and should be deleted
-    case actionTypes.SYNSET_SEARCH_TOGGLE_IGNORE_CASE: {
-        return state.merge({ ignoreCase: !state.ignoreCase });
-    }
-
     case actionTypes.SYNSET_SEARCH_TOGGLE_REGEX_SUPPORT: {
         const params = state.params.merge({
             regEx: !state.params.regEx
@@ -72,14 +67,6 @@ function searchFormInnerReducer(state = searchFormInnerState, action) {
         });
 
         return state.merge({ params });
-    }
-        // TODO: this is deprecated and should be deleted
-    case actionTypes.SYNSET_SEARCH_SET_IGNORE_CASE: {
-        return state.merge({ ignoreCase: action.ignoreCase });
-    }
-        // TODO: this is deprecated and should be deleted
-    case actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_TERM: {
-        return state.merge({ currentSearchTerm: action.searchTerm });
     }
     case actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_PARAMS: {
         return state.merge({ params: action.params });
