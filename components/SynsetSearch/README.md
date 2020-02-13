@@ -7,8 +7,10 @@ displaying the results of those searches.
 
 ### SynsetSearchForm
 
-Displays a simple search form for synsets, including a text input, a
-submit button, and a checkbox for ignoring case.
+Displays a search form for synsets, including a text input, a submit
+button, and a checkbox for ignoring case. Advanced search options,
+available on a popup display, can also be enabled via the
+`advancedEnabled` prop.
 
 The `id` prop is required and must be unique in the application, since
 it is used to track the state of the form in Redux.
@@ -45,7 +47,7 @@ corresponding search form.
 ```
 import { SynsetSearchForm, SynsetSearchResults, SynsetsAsTable } from '@sfstuebingen/germanet-common/components';
 
-<SynsetSearchForm id="mainSearch" />
+<SynsetSearchForm id="mainSearch" advancedEnabled={true} />
 <SynsetSearchResults containerId="mainSearchResults" source="mainSearch" displayAs={SynsetsAsTable}/>
 ```
 

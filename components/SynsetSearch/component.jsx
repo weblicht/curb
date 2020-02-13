@@ -1,4 +1,4 @@
-// Copyright 2019 Richard Lawrence
+// Copyright 2020 Richard Lawrence
 //
 // This file is part of germanet-common.
 //
@@ -31,7 +31,7 @@ import classNames from 'classnames';
 import React from 'react';
 import { connect } from 'react-redux';
 
-// Renders a simple search form with text input and submit button for synset searches 
+// Renders a search form with text input and submit button for synset searches 
 // props:
 //   id :: String, an identifier for the search form
 //   advancedEnabled :: Boolean: when true, a link to display advanced search options
