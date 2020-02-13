@@ -30,19 +30,22 @@ import { connect } from 'react-redux';
 // Renders a simple search form with text input and submit button for synset searches 
 // props:
 //   id :: String, an identifier for the search form
-//   className (optional), class for form element. Defaults to "form-inline".
-//   extras (optional), extra classes for form element.
-//   inputClassName, inputExtras (optional), className and extras for the text input.
-//   buttonClassName, buttonExtras (optional), className and extras for the submit button.
-//     Defaults space the button slightly right from the text input.  
-//   checkboxClassName, checkboxExtras (optional), className and extras for the 
-//     "ignore case" checkbox. Defaults space the button slightly right of the
-//     submit button.
 //   advancedEnabled :: Boolean: when true, a link to display advanced search options
 //     is made available and the user's selections for these options are submitted with
-//     the form.
+//     the form.  Otherwise, the only search option is to ignore case, which displays as
+//     a checkbox next to the submit button.
+//   className, extras (optional): for the form element. 
+//   inputClassName, inputExtras (optional), className and extras for the text input
+//     representing the search term.
+//   buttonClassName, buttonExtras (optional), className and extras for the submit button.
+//     Defaults space the button slightly right from the text input.  
+//   checkboxClassName, checkboxExtras (optional), className and extras for all
+//     checkboxes on the form.
+//   editDistanceClassName, editDistanceExtras (optional), className and extras for
+//     the edit distance text input (advanced search options only)
 function SynsetSearchForm(props) {
 
+    // submit handler for form:
     function onSubmit(formData) {
         const { word, editDistance, ...checkboxes } = formData;
 
@@ -68,12 +71,14 @@ function SynsetSearchForm(props) {
         props.doSearch(params);
     }
 
+    // our one piece of local state:
     const [showAdvanced, setShowAdvanced] = React.useState(false);
     function toggleAdvancedOptions(e) {
         e.preventDefault();
         setShowAdvanced(isShown => !isShown);
     }
 
+    // classes for advanced search options:
     const advancedContainerClasses = classNames([
         // adds position: relative to the div wrapping the options
         // box, which keeps the top of the options box visually inside
@@ -96,23 +101,6 @@ function SynsetSearchForm(props) {
         "shadow-lg": true,
     });
         
-    
-    // we still want to show the ignore case checkbox in the search
-    // form when the advanced options are not enabled; but if they
-    // are, we put it down in the advanced options instead
-    const ignoreCaseOrAdvancedLink = props.advancedEnabled
-          ? <><a href="#" onClick={toggleAdvancedOptions} className="ml-3 my-1">
-                {showAdvanced ? "Hide" : "Show"} search options</a></>
-          : <> 
-              <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
-                        name="ignoreCase"
-                        asGroup={true} groupClassName="col"
-                        defaultChecked={props.params.ignoreCase}
-                        className={props.checkboxClassName}
-                        extras={props.checkboxExtras || "ml-3 my-1"}
-              />
-            </>;
-
     return ( 
         // setting the key to props.history.length clears the search
         // term box and validity state after each search is run
@@ -130,14 +118,30 @@ function SynsetSearchForm(props) {
                        className={props.inputClassName}
                        extras={props.inputExtras}
                        required={true}
-                       asGroup={true} groupClassName="col-4"
-            />
+                       asGroup={true} groupClassName="col-4" />
             <SubmitButton text="Find"
                           className={props.buttonClassName}
                           extras={props.buttonExtras || "btn-primary ml-3 my-auto"}
-                          asGroup={true} groupClassName="col"
-            />
-            {ignoreCaseOrAdvancedLink}
+                          asGroup={true} groupClassName="col" />
+
+            {props.advancedEnabled &&
+             <a href="#" onClick={toggleAdvancedOptions} className="ml-3 my-1">
+               {showAdvanced ? "Hide" : "Show"} search options
+             </a>
+            }
+            {!props.advancedEnabled &&
+             // when the advanced options are not enabled, we show the
+             // ignore case checkbox inline in the main search form,
+             // with default classes that space it away from the subit
+             // button; otherwise, we put it down in the advanced
+             // options:
+             <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
+                       name="ignoreCase"
+                       defaultChecked={props.params.ignoreCase}
+                       asGroup={true} groupClassName="form-check-inline"
+                       className={props.checkboxClassName}
+                       extras={props.checkboxExtras || "my-auto"} />
+            }
           </div>
 
           {props.advancedEnabled &&
@@ -150,16 +154,14 @@ function SynsetSearchForm(props) {
                            defaultChecked={props.params.ignoreCase}
                            asGroup={false}
                            className={props.checkboxClassName}
-                           extras={props.checkboxExtras}
-                 />
+                           extras={props.checkboxExtras} />
                  <Checkbox id={`${props.id}-regEx`} label="Enable regular expressions"
                            name="regEx"
                            checked={props.params.regEx}
                            onChange={props.toggleRegexSupport}
                            asGroup={false} 
                            className={props.checkboxClassName}
-                           extras={props.checkboxExtras}
-                 />
+                           extras={props.checkboxExtras} />
                </div>
                <div className="form-group">
                  <TextInput id={`${props.id}-editDistance`} label="Edit distance"
@@ -169,12 +171,12 @@ function SynsetSearchForm(props) {
                             defaultValue={props.params.editDistance}
                             asGroup={false}  
                             readOnly={props.params.regEx}
-                            extras="col-4"
-                            placeholder="Enter an integer greater than 0"
-                 />
+                            className={props.editDistanceClassName}
+                            extras={props.editDistanceExtras || "col-4"}
+                            placeholder="Enter an integer greater than 0" />
                </div>
-               <div className="row mb-2">
-                 
+
+               <div className="row">
                  <div className="col">
                    <h5>Word category</h5>
                    <p className="small text-muted">Empty selection searches all categories.</p>
