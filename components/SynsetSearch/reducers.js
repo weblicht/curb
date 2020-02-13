@@ -22,12 +22,31 @@ import SI from 'seamless-immutable';
 
 // internal state for a particular search box:
 const searchFormInnerState = SI({
-    ignoreCase: false,
-    currentSearchTerm: '',
-    history: [],
+    // params represents current search parameters, which are used to
+    // populate the default values in the search form. These values
+    // are restored from history items, so that when a previous search
+    // is re-run, the search form will reflect the parameters set at
+    // the time. We also manage the state of the regex and word category
+    // checkboxes here; they need to be controlled components *and*
+    // their state needs to be re-populated from history via props, so
+    // they have to be managed in Redux rather than in local component
+    // state.
+    params: {
+        word: undefined,
+        ignoreCase: false,
+        regEx: false,
+        adjectives: false,
+        nouns: false,
+        verbs: false
+    },
+    // parameters for previous searches:
+    history: [], 
+    // results returned by backend:
     synsets: [], 
-    alert: undefined, // message for user
-    alertClass: undefined, // 'info', 'warning', 'success', etc.: Bootstrap class for alert message
+    // message for user:
+    alert: undefined, 
+    // Bootstrap class for alert message: 'info', 'warning', 'success', etc.
+    alertClass: undefined, 
     error: undefined
 })
 export { searchFormInnerState as defaultSearchFormState }; 
@@ -35,25 +54,42 @@ export { searchFormInnerState as defaultSearchFormState };
 // manages private state for an individual search box
 function searchFormInnerReducer(state = searchFormInnerState, action) {
     switch (action.type) {
-    // we have actions both to TOGGLE and SET ignore case because
-    // TOGGLE is best suited to easily handling clicks on the
-    // checkbox, but SET is best suited to updating the checkbox
-    // explicitly with the value from a previous search
+        // TODO: this is deprecated and should be deleted
     case actionTypes.SYNSET_SEARCH_TOGGLE_IGNORE_CASE: {
         return state.merge({ ignoreCase: !state.ignoreCase });
     }
+
+    case actionTypes.SYNSET_SEARCH_TOGGLE_REGEX_SUPPORT: {
+        const params = state.params.merge({
+            regEx: !state.params.regEx
+        });
+
+        return state.merge({ params });
+    }
+    case actionTypes.SYNSET_SEARCH_TOGGLE_CATEGORY: {
+        const params = state.params.merge({
+            [action.category]: !state.params[action.category]
+        });
+
+        return state.merge({ params });
+    }
+        // TODO: this is deprecated and should be deleted
     case actionTypes.SYNSET_SEARCH_SET_IGNORE_CASE: {
         return state.merge({ ignoreCase: action.ignoreCase });
     }
+        // TODO: this is deprecated and should be deleted
     case actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_TERM: {
         return state.merge({ currentSearchTerm: action.searchTerm });
+    }
+    case actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_PARAMS: {
+        return state.merge({ params: action.params });
     }
     case actionTypes.SYNSET_SEARCH_UPDATE_ERROR: {
         return state.merge({ error: action.error });
     }
     case actionTypes.SYNSET_SEARCH_SUBMITTED: {
         return state.merge({
-            currentSearchTerm: '',
+            params: searchFormInnerState.params,
             synsets: [],
             alert: undefined,
             alertClass: undefined
@@ -66,8 +102,7 @@ function searchFormInnerReducer(state = searchFormInnerState, action) {
         // deal with updating a history item we've already partially
         // recorded, and with the possibility of network failures.
         const newHistoryItem = SI({
-            word: action.params.word,
-            ignoreCase: action.params.ignoreCase,
+            params: action.params,
             numResults: action.data.length
         });
 

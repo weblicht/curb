@@ -17,7 +17,7 @@
 
 // SynsetSearch/component.jsx
 
-import { doSearch, updateSearchTerm, toggleIgnoreCase, setIgnoreCase, reloadHistory } from './actions';
+import { doAdvancedSearch as doSearch, updateSearchParams, setIgnoreCase, reloadHistory, toggleCategory, toggleRegexSupport } from './actions';
 import { selectSearchFormState,
          selectSynsetsForSearchForm } from './selectors';
 import { Button, Checkbox, Form, Options, Select, SubmitButton, TextInput } from '../GenericForms/component';
@@ -44,31 +44,34 @@ import { connect } from 'react-redux';
 function SynsetSearchForm(props) {
 
     function onSubmit(formData) {
-        props.doSearch(formData.searchTerm, formData.ignoreCase === "on");
+        const { word, editDistance, ...checkboxes } = formData;
+
+        // convert checkbox values to booleans for the backend:
+        const flags = Object.fromEntries(Object.entries(checkboxes).map(
+            ([name, state]) => [name, state === "on"]
+        ));
+
+        const params = {
+            word,
+            editDistance,
+            ...flags  
+        };
+
+        // Silently drop any editDistance value if regex support is
+        // on; disabling the field in the UI already makes clear that
+        // this is not supported. Also avoid cluttering the URL with
+        // an empty value.
+        if (params.regEx || !params.editDistance) {
+            delete params.editDistance;
+        }
+
+        props.doSearch(params);
     }
 
     const [showAdvanced, setShowAdvanced] = React.useState(false);
     function toggleAdvancedOptions(e) {
         e.preventDefault();
-        setShowAdvanced(!showAdvanced);
-    }
-
-    const [selectedCategories, setCategories] = React.useState({
-        adjectives: false,
-        nouns: false,
-        verbs: false
-    });
-    function toggleCategory(category) {
-        return function (e) {
-            var newCategories = { ...selectedCategories };
-            newCategories[category] = !newCategories[category];
-            setCategories(newCategories);
-        };
-    }
-
-    const [regexEnabled, setRegexEnabled] = React.useState(false);
-    function toggleRegexEnabled(e) {
-        setRegexEnabled(!regexEnabled);
+        setShowAdvanced(isShown => !isShown);
     }
 
     // we still want to show the ignore case checkbox in the search
@@ -81,74 +84,17 @@ function SynsetSearchForm(props) {
               <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
                         name="ignoreCase"
                         asGroup={true} groupClassName="col"
-                        checked={props.ignoreCase}
-                        onChange={props.toggleIgnoreCase}
+                        defaultChecked={props.params.ignoreCase}
                         className={props.checkboxClassName}
                         extras={props.checkboxExtras || "ml-3 my-1"}
               />
             </>;
 
-    const wordCategories = [
-        { label: 'Adjectives', value: 'adj' },
-        { label: 'Nouns', value: 'nomen' },
-        { label: 'Verbs', value: 'verben' },
-    ];
-
-    const wordCategoryCheckboxes = wordCategories.map(
-        category => <Checkbox id={`${props.id}-${category.value}`} label={category.label}
-                              key={category.value}
-                              name={category.value}
-                              asGroup={false} 
-                              onChange={toggleCategory(category.label.toLowerCase())}
-                              className={props.checkboxClassName}
-                              extras={props.checkboxExtras}
-                    />
-    );
-
-    const wordClasses = [
-        { label: 'Allgemein', value: 'Allgemein', nouns: false, verbs: true, adjectives: true },
-        { label: 'Artefakt', value: 'Artefakt', nouns: true, verbs: false, adjectives: false },
-        { label: 'Attribut', value: 'Attribut', nouns: true, verbs: false, adjectives: false },
-        { label: 'Besitz', value: 'Besitz', nouns: true, verbs: true, adjectives: false },
-        { label: 'Bewegung', value: 'Bewegung', nouns: false, verbs: false, adjectives: true },
-        { label: 'Form', value: 'Form', nouns: true, verbs: false, adjectives: false },
-        { label: 'Gefuehl', value: 'Gefuehl', nouns: true, verbs: true, adjectives: true },
-        { label: 'Geist', value: 'Geist', nouns: false, verbs: false, adjectives: true },
-        { label: 'Geschehen', value: 'Geschehen', nouns: true, verbs: false, adjectives: false },
-        { label: 'Gesellschaft', value: 'Gesellschaft', nouns: false, verbs: true, adjectives: true },
-        { label: 'Gruppe', value: 'Gruppe', nouns: true, verbs: false, adjectives: false },
-        { label: 'Koerper', value: 'Koerper', nouns: true, verbs: false, adjectives: true },
-        { label: 'Koerperfunktion', value: 'Koerperfunktion', nouns: false, verbs: true, adjectives: false },
-        { label: 'Kognition', value: 'Kognition', nouns: true, verbs: true, adjectives: false },
-        { label: 'Kommunikation', value: 'Kommunikation', nouns: true, verbs: true, adjectives: false },
-        { label: 'Konkurrenz', value: 'Konkurrenz', nouns: false, verbs: true, adjectives: false },
-        { label: 'Kontakt', value: 'Kontakt', nouns: false, verbs: true, adjectives: false },
-        { label: 'Lokation', value: 'Lokation', nouns: false, verbs: true, adjectives: false },
-        { label: 'Menge', value: 'Menge', nouns: true, verbs: false, adjectives: true },
-        { label: 'Mensch', value: 'Mensch', nouns: true, verbs: false, adjectives: false },
-        { label: 'Motiv', value: 'Motiv', nouns: true, verbs: false, adjectives: false },
-        { label: 'Nahrung', value: 'Nahrung', nouns: true, verbs: false, adjectives: false },
-        { label: 'natGegenstand', value: 'natGegenstand', nouns: true, verbs: false, adjectives: false },
-        { label: 'natPhaenomen', value: 'natPhaenomen', nouns: true, verbs: true, adjectives: true },
-        { label: 'Ort', value: 'Ort', nouns: true, verbs: false, adjectives: true },
-        { label: 'Pertonym', value: 'Pertonym', nouns: false, verbs: false, adjectives: true },
-        { label: 'Perzeption', value: 'Perzeption', nouns: false, verbs: true, adjectives: true },
-        { label: 'Pflanze', value: 'Pflanze', nouns: true, verbs: false, adjectives: false },
-        { label: 'privativ', value: 'privativ', nouns: false, verbs: false, adjectives: true },
-        { label: 'Relation', value: 'Relation', nouns: true, verbs: false, adjectives: true },
-        { label: 'Schoepfung', value: 'Schoepfung', nouns: false, verbs: true, adjectives: false },
-        { label: 'Substanz', value: 'Substanz', nouns: true, verbs: false, adjectives: true },
-        { label: 'Tier', value: 'Tier', nouns: true, verbs: false, adjectives: false },
-        { label: 'Tops', value: 'Tops', nouns: true, verbs: false, adjectives: false },
-        { label: 'Veraenderung', value: 'Veraenderung', nouns: false, verbs: true, adjectives: false },
-        { label: 'Verbrauch', value: 'Verbrauch', nouns: false, verbs: true, adjectives: false },
-        { label: 'Verhalten', value: 'Verhalten', nouns: false, verbs: false, adjectives: true },
-        { label: 'Zeit', value: 'Zeit', nouns: true, verbs: false, adjectives: true },
-    ];
-    const wordClassCheckboxes = wordClasses.map(
-        wc => <Checkbox id={`${props.id}-${wc}`} label={classToLabel(wc)}
-                        key={wc}
-                        name={wc}
+    const wordClassCheckboxes = WORD_CLASS_OPTIONS.map(
+        wc => <Checkbox id={`${props.id}-${wc.value}`} label={labelFor(wc)}
+                        key={wc.value}
+                        name={wc.value}
+                        defaultChecked={props.params[wc.value]}
                         asGroup={false} 
                         disabled={isDisabled(wc)}
                         className={props.checkboxClassName}
@@ -156,7 +102,7 @@ function SynsetSearchForm(props) {
               />
     );
 
-    function classToLabel(wordClass) {
+    function labelFor(wordClass) {
         const categories = [
             wordClass.nouns ? 'Nouns' : undefined,
             wordClass.adjectives ? 'Adjectives' : undefined,
@@ -169,32 +115,16 @@ function SynsetSearchForm(props) {
     }
 
     function isDisabled(wordClass) {
-        const allUnchecked = !selectedCategories.nouns && !selectedCategories.adjectives && !selectedCategories.verbs;
+        const allUnchecked = !props.params.nouns && !props.params.adjectives && !props.params.verbs;
 
         if (allUnchecked) return false;
-        if (selectedCategories.nouns && wordClass.nouns) return false;
-        if (selectedCategories.adjectives && wordClass.adjectives) return false;
-        if (selectedCategories.verbs && wordClass.verbs) return false;
+        if (props.params.nouns && wordClass.nouns) return false;
+        if (props.params.adjectives && wordClass.adjectives) return false;
+        if (props.params.verbs && wordClass.verbs) return false;
 
         return true;
     }
-
-    const variants = [
-        { label: 'Current form', value: 'orthForm' },
-        { label: 'Current form, variant spelling', value: 'orthVar' },
-        { label: 'Old form', value: 'oldOrthForm' },
-        { label: 'Old form, variant spelling', value: 'oldOrthVar' }
-    ];
-    const variantCheckboxes = variants.map(
-        variant => <Checkbox id={`${props.id}-${variant.value}`} label={variant.label}
-                             key={variant.value}
-                             name={variant.value}
-                             asGroup={true} groupClassName="col" 
-                             className={props.checkboxClassName}
-                             extras={props.checkboxExtras}
-                    />
-    );
-    
+   
     return ( 
         // setting the key to props.history.length clears the search
         // term box and validity state after each search is run
@@ -202,11 +132,11 @@ function SynsetSearchForm(props) {
               submitTo={onSubmit}
               className={classNames(props.className, props.extras)}>
           <div className="form-group form-row">
-            <TextInput id={`${props.id}-searchTerm`}
-                       name="searchTerm"
+            <TextInput id={`${props.id}-word`}
+                       name="word"
                        label="Search for" labelClassName="sr-only"
                        type="search"
-                       defaultValue={props.currentSearchTerm}
+                       defaultValue={props.params.word}
                        autoFocus={true}
                        placeholder="Enter a word or Synset Id"
                        className={props.inputClassName}
@@ -221,56 +151,106 @@ function SynsetSearchForm(props) {
             />
             {ignoreCaseOrAdvancedLink}
           </div>
-          <div className={ classNames(showAdvanced ? "d-block" : "d-none", "mt-2")}>
-            <h5>Search term interpretation</h5>
-            <div className="form-group">
-              <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
-                        name="ignoreCase"
-                        defaultChecked={props.ignoreCase}
-                        asGroup={false}
-                        className={props.checkboxClassName}
-                        extras={props.checkboxExtras}
-              />
-              <Checkbox id={`${props.id}-regEx`} label="Enable regular expressions"
-                        name="regEx"
-                        checked={regexEnabled}
-                        onChange={toggleRegexEnabled}
-                        asGroup={false} 
-                        className={props.checkboxClassName}
-                        extras={props.checkboxExtras}
-              />
-            </div>
-            <div className="form-group">
-              <TextInput id={`${props.id}-editDistance`} label="Edit distance"
-                         name="editDistance"
-                         type="number"
-                         min={0}
-                         asGroup={false}  
-                         readOnly={regexEnabled}
-                         extras="col-4"
-                         placeholder="Enter an integer greater than 0"
-              />
-            </div>
-            <div className="row mb-2">
-              <div className="col">
-                <h5>Word category</h5>
-                <p className="small text-muted">No selection searches all categories.</p>
-                {wordCategoryCheckboxes}
-              </div>
-              <div className="col" >
-                <h5>Word classes</h5>
-                <p className="small text-muted">No selection searches all classes.</p>
-                <div style={{ maxHeight: "20vh", overflow: "scroll" }}>
-                  {wordClassCheckboxes}
-                </div>
-              </div>
-              <div className="col">
-                <h5>Orthographic variants</h5>
-                <p className="small text-muted">No selection searches all variants.</p>
-                {variantCheckboxes}
-              </div>
-            </div>
-          </div>
+
+          {props.advancedEnabled &&
+           <div className={ classNames(showAdvanced ? "d-block" : "d-none", "mt-2")}>
+             <h5>Search term interpretation</h5>
+             <div className="form-group">
+               <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
+                         name="ignoreCase"
+                         defaultChecked={props.params.ignoreCase}
+                         asGroup={false}
+                         className={props.checkboxClassName}
+                         extras={props.checkboxExtras}
+               />
+               <Checkbox id={`${props.id}-regEx`} label="Enable regular expressions"
+                         name="regEx"
+                         checked={props.params.regEx}
+                         onChange={props.toggleRegexSupport}
+                         asGroup={false} 
+                         className={props.checkboxClassName}
+                         extras={props.checkboxExtras}
+               />
+             </div>
+             <div className="form-group">
+               <TextInput id={`${props.id}-editDistance`} label="Edit distance"
+                          name="editDistance"
+                          type="number"
+                          min={0}
+                          defaultValue={props.params.editDistance}
+                          asGroup={false}  
+                          readOnly={props.params.regEx}
+                          extras="col-4"
+                          placeholder="Enter an integer greater than 0"
+               />
+             </div>
+             <div className="row mb-2">
+
+               <div className="col">
+                 <h5>Word category</h5>
+                 <p className="small text-muted">Empty selection searches all categories.</p>
+                 <Checkbox id={`${props.id}-adjectives`} label="Adjectives"
+                           name="adjectives"
+                           asGroup={false} 
+                           checked={props.params.adjectives}
+                           onChange={props.toggleCategory('adjectives')}
+                           className={props.checkboxClassName}
+                           extras={props.checkboxExtras} />
+                 <Checkbox id={`${props.id}-nouns`} label="Nouns"
+                           name="nouns"
+                           asGroup={false} 
+                           checked={props.params.nouns}
+                           onChange={props.toggleCategory('nouns')}
+                           className={props.checkboxClassName}
+                           extras={props.checkboxExtras} />
+                 <Checkbox id={`${props.id}-verbs`} label="Verbs"
+                           name="verbs"
+                           asGroup={false} 
+                           checked={props.params.verbs}
+                           onChange={props.toggleCategory('verbs')}
+                           className={props.checkboxClassName}
+                           extras={props.checkboxExtras} />
+               </div>
+
+               <div className="col" >
+                 <h5>Word classes</h5>
+                 <p className="small text-muted">Empty selection searches all classes.</p>
+                 <div style={{ maxHeight: "20vh", overflow: "scroll" }}>
+                   {wordClassCheckboxes}
+                 </div>
+               </div>
+
+               <div className="col">
+                 <h5>Orthographic variants</h5>
+                 <p className="small text-muted">Empty selection searches all variants.</p>
+                 <Checkbox id={`${props.id}-orthForm`} label="Current form"
+                           name="orthForm"
+                           defaultChecked={props.params.orthForm}
+                           asGroup={true} groupClassName="col" 
+                           className={props.checkboxClassName}
+                           extras={props.checkboxExtras} />
+                 <Checkbox id={`${props.id}-orthVar`} label="Current form, variant spelling"
+                           name="orthVar"
+                           defaultChecked={props.params.orthVar}
+                           asGroup={true} groupClassName="col" 
+                           className={props.checkboxClassName}
+                           extras={props.checkboxExtras} />
+                 <Checkbox id={`${props.id}-oldOrthForm`} label="Old form"
+                           name="oldOrthForm"
+                           defaultChecked={props.params.oldOrthForm}
+                           asGroup={true} groupClassName="col" 
+                           className={props.checkboxClassName}
+                           extras={props.checkboxExtras} />
+                 <Checkbox id={`${props.id}-oldOrthVar`} label="Old form, variant spelling"
+                           name="oldOrthVar"
+                           defaultChecked={props.params.oldOrthVar}
+                           asGroup={true} groupClassName="col" 
+                           className={props.checkboxClassName}
+                           extras={props.checkboxExtras} />
+               </div>
+             </div>
+           </div>
+          }
         </Form>
     );
 }
@@ -281,8 +261,9 @@ function searchFormStateToProps(state, ownProps) {
 
 function searchFormDispatchToProps(dispatch, ownProps) {
     return {
-        doSearch: (term, igcase) => dispatch(doSearch(ownProps.id, term, igcase)),
-        toggleIgnoreCase: () => dispatch(toggleIgnoreCase(ownProps.id)),
+        doSearch: params => dispatch(doSearch(ownProps.id, params)),
+        toggleCategory: category => e => dispatch(toggleCategory(ownProps.id, category)),
+        toggleRegexSupport: e => dispatch(toggleRegexSupport(ownProps.id)),
     };
 }
 
@@ -333,6 +314,8 @@ export { SynsetSearchAlert };
 // props:
 //   source :: String, the .id of the corresponding SynsetSearchForm
 //   onlyUnique (optional) :: Bool, whether to only display a list of unique search terms
+//     Note: the comparison is on search terms only; if multiple searches for the same term 
+//     were run with different options, only one history item for this term will appear! 
 //   onlySuccessful (optional) :: Bool, whether to only display searches that returned results
 //   persist (optional) :: Bool, whether to use browser localStorage to persist search history
 //   limit (optional) :: Number, a maximum number of history items to display, *after*
@@ -373,10 +356,10 @@ class SynsetSearchHistoryNav extends React.Component {
             var seenWords = [];
             itemsToDisplay = itemsToDisplay.filter(
                 item => {
-                    if (seenWords.includes(item.word)) {
+                    if (seenWords.includes(item.params.word)) {
                         return false;
                     } else {
-                        seenWords.push(item.word);
+                        seenWords.push(item.params.word);
                         return true;
                     }
                 }
@@ -393,8 +376,8 @@ class SynsetSearchHistoryNav extends React.Component {
                         {this.props.emptyMessage || "No search history to display."}
                       </div>;
         const buttons = itemsToDisplay.map(
-            item => <Button text={item.word}
-                            onClick={this.props.redoSearch(item.word, item.ignoreCase)}
+            item => <Button text={item.params.word}
+                            onClick={this.props.redoSearch(item.params)}
                             className={this.props.buttonClassName}
                             extras={this.props.buttonExtras} />
         );
@@ -415,11 +398,10 @@ function historyStateToProps(state, ownProps) {
 
 function historyDispatchToProps(dispatch, ownProps) {
     return {
-        redoSearch: (term, igcase) => function(e) {
+        redoSearch: params => function(e) {
             e.preventDefault();
-            dispatch(doSearch(ownProps.source, term, igcase));
-            dispatch(updateSearchTerm(ownProps.source, term));
-            dispatch(setIgnoreCase(ownProps.source, igcase)); 
+            dispatch(doSearch(ownProps.source, params));
+            dispatch(updateSearchParams(ownProps.source, params));
         },
         reloadHistory: () => dispatch(reloadHistory(ownProps.source))
     };
@@ -427,3 +409,48 @@ function historyDispatchToProps(dispatch, ownProps) {
 
 SynsetSearchHistoryNav = connect(historyStateToProps, historyDispatchToProps)(SynsetSearchHistoryNav);
 export { SynsetSearchHistoryNav };
+
+
+// Constants needed for advanced search form:
+
+const WORD_CLASS_OPTIONS = [
+    { label: 'Allgemein', value: 'Allgemein', nouns: false, verbs: true, adjectives: true },
+    { label: 'Artefakt', value: 'Artefakt', nouns: true, verbs: false, adjectives: false },
+    { label: 'Attribut', value: 'Attribut', nouns: true, verbs: false, adjectives: false },
+    { label: 'Besitz', value: 'Besitz', nouns: true, verbs: true, adjectives: false },
+    { label: 'Bewegung', value: 'Bewegung', nouns: false, verbs: false, adjectives: true },
+    { label: 'Form', value: 'Form', nouns: true, verbs: false, adjectives: false },
+    { label: 'Gefuehl', value: 'Gefuehl', nouns: true, verbs: true, adjectives: true },
+    { label: 'Geist', value: 'Geist', nouns: false, verbs: false, adjectives: true },
+    { label: 'Geschehen', value: 'Geschehen', nouns: true, verbs: false, adjectives: false },
+    { label: 'Gesellschaft', value: 'Gesellschaft', nouns: false, verbs: true, adjectives: true },
+    { label: 'Gruppe', value: 'Gruppe', nouns: true, verbs: false, adjectives: false },
+    { label: 'Koerper', value: 'Koerper', nouns: true, verbs: false, adjectives: true },
+    { label: 'Koerperfunktion', value: 'Koerperfunktion', nouns: false, verbs: true, adjectives: false },
+    { label: 'Kognition', value: 'Kognition', nouns: true, verbs: true, adjectives: false },
+    { label: 'Kommunikation', value: 'Kommunikation', nouns: true, verbs: true, adjectives: false },
+    { label: 'Konkurrenz', value: 'Konkurrenz', nouns: false, verbs: true, adjectives: false },
+    { label: 'Kontakt', value: 'Kontakt', nouns: false, verbs: true, adjectives: false },
+    { label: 'Lokation', value: 'Lokation', nouns: false, verbs: true, adjectives: false },
+    { label: 'Menge', value: 'Menge', nouns: true, verbs: false, adjectives: true },
+    { label: 'Mensch', value: 'Mensch', nouns: true, verbs: false, adjectives: false },
+    { label: 'Motiv', value: 'Motiv', nouns: true, verbs: false, adjectives: false },
+    { label: 'Nahrung', value: 'Nahrung', nouns: true, verbs: false, adjectives: false },
+    { label: 'natGegenstand', value: 'natGegenstand', nouns: true, verbs: false, adjectives: false },
+    { label: 'natPhaenomen', value: 'natPhaenomen', nouns: true, verbs: true, adjectives: true },
+    { label: 'Ort', value: 'Ort', nouns: true, verbs: false, adjectives: true },
+    { label: 'Pertonym', value: 'Pertonym', nouns: false, verbs: false, adjectives: true },
+    { label: 'Perzeption', value: 'Perzeption', nouns: false, verbs: true, adjectives: true },
+    { label: 'Pflanze', value: 'Pflanze', nouns: true, verbs: false, adjectives: false },
+    { label: 'privativ', value: 'privativ', nouns: false, verbs: false, adjectives: true },
+    { label: 'Relation', value: 'Relation', nouns: true, verbs: false, adjectives: true },
+    { label: 'Schoepfung', value: 'Schoepfung', nouns: false, verbs: true, adjectives: false },
+    { label: 'Substanz', value: 'Substanz', nouns: true, verbs: false, adjectives: true },
+    { label: 'Tier', value: 'Tier', nouns: true, verbs: false, adjectives: false },
+    { label: 'Tops', value: 'Tops', nouns: true, verbs: false, adjectives: false },
+    { label: 'Veraenderung', value: 'Veraenderung', nouns: false, verbs: true, adjectives: false },
+    { label: 'Verbrauch', value: 'Verbrauch', nouns: false, verbs: true, adjectives: false },
+    { label: 'Verhalten', value: 'Verhalten', nouns: false, verbs: false, adjectives: true },
+    { label: 'Zeit', value: 'Zeit', nouns: true, verbs: false, adjectives: true },
+];
+

@@ -25,8 +25,11 @@ import axios from 'axios';
 // these are all per-id actions:
 export const actionTypes = actionTypesFromStrings([
     'SYNSET_SEARCH_UPDATE_SEARCH_TERM',
+    'SYNSET_SEARCH_UPDATE_SEARCH_PARAMS',
     'SYNSET_SEARCH_SET_IGNORE_CASE',
     'SYNSET_SEARCH_TOGGLE_IGNORE_CASE',
+    'SYNSET_SEARCH_TOGGLE_CATEGORY',
+    'SYNSET_SEARCH_TOGGLE_REGEX_SUPPORT',
     'SYNSET_SEARCH_UPDATE_ERROR',
     'SYNSET_SEARCH_SUBMITTED',
     'SYNSET_SEARCH_RESULTS_RETURNED',
@@ -34,21 +37,24 @@ export const actionTypes = actionTypesFromStrings([
     'SYNSET_SEARCH_RELOAD_HISTORY'
 ])
 
-
-// Simple action creators
-
 export function updateSearchTerm(id, searchTerm) {
     return { type: actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_TERM, id, searchTerm };
 }
-
+export function updateSearchParams(id, params) {
+    return { type: actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_PARAMS, id, params };
+}
 export function toggleIgnoreCase(id) {
     return { type: actionTypes.SYNSET_SEARCH_TOGGLE_IGNORE_CASE, id };
 }
-
+export function toggleRegexSupport(id) {
+    return { type: actionTypes.SYNSET_SEARCH_TOGGLE_REGEX_SUPPORT, id };
+}
 export function setIgnoreCase(id, ignoreCase) {
     return { type: actionTypes.SYNSET_SEARCH_SET_IGNORE_CASE, id, ignoreCase };
 }
-
+export function toggleCategory(id, category) {
+    return { type: actionTypes.SYNSET_SEARCH_TOGGLE_CATEGORY, id, category };
+}
 export function updateError(id, error) {
     return { type: actionTypes.SYNSET_SEARCH_UPDATE_ERROR, id, error };
 }
@@ -71,11 +77,23 @@ export function reloadHistory(id) {
 }
     
 
-// Thunk action creators: these return thunks that perform async requests
-
-export function doSearch(id, term, ignoreCase) {
+// Async action creator that queries the /synsets endpoint with the
+// query parameters from the advanced search form and dispatches the
+// results.
+// 
+// params:
+//   id: the ID of the search box for which this search should be recorded.
+//   params: Object representing the search query.  It must contain a string
+//     value for the 'word' property; all other properties are optional. These
+//     include:
+//       ignoreCase :: Boolean
+//       regEx :: Boolean
+//       editDistance :: String for Integer > 0 (invalid if regEx is true)
+//     as well as any of the Boolean flags for word category, word class, and
+//     orthographic variants which are submitted from the advanced search form. 
+//     See SynsetSearchForm for all possible options.
+export function doAdvancedSearch(id, params) {
     return function (dispatch) {
-        const params = { word: term, ignoreCase }
         const config = { params };
         dispatch(submitSearch(id, params));
         return axios.get(apiPath.synsets, config)
@@ -84,4 +102,12 @@ export function doSearch(id, term, ignoreCase) {
                   error => dispatch(updateError(id, `Failed to retrieve results for "${params.word}".`)) 
              );
     };
+}
+
+// This wrapper provides backward-compatible support for the signature
+// of doSearch() up through version 1.2.5, where the only search
+// option was a boolean flag for ignoring case. We can remove it in
+// 2.0 and rename doAdvancedSearch to doSearch:
+export function doSearch(id, word, ignoreCase) {
+    return doAdvancedSearch(id, { word, ignoreCase });
 }
