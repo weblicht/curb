@@ -143,9 +143,6 @@ export const DEFAULT_NETWORK_LAYOUT = {
 // The default node options draw nodes as blue dots with the label
 // positioned below them:
 export const DEFAULT_NETWORK_NODES = {
-    // add white outline to node labels:
-    strokeWidth: 3,
-    strokeColor: "white",
     shape: "dot",
     size: 10,
     font: {
@@ -153,6 +150,34 @@ export const DEFAULT_NETWORK_NODES = {
     },
     widthConstraint: 150,   
 };
+
+// These node options for highlighted nodes are only added to
+// those nodes which the backend marks as being highlighted (e.g., the
+// LCS node(s) in a path): 
+export const DEFAULT_NETWORK_HIGHLIGHTED_NODES = {
+    color: {
+        background: "#fff3cd", // light yellow, matches Bootstrap warning
+        border: "#856404", // dark yellow, matches Bootstrap warning
+        highlight: {
+            background: "#fff3cd",
+            border: "#856404", 
+        } 
+    }
+};
+
+// These node options for the "end" nodes are only added to the from
+// and to nodes which are used to construct a path graph:
+export const DEFAULT_NETWORK_END_NODES = {
+    color: {
+        background: "#d4edda", // light green, matches Bootstrap success 
+        border: "#155724", // dark green, matches Bootstrap success 
+        highlight: {
+            background: "#d4edda",
+            border: "#155724", 
+        }
+    }
+};
+
 
 // The default edge options draw edges as curves with arrows pointing
 // from hypernym to hyponym:
@@ -175,19 +200,19 @@ export const DEFAULT_NETWORK_EDGES =  {
 export const DEFAULT_NETWORK_PHYSICS = {
     enabled: true,
     solver: "hierarchicalRepulsion",
+    maxVelocity: 55,
     hierarchicalRepulsion: {
         centralGravity: 0,
         springLength: 85,
         springConstant: 0.1,
-        avoidOverlap: 1,
-        maxVelocity: 55,
+        //avoidOverlap: 1,
     },
 };
 
 // The default interaction options enable the navigation and zoom
 // restoration buttons:
 export const DEFAULT_NETWORK_INTERACTION = {
-    enabled: true,
+    //enabled: true,
     navigationButtons: true,
     keyboard: true,
 };
@@ -1092,9 +1117,13 @@ class NetworkContainer extends React.Component {
 
 // we accept each of the module-specific configuration objects (e.g.
 // nodes, edges, layout) as individual props, using the defaults
-// specified as constants above:
+// specified as constants above; we also accept additional
+// configuration objects to be applied to highlighted nodes and the
+// end nodes in the path:
 NetworkContainer.defaultProps = {
-    ...DEFAULT_NETWORK_OPTIONS
+    ...DEFAULT_NETWORK_OPTIONS,
+    highlightedNodes: DEFAULT_NETWORK_HIGHLIGHTED_NODES,
+    endNodes: DEFAULT_NETWORK_END_NODES
 };
 
 function stateToNetworkContainerProps(state, ownProps) {
