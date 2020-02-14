@@ -7,23 +7,6 @@ const actionTypes = hnymPathQueries.actionTypes;
 
 const defaultPrivState = SI([]);
 
-// helper to munge the directions of edges after the LCS, which are
-// currently returned with from and to reversed:
-function flipAfterLcs(graph) {
-    var afterLcs = false;
-    const newEdges = graph.edges.map(edge => {
-        // assuming here that the edges come back in order... 
-        if (edge.from === graph.lcsId) {
-            afterLcs = true;
-        }
-        if (afterLcs) {
-            return { from: edge.to, to: edge.from };
-        }
-        return edge;
-    })
-
-    return { ...graph, edges: newEdges };
-}
 
 function hnymPathsInnerReducer(state = defaultPrivState, action) {
     switch (action.type) {
