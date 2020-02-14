@@ -126,6 +126,99 @@ export const DEFAULT_LINK_CONFIG = {
     opacity: DEFAULT_LINK_OPACITY 
 };
 
+// Default configuration options for vis.js:
+
+// The default layout options create a hierarchical network layout:
+export const DEFAULT_NETWORK_LAYOUT = {
+    hierarchical: {
+        enabled: true,
+        // these options position root/LCS at top and draws
+        // the graph like a standard tree:
+        direction: "DU", 
+        sortMethod: "directed",
+        nodeSpacing: 200,
+    }
+};
+
+// The default node options draw nodes as blue dots with the label
+// positioned below them:
+export const DEFAULT_NETWORK_NODES = {
+    // add white outline to node labels:
+    strokeWidth: 3,
+    strokeColor: "white",
+    shape: "dot",
+    size: 10,
+    font: {
+        size: 11,
+    },
+    widthConstraint: 150,   
+};
+
+// The default edge options draw edges as curves with arrows pointing
+// from hypernym to hyponym:
+export const DEFAULT_NETWORK_EDGES =  {
+    smooth: {
+        type: "cubicBezier",
+    }, 
+    color: {
+        inherit: false, // highlighted nodes shouldn't have highlighted edges
+    },
+    arrows: { from: true }, 
+};
+
+// The default physics uses the hierarchical repulsion model (in
+// conjunction with the default hierarchical layout, above) to layout
+// the graph. Note: this combination of options is not perfect, but it
+// seems to reduce the number of edge crossings a bit in more
+// complicated graphs, and mostly gives nice looking results, though a
+// few manual adjustments by the user may be necessary:
+export const DEFAULT_NETWORK_PHYSICS = {
+    enabled: true,
+    solver: "hierarchicalRepulsion",
+    hierarchicalRepulsion: {
+        centralGravity: 0,
+        springLength: 85,
+        springConstant: 0.1,
+        avoidOverlap: 1,
+        maxVelocity: 55,
+    },
+};
+
+// The default interaction options enable the navigation and zoom
+// restoration buttons:
+export const DEFAULT_NETWORK_INTERACTION = {
+    enabled: true,
+    navigationButtons: true,
+    keyboard: true,
+};
+
+// The default configure options *disable* the network configuration
+// GUI. Enabling can be helpful for development, though, especially
+// when trying to play around with the physics to find a good
+// combination of options.
+export const DEFAULT_NETWORK_CONFIGURE = {
+    enabled: false,
+    // uncomment this to provide a set of controls to play around with all the settings:
+    //     enabled: true,
+    //     filter: "physics", // or true for all options
+    //     showButton: true,
+    //     //container: config.optionsRef
+    // },
+};
+
+// The default vis.js network options. Packs all of the default
+// options above into the top level options object that is passed to
+// the network constructor.
+export const DEFAULT_NETWORK_OPTIONS = {
+    configure: DEFAULT_NETWORK_CONFIGURE,
+    interaction: DEFAULT_NETWORK_INTERACTION,
+    layout: DEFAULT_NETWORK_LAYOUT,
+    physics: DEFAULT_NETWORK_PHYSICS,
+    nodes: DEFAULT_NETWORK_NODES,
+    edges: DEFAULT_NETWORK_EDGES,
+};
+
+
 // D3VerticalTreeGraph starts here - heed the notice at the top of this file!
 // params:
 //   svgNode :: React ref, a reference to the svg DOM node where the graph should be drawn
@@ -919,109 +1012,74 @@ function isEqualNodes(node1, node2) {
     return true;
 }
 
-function VisHierarchicalGraph(containerRef, data, config) {
-    const options = {
-        ...config,
-        // provides a set of controls to play around with all the settings:
-        // configure: {
-        //     enabled: true,
-        //     filter: "physics",
-        //     showButton: true,
-        //     //container: config.optionsRef
-        // },
-
-        // enables the navigation buttoms and zoom restoration:
-        interaction: {
-            navigationButtons: true,
-            keyboard: true
-        },
-        layout: {
-            hierarchical: {
-                enabled: true,
-                // these options position root/LCS at top and draws
-                // the graph like a standard tree:
-                direction: "DU", 
-                sortMethod: "directed",
-                nodeSpacing: 200,
-            }
-        },
-        physics: {
-            enabled: true,
-            solver: "hierarchicalRepulsion",
-            // this is not perfect, but this combination of options
-            // seems to reduce the number of edge crossings a bit in
-            // more complicated graphs, and gives nice looking results
-            // possibly after a few user movements:
-            hierarchicalRepulsion: {
-                centralGravity: 0,
-                springLength: 85,
-                springConstant: 0.4,
-                avoidOverlap: 1,
-                maxVelocity: 55,
-            }
-        },
-        nodes: {
-            // add white outline to node labels:
-            strokeWidth: 3,
-            strokeColor: "white",
-            // draw all nodes as dots with labels outside:
-            shape: "dot",
-            size: 10,
-            font: {
-                size: 11,
-            },
-            widthConstraint: 150,
-        },
-        edges: {
-            // draws "curvy" edges
-            smooth: {
-                type: "cubicBezier",
-            }, 
-            //arrows: { to: true }, // draws arrow from hyponym to hypernym
-        },
-    };
+// Creates and returns a new vis.js Network instance.
+// params:
+//   containerRef: a DOM node for a container where the network should be drawn.
+//     The canvas will become a descendant of this node in the DOM.
+//   data: Object :: the data object to pass to the Network constructor. It must
+//     have two properties:
+//       nodes :: [ { id: <someId>, ... } ]
+//       edges :: [ { from: <someId>, to: <someOtherId>, ... } ]
+//     The nodes and edges may contain additional data.  See the vis.js documentation
+//     for more info.
+//     Note: vis.js needs mutable data structures, so the data object
+//     is passed through seamless-immutable's asMutable method here.
+//   options: Object :: the configuration object to pass to the
+//     Network constructor. There are many possible options to control
+//     both the layout and behavior of the graph; see the default
+//     options objects above, and the vis.js documentation, for more
+//     information.
+function VisGraph(containerRef, data, options) {
     const mutData = SI.asMutable(data, { deep: true }); // vis.js needs mutable data
     const network = new Network(containerRef, mutData, options);
     return network;
 }
 
+
+// A container for a vis.js Network.
+// props:
+//   data: Object representing a network
+//   options (optional): Object with configuration options for vis.js.
+//     Individual option objects can also be given as props.
 class NetworkContainer extends React.Component {
     constructor(props) {
         super(props);
         this.containerRef = React.createRef();
+        this.network = null;
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.data && this.props.data.length) {
-            var seenIds = [];
-            const allNodes = this.props.data.map(graph => graph.nodes).flat().filter(
-                node => {
-                    if (seenIds.includes(node.id)) return false;
-                    seenIds.push(node.id);
-                    return true;
-                }
-            );
-            var seenEdges = {};
-            const allEdges = this.props.data.map(graph => graph.edges).flat().filter(
-                edge => {
-                    const { from, to } = edge;
-                    if (seenEdges[from] && seenEdges[from].includes(to)) return false;
-                    if (seenEdges[from]) {
-                        seenEdges[from].push(to);
-                    } else {
-                        seenEdges[from] = [to];
-                    }
-                    return true;
-                }
-            );
-            
-            const combinedGraph = {
-                nodes: SI.asMutable(allNodes, { deep: true }),
-                edges: SI.asMutable(allEdges, { deep: true }),
-            };
+        if (this.props.data && this.props.data.nodes && this.props.data.nodes.length) {
+            if (this.network !== null) {
+                // we're redrawing after a props change, so destroy the old network:
+                this.network.destroy();
+                this.network = null;
+            }
 
-            VisHierarchicalGraph(this.containerRef.current, combinedGraph, {});
+            this.draw();
         }
+    }
+
+    componentWillUmount() {
+        if (this.network !== null) {
+            this.network.destroy();
+        }
+    }
+
+    draw() {
+        // allow caller to pass a complete options object, or to
+        // override individual defaults via props. These props are all
+        // given default values via defaultProps, below.
+        const options = this.props.options || {
+            configure: this.props.configure,
+            interaction: this.props.interaction,
+            layout: this.props.layout,
+            physics: this.props.physics,
+            nodes: this.props.nodes,
+            edges: this.props.edges,
+        };
+        
+        this.network = VisGraph(this.containerRef.current, this.props.data, options);
     }
 
     render() {
@@ -1031,6 +1089,13 @@ class NetworkContainer extends React.Component {
         );
     }
 }
+
+// we accept each of the module-specific configuration objects (e.g.
+// nodes, edges, layout) as individual props, using the defaults
+// specified as constants above:
+NetworkContainer.defaultProps = {
+    ...DEFAULT_NETWORK_OPTIONS
+};
 
 function stateToNetworkContainerProps(state, ownProps) {
     return {
