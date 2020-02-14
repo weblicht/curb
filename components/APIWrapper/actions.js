@@ -16,7 +16,7 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 import { actionTypesFromStrings } from '../../helpers';
-import { APIError, dataIsArrayOfObjects } from './validation';
+import { APIError, isArrayOfObjects } from './validation';
 
 import axios from 'axios';
 
@@ -30,12 +30,14 @@ import axios from 'axios';
 //     fields. The results of paramsTransformer(params) will be
 //     spliced into action objects returned by the returned action
 //     creators.
-//   dataValidator (optional) :: response data -> Boolean : a function
-//     that validates the data attribute of the response (i.e.,
-//     response.data.data). This function should accept the data and
-//     throw an APIError (see validation.js) if the data is not in the
-//     right format. Otherwise, it should return true. Defaults to a
-//     function that checks whether the data is an array of objects.
+//   dataValidator (optional) :: response data -> <anything> : a
+//     function that validates the data attribute of the response
+//     (i.e., response.data.data). This function should accept the
+//     data and throw an APIError (see validation.js) if the data is
+//     not in the right format. Otherwise, it should return validated
+//     data, which will be dispatched with the action creator for the
+//     returned data. Defaults to a function that checks whether the
+//     data is an array of objects.
 //
 // returns: {
 //   actionTypes: action types object with requested, returned, error types
@@ -53,7 +55,7 @@ export function makeQueryActions(prefix, endpoint,
                                  dataValidator) {
 
     const transformer = paramsTransformer || function (params) { return undefined; }
-    const validateData = dataValidator || dataIsArrayOfObjects;
+    const validateData = dataValidator || isArrayOfObjects;
 
     const requested = prefix + '_REQUESTED';
     const returned = prefix + '_RETURNED';
@@ -85,8 +87,8 @@ export function makeQueryActions(prefix, endpoint,
                 } 
 
                 try {
-                    validateData(response.data.data);
-                    dispatch(queryReturned(params, response.data.data));
+                    const validData = validateData(response.data.data);
+                    dispatch(queryReturned(params, validData));
                 } catch (e) {
                     if (e instanceof APIError) {
                         dispatch(queryError(params, e.message));

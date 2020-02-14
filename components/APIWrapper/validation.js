@@ -33,16 +33,33 @@ export class APIError extends ExternalError {
 // params:
 //   data: the data attribute of the object returned from the API
 //     (i.e., response.data.data, where response is an Axios response object).
-export function dataIsArrayOfObjects(data) {
+export function isArrayOfObjects(data) {
+    return isArrayOf(isObject, data);
+}
+
+export function isArrayOf(itemPredicate, data) {
     if (!Array.isArray(data)) {
         throw new APIError("Data is not an array")
     }
 
-    data.forEach(obj => {
-        if (typeof obj !== "object") {
-            throw new APIError("Data array contained non-object");
+    try {
+        const validatedData = data.map(itemPredicate);
+        return validatedData;
+    } catch (e) {
+        if (e instanceof APIError) {
+            throw new APIError(`Item in array is invalid: ${e.message}`);
+        } else {
+            throw e;
         }
-    });
+    }
+}
 
-    return true;
+// Note: for historical reasons, null passes this test! Don't use this
+// validator if you care that your object is non-null.
+export function isObject(data) {
+    if (typeof data !== "object") {
+        throw new APIError("Data is not an object");
+    }
+
+    return data;
 }
