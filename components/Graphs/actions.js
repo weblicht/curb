@@ -31,7 +31,7 @@ function isValidGraph(data) {
 export const hnymPathQueries = makeQueryActions(
     'HNYM_PATH',
     apiPath.hnymPaths,
-    params => ({ fromAndToId: `from${params.fromSynsetId}to${params.toSynsetId}` }),
+    params => ({ id: `from${params.fromSynsetId}to${params.toSynsetId}` }),
     isValidGraph
 ); 
 
