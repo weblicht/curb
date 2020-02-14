@@ -1103,7 +1103,16 @@ function stateToNetworkContainerProps(state, ownProps) {
     };
 }
 
+function propsToNetworkQueryParams(props) {
+    if (!(props.fromSynsetId && props.toSynsetId)) return undefined;
+
+    return {
+        fromSynsetId: props.fromSynsetId,
+        toSynsetId: props.toSynsetId
+    };
+}
 NetworkContainer = connect(stateToNetworkContainerProps)(NetworkContainer);
-NetworkContainer = connectWithApiQuery(NetworkContainer, hnymPathQueries.queryActions);
+NetworkContainer = connectWithApiQuery(NetworkContainer, hnymPathQueries.queryActions,
+                                       propsToNetworkQueryParams);
 
 export { NetworkContainer };
