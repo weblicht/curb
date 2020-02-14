@@ -1037,35 +1037,20 @@ function isEqualNodes(node1, node2) {
     return true;
 }
 
-// Creates and returns a new vis.js Network instance.
-// params:
-//   containerRef: a DOM node for a container where the network should be drawn.
-//     The canvas will become a descendant of this node in the DOM.
-//   data: Object :: the data object to pass to the Network constructor. It must
-//     have two properties:
-//       nodes :: [ { id: <someId>, ... } ]
-//       edges :: [ { from: <someId>, to: <someOtherId>, ... } ]
-//     The nodes and edges may contain additional data.  See the vis.js documentation
-//     for more info.
-//     Note: vis.js needs mutable data structures, so the data object
-//     is passed through seamless-immutable's asMutable method here.
-//   options: Object :: the configuration object to pass to the
-//     Network constructor. There are many possible options to control
-//     both the layout and behavior of the graph; see the default
-//     options objects above, and the vis.js documentation, for more
-//     information.
-function VisGraph(containerRef, data, options) {
-    const mutData = SI.asMutable(data, { deep: true }); // vis.js needs mutable data
-    const network = new Network(containerRef, mutData, options);
-    return network;
-}
-
 
 // A container for a vis.js Network.
 // props:
 //   data: Object representing a network
 //   options (optional): Object with configuration options for vis.js.
 //     Individual option objects can also be given as props.
+//     There are many possible options to control
+//     both the layout and behavior of the graph; see the default
+//     options objects above, and the vis.js documentation, for more
+//     information.
+//   highlightedNodes: additional options object that will be applied only to
+//     highlighted nodes in the graph
+//   endNodes: additional options object that will be applied only to
+//     endpoint (to/from) nodes in the graph
 class NetworkContainer extends React.Component {
     constructor(props) {
         super(props);
@@ -1103,8 +1088,39 @@ class NetworkContainer extends React.Component {
             nodes: this.props.nodes,
             edges: this.props.edges,
         };
+
+        // vis.js needs mutable data:
+        const mutData = SI.asMutable(this.props.data, { deep: true });
+
+        const nodes = mutData.nodes.map(
+            node => {
+                // limit label size to 60 chars:
+                const orthForms = node.orthForms.sort();
+                const fullLabel = orthForms.join(', ');
+                const label = (fullLabel.length > 60)
+                      ? fullLabel.slice(0, fullLabel.lastIndexOf(', ', 60)) + ' ...'
+                      : fullLabel;
+
+                const highlightOptions = mutData.highlights.includes(node.id)
+                      ? this.props.highlightedNodes
+                      : undefined;
+
+                const endOptions = (node.id === this.props.fromSynsetId
+                                        || node.id === this.props.toSynsetId)
+                      ? this.props.endNodes
+                      : undefined;
+
+                return {
+                    id: node.id,
+                    label,
+                    ...highlightOptions,
+                    ...endOptions
+                };
+            }
+        );
+        const graph = { nodes, edges: mutData.edges };
         
-        this.network = VisGraph(this.containerRef.current, this.props.data, options);
+        this.network = new Network(this.containerRef.current, graph, options);
     }
 
     render() {
