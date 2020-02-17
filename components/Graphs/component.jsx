@@ -1178,7 +1178,7 @@ function PathsBetweenGraph(props) {
             };
         }
     );
-    const graph = { nodes, edges: mutData.edges };
+    const graph = withLevels({ nodes, edges: mutData.edges });
 
     return (
         <NetworkContainer {...props} data={graph} />
@@ -1223,4 +1223,63 @@ export function PathsToRootGraph(props) {
                            toSynsetId={GERNEDIT_ROOT_ID}
                            onlyShortest={false} />
     );
+}
+
+// Helper to add levels to a vis.js graph object. This improves
+// layouts in cases where vis.js sometimes assigns the wrong levels
+// just based on the edge relation, particularly when paths of
+// different lengths converge at the same node.
+// params:
+//   graph Object, with nodes and edges arrays
+// returns:
+//   graph Object, where nodes include a level from 0 (representing a top node)
+//   ranging into the negative numbers
+function withLevels(graph) {
+    // Levels start at 0 and go negative; with the "DU" layout
+    // direction option for vis.js' hierarchical layout, this ensures
+    // that top nodes (like GNROOT) are always laid out visually at
+    // the top of the graph. We'd have to flip this for the "UD"
+    // direction; but the "DU" direction is the right one when we
+    // *don't* add levels.
+    
+    // We update nodesById as we make the level calculations. We
+    // ensure here that every node has an initial level (so vis.js
+    // doesn't barf if for some reason the graph is unconnected):
+    var nodesById = Object.fromEntries(graph.nodes.map(node => [node.id, {...node, level: 1}]));
+
+    // edge relation goes FROM children TO parent 
+    const edges = graph.edges;
+    var childrenById = {};
+    var topNodeIds = new Set(graph.nodes.map(node => node.id));
+    edges.forEach(edge => {
+        topNodeIds.delete(edge.from);
+        if (childrenById.hasOwnProperty(edge.to)) {
+            childrenById[edge.to].push(edge.from);
+        } else {
+            childrenById[edge.to] = [edge.from];
+        }
+    });
+    
+    function addLevelBelow(level, nodeId) {
+        // the node's new level is the min of the passed level and any existing level:
+        const oldLevel = nodesById[nodeId].level;
+        const newLevel = oldLevel ? Math.min(level, oldLevel) : level;
+        nodesById[nodeId].level = newLevel;
+       
+        // if node has no children, or level didn't change, we're done:
+        const children = childrenById[nodeId];
+        if (!children || !children.length || newLevel === oldLevel) return;
+
+        // otherwise (re)assign level of all children below it:
+        children.forEach(childId => addLevelBelow(newLevel - 1, childId));
+
+    }
+
+    // assign levels in the graph starting with 0 at the top nodes:
+    topNodeIds.forEach(nodeId => addLevelBelow(0, nodeId));
+
+    return {
+        ...graph,
+        nodes: Object.values(nodesById)
+    };
 }
