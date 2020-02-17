@@ -25,6 +25,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import SI from 'seamless-immutable';
 import { Network } from 'visjs-network';
+import classNames from 'classnames';
 
 // *******************************************************************
 // READ THIS FIRST:
@@ -243,6 +244,10 @@ export const DEFAULT_NETWORK_OPTIONS = {
     edges: DEFAULT_NETWORK_EDGES,
 };
 
+// The default style for the wrapper div around a vis.js network.
+export const DEFAULT_NETWORK_CONTAINER_STYLE = {
+    height: "800px"
+};
 
 // D3VerticalTreeGraph starts here - heed the notice at the top of this file!
 // params:
@@ -1038,7 +1043,8 @@ function isEqualNodes(node1, node2) {
 }
 
 
-// A container for a vis.js Network.
+// A container for a vis.js Network.  Renders the wrapper div and passes the ref
+// down to vis.js to draw the actual network.
 // props:
 //   data: Object representing a network
 //   options (optional): Object with configuration options for vis.js.
@@ -1047,10 +1053,16 @@ function isEqualNodes(node1, node2) {
 //     both the layout and behavior of the graph; see the default
 //     options objects above, and the vis.js documentation, for more
 //     information.
-//   highlightedNodes: additional options object that will be applied only to
-//     highlighted nodes in the graph
-//   endNodes: additional options object that will be applied only to
-//     endpoint (to/from) nodes in the graph
+//   highlightedNodes (optional): additional options object that will
+//     be applied only to highlighted nodes in the graph
+//   endNodes (optional): additional options object that will be
+//     applied only to endpoint (to/from) nodes in the graph
+//   containerStyle (optional): style object to be forwarded to the
+//     wrapper div around the network. By default renders the
+//     container div with a fixed height.
+//   className, extras (optional): class name and extras to be applied
+//     as classes to the wrapper div around the network.  By default adds
+//     a "network-wrapper" class that can be used to style the wrapper in CSS.
 class NetworkContainer extends React.Component {
     constructor(props) {
         super(props);
@@ -1125,7 +1137,10 @@ class NetworkContainer extends React.Component {
 
     render() {
         return (
-            <div ref={this.containerRef} className="network-container" style={{ height: '600px'}}>
+            <div ref={this.containerRef}
+                 className={classNames(this.props.className || "network-wrapper",
+                                       this.props.extras)}
+                 style={this.props.containerStyle}>
             </div>
         );
     }
@@ -1139,7 +1154,8 @@ class NetworkContainer extends React.Component {
 NetworkContainer.defaultProps = {
     ...DEFAULT_NETWORK_OPTIONS,
     highlightedNodes: DEFAULT_NETWORK_HIGHLIGHTED_NODES,
-    endNodes: DEFAULT_NETWORK_END_NODES
+    endNodes: DEFAULT_NETWORK_END_NODES,
+    containerStyle: DEFAULT_NETWORK_CONTAINER_STYLE
 };
 
 function stateToNetworkContainerProps(state, ownProps) {
