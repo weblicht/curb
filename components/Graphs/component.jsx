@@ -1046,17 +1046,13 @@ function isEqualNodes(node1, node2) {
 // A container for a vis.js Network.  Renders the wrapper div and passes the ref
 // down to vis.js to draw the actual network.
 // props:
-//   data: Object representing a network
+//   data: Object representing a network, containing nodes and edges arrays.
 //   options (optional): Object with configuration options for vis.js.
 //     Individual option objects can also be given as props.
 //     There are many possible options to control
 //     both the layout and behavior of the graph; see the default
 //     options objects above, and the vis.js documentation, for more
 //     information.
-//   highlightedNodes (optional): additional options object that will
-//     be applied only to highlighted nodes in the graph
-//   endNodes (optional): additional options object that will be
-//     applied only to endpoint (to/from) nodes in the graph
 //   containerStyle (optional): style object to be forwarded to the
 //     wrapper div around the network. By default renders the
 //     container div with a fixed height.
@@ -1101,38 +1097,7 @@ class NetworkContainer extends React.Component {
             edges: this.props.edges,
         };
 
-        // vis.js needs mutable data:
-        const mutData = SI.asMutable(this.props.data, { deep: true });
-
-        const nodes = mutData.nodes.map(
-            node => {
-                // limit label size to 60 chars:
-                const orthForms = node.orthForms.sort();
-                const fullLabel = orthForms.join(', ');
-                const label = (fullLabel.length > 60)
-                      ? fullLabel.slice(0, fullLabel.lastIndexOf(', ', 60)) + ' ...'
-                      : fullLabel;
-
-                const highlightOptions = mutData.highlights.includes(node.id)
-                      ? this.props.highlightedNodes
-                      : undefined;
-
-                const endOptions = (node.id === this.props.fromSynsetId
-                                        || node.id === this.props.toSynsetId)
-                      ? this.props.endNodes
-                      : undefined;
-
-                return {
-                    id: node.id,
-                    label,
-                    ...highlightOptions,
-                    ...endOptions
-                };
-            }
-        );
-        const graph = { nodes, edges: mutData.edges };
-        
-        this.network = new Network(this.containerRef.current, graph, options);
+        this.network = new Network(this.containerRef.current, this.props.data, options);
     }
 
     render() {
@@ -1146,34 +1111,109 @@ class NetworkContainer extends React.Component {
     }
 }
 
-// we accept each of the module-specific configuration objects (e.g.
-// nodes, edges, layout) as individual props, using the defaults
-// specified as constants above; we also accept additional
-// configuration objects to be applied to highlighted nodes and the
-// end nodes in the path:
+// we accept each of the vis.js module-specific configuration objects
+// (e.g. nodes, edges, layout) as individual props, using the defaults
+// specified as constants above:
 NetworkContainer.defaultProps = {
     ...DEFAULT_NETWORK_OPTIONS,
-    highlightedNodes: DEFAULT_NETWORK_HIGHLIGHTED_NODES,
-    endNodes: DEFAULT_NETWORK_END_NODES,
     containerStyle: DEFAULT_NETWORK_CONTAINER_STYLE
 };
 
-function stateToNetworkContainerProps(state, ownProps) {
+// Renders a graph of the path(s) between two synsets. Paths follow
+// the hypernym relation and run via one or more common subsumers of
+// the given synsets.
+// props:
+//   fromSynsetId :: String: the ID of the synset where the paths should start
+//   toSynsetId :: String: the ID of the synset where the paths should end
+//   onlyShortest (optional) :: Boolean: if true, draws only the shortest
+//     paths from the two synsets to their least common subsumer(s).  Otherwise,
+//     draws all paths. NOTE: drawing all paths is currently only implemented by
+//     the backend in the case where toSynsetId is the ID for GNROOT.
+//   highlightedNodes (optional): vis.js node options object that will
+//     be applied only to highlighted nodes in the graph
+//   endNodes (optional): vis.js node options object that will be
+//     applied only to endpoint (to/from) nodes in the graph
+//   Other props are forwarded to NetworkContainer to configure the display of
+//   the graph.
+function PathsBetweenGraph(props) {
+    if (!(props.data && props.data.nodes && props.data.nodes.length)) {
+        // draw the container even without data, so that layouts
+        // expecting it don't break:
+        return <NetworkContainer {...props} data={undefined} />;
+    } 
+
+    // vis.js needs mutable data:
+    const mutData = SI.asMutable(props.data, { deep: true });
+
+    const nodes = mutData.nodes.map(
+        node => {
+            // limit label size to 60 chars:
+            const orthForms = node.orthForms.sort();
+            const fullLabel = orthForms.join(', ');
+            const label = (fullLabel.length > 60)
+                  ? fullLabel.slice(0, fullLabel.lastIndexOf(', ', 60)) + ' ...'
+                  : fullLabel;
+            
+            const highlightOptions = mutData.highlights.includes(node.id)
+                  ? (props.highlightedNodes || DEFAULT_NETWORK_HIGHLIGHTED_NODES)
+                  : undefined;
+            
+            const endOptions = (node.id === props.fromSynsetId
+                                || node.id === props.toSynsetId)
+                  ? (props.endNodes || DEFAULT_NETWORK_END_NODES)
+                  : undefined;
+            
+            return {
+                id: node.id,
+                label,
+                ...highlightOptions,
+                ...endOptions
+            };
+        }
+    );
+    const graph = { nodes, edges: mutData.edges };
+
+    return (
+        <NetworkContainer {...props} data={graph} />
+    );
+}
+
+function stateToPathsBetweenProps(state, ownProps) {
     return {
         data: selectHnymPaths(state, ownProps)
     };
 }
 
-function propsToNetworkQueryParams(props) {
+function propsToPathsBetweenParams(props) {
+    // avoid API calls before we have both synset IDs:
     if (!(props.fromSynsetId && props.toSynsetId)) return undefined;
 
     return {
         fromSynsetId: props.fromSynsetId,
-        toSynsetId: props.toSynsetId
+        toSynsetId: props.toSynsetId,
+        onlyShortest: props.onlyShortest,
     };
 }
-NetworkContainer = connect(stateToNetworkContainerProps)(NetworkContainer);
-NetworkContainer = connectWithApiQuery(NetworkContainer, hnymPathQueries.queryActions,
-                                       propsToNetworkQueryParams);
+PathsBetweenGraph = connect(stateToPathsBetweenProps)(PathsBetweenGraph);
+PathsBetweenGraph = connectWithApiQuery(PathsBetweenGraph,
+                                        hnymPathQueries.queryActions,
+                                        propsToPathsBetweenParams);
 
-export { NetworkContainer };
+export { PathsBetweenGraph };
+
+// Renders a graph of all paths from a given synset to GNROOT.
+// props:
+//   fromSynsetId: the ID of the synset from which the paths should start
+// Other props are forwarded to NetworkContainer to configured the display
+// of the graph.
+export function PathsToRootGraph(props) {
+
+    const GERNEDIT_ROOT_ID = "51001";
+
+    return (
+        <PathsBetweenGraph {...props}
+                           fromSynsetId={props.fromSynsetId}
+                           toSynsetId={GERNEDIT_ROOT_ID}
+                           onlyShortest={false} />
+    );
+}
