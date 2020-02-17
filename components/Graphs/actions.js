@@ -24,7 +24,14 @@ function isValidGraph(data) {
         if (!(edge.from && edge.to)) throw new APIError("Graph data edge is missing .from or .to");
     });
 
-    return data;
+    var validatedData = data;
+    if (!(data.hasOwnProperty("highlights") && Array.isArray(data.highlights))) {
+        // ensure we have a highlights array even if the backend doesn't provide one.
+        // TODO: really, this should be done in the backend code...
+        validatedData.highlights = [];
+    }
+
+    return validatedData;
 }
 
 
