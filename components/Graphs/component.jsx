@@ -1140,7 +1140,7 @@ NetworkContainer.defaultProps = {
 //     effects on the appearance of the graph).
 //   Other props are forwarded to NetworkContainer to configure the display of
 //   the graph.
-function PathsBetweenGraph(props) {
+function HnymPathsBetweenGraph(props) {
     if (!(props.data && props.data.nodes && props.data.nodes.length)) {
         // draw the container even without data, so that layouts
         // expecting it don't break:
@@ -1185,13 +1185,13 @@ function PathsBetweenGraph(props) {
     );
 }
 
-function stateToPathsBetweenProps(state, ownProps) {
+function stateToHnymPathsBetweenProps(state, ownProps) {
     return {
         data: selectHnymPaths(state, ownProps)
     };
 }
 
-function propsToPathsBetweenParams(props) {
+function propsToHnymPathsBetweenParams(props) {
     // avoid API calls before we have both synset IDs:
     if (!(props.fromSynsetId && props.toSynsetId)) return undefined;
 
@@ -1201,27 +1201,25 @@ function propsToPathsBetweenParams(props) {
         onlyShortest: props.onlyShortest,
     };
 }
-PathsBetweenGraph = connect(stateToPathsBetweenProps)(PathsBetweenGraph);
-PathsBetweenGraph = connectWithApiQuery(PathsBetweenGraph,
-                                        hnymPathQueries.queryActions,
-                                        propsToPathsBetweenParams);
+HnymPathsBetweenGraph = connect(stateToHnymPathsBetweenProps)(HnymPathsBetweenGraph);
+HnymPathsBetweenGraph = connectWithApiQuery(HnymPathsBetweenGraph,
+                                            hnymPathQueries.queryActions,
+                                            propsToHnymPathsBetweenParams);
 
-export { PathsBetweenGraph };
+export { HnymPathsBetweenGraph };
 
 // Renders a graph of all paths from a given synset to GNROOT.
 // props:
 //   fromSynsetId: the ID of the synset from which the paths should start
 // Other props are forwarded to NetworkContainer to configured the display
 // of the graph.
-export function PathsToRootGraph(props) {
-
+export function HnymPathsToRootGraph(props) {
     const GERNEDIT_ROOT_ID = "51001";
-
     return (
-        <PathsBetweenGraph {...props}
-                           fromSynsetId={props.fromSynsetId}
-                           toSynsetId={GERNEDIT_ROOT_ID}
-                           onlyShortest={false} />
+        <HnymPathsBetweenGraph {...props}
+                               fromSynsetId={props.fromSynsetId}
+                               toSynsetId={GERNEDIT_ROOT_ID}
+                               onlyShortest={false} />
     );
 }
 
