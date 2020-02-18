@@ -213,7 +213,6 @@ export const DEFAULT_NETWORK_PHYSICS = {
 // The default interaction options enable the navigation and zoom
 // restoration buttons:
 export const DEFAULT_NETWORK_INTERACTION = {
-    //enabled: true,
     navigationButtons: true,
     keyboard: true,
 };
