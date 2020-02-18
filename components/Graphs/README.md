@@ -33,6 +33,17 @@ synset IDs.
 `HnymPathsToRootGraph`: high-level component to render all the paths in
 the hypernym relation between a given synset and the GNROOT node.
 
+**Note**: by default, the graphs rendered by the components support
+zooming and moving via control buttons provided by vis.js. Vis.js
+distributes CSS and images for these control buttons with its NPM
+package. You must serve these assets from your site if you want the
+control buttons to be rendered. Resetting the zoom level to fit the
+entire graph on the canvas, in particular, can only be done via these
+buttons, so make sure to serve them if you need this function. The
+required CSS is at `visjs-network/dist/vis-network.min.css`. The
+required images are in `visjs-network/lib/network/img/*.png`, and
+should be served from `./img` relative to the URL of the CSS.
+
 There are *many* configuration options available to tweak the
 appearance and interactivity of the graphs; see the constants section
 in the code and the [vis.js Network
