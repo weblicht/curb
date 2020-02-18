@@ -181,7 +181,7 @@ export const DEFAULT_NETWORK_END_NODES = {
 
 
 // The default edge options draw edges as curves with arrows pointing
-// from hypernym to hyponym:
+// in the middle of the edge from hyponyms to their hypernyms:
 export const DEFAULT_NETWORK_EDGES =  {
     smooth: {
         type: "cubicBezier",
@@ -189,7 +189,9 @@ export const DEFAULT_NETWORK_EDGES =  {
     color: {
         inherit: false, // highlighted nodes shouldn't have highlighted edges
     },
-    arrows: { from: true }, 
+    arrows: {
+        middle: { enabled: true, type: 'arrow' }
+    }, 
 };
 
 // The default physics uses the hierarchical repulsion model (in
@@ -215,6 +217,7 @@ export const DEFAULT_NETWORK_PHYSICS = {
 export const DEFAULT_NETWORK_INTERACTION = {
     navigationButtons: true,
     keyboard: true,
+    multiselect: true,
 };
 
 // The default configure options *disable* the network configuration
