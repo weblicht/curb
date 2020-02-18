@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
-import { isVisible, comparisonOn } from '../../helpers';
+import { isComponent, isVisible, comparisonOn } from '../../helpers';
 import { hnymPathQueries } from './actions';
-import { selectHnymPaths } from './selectors';
+import { selectHnymPathsState } from './selectors';
 import { connectWithApiQuery } from '../APIWrapper';
 
 import * as d3 from 'd3';
@@ -1099,6 +1099,12 @@ class NetworkContainer extends React.Component {
         this.network = null;
     }
 
+    componentDidMount() {
+        if (this.props.data && this.props.data.nodes && this.props.data.nodes.length) {
+            this.draw();
+        }
+    }
+    
     componentDidUpdate(prevProps) {
         if (this.props.data && this.props.data.nodes && this.props.data.nodes.length
             && !isEqualNetworks(prevProps.data, this.props.data)) {
@@ -1172,14 +1178,23 @@ NetworkContainer.defaultProps = {
 //     node, up to this length. Defaults to 60. Pass null to always
 //     show all orthForms (but note that long labels can have negative
 //     effects on the appearance of the graph).
+//   displayUnavailable (optional) :: Component. If given, this
+//     component will be rendered just in case props.data is
+//     undefined. (Otherwise, null is returned from this component,
+//     i.e., nothing is rendered). The component will receive all of
+//     this component's props.
 //   Other props are forwarded to NetworkContainer to configure the display of
 //   the graph.
 function HnymPathsBetweenGraph(props) {
-    if (!(props.data && props.data.nodes && props.data.nodes.length)) {
-        // draw the container even without data, so that layouts
-        // expecting it don't break:
-        return <NetworkContainer {...props} data={undefined} />;
-    } 
+
+    if (props.data === undefined) {
+        if (isComponent(props.displayUnavailable)) {
+            const Unavailable = props.displayUnavailable;
+            return <Unavailable {...props} />;
+        }
+
+        return null;
+    }
 
     const maxLabelLength = props.maxLabelLength || 60;
     
@@ -1219,12 +1234,6 @@ function HnymPathsBetweenGraph(props) {
     );
 }
 
-function stateToHnymPathsBetweenProps(state, ownProps) {
-    return {
-        data: selectHnymPaths(state, ownProps)
-    };
-}
-
 function propsToHnymPathsBetweenParams(props) {
     // avoid API calls before we have both synset IDs:
     if (!(props.fromSynsetId && props.toSynsetId)) return undefined;
@@ -1235,7 +1244,7 @@ function propsToHnymPathsBetweenParams(props) {
         onlyShortest: props.onlyShortest,
     };
 }
-HnymPathsBetweenGraph = connect(stateToHnymPathsBetweenProps)(HnymPathsBetweenGraph);
+HnymPathsBetweenGraph = connect(selectHnymPathsState)(HnymPathsBetweenGraph);
 HnymPathsBetweenGraph = connectWithApiQuery(HnymPathsBetweenGraph,
                                             hnymPathQueries.queryActions,
                                             propsToHnymPathsBetweenParams);

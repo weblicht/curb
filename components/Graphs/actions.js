@@ -24,6 +24,16 @@ function isValidGraph(data) {
         if (!(edge.from && edge.to)) throw new APIError("Graph data edge is missing .from or .to");
     });
 
+    // workaround for now: current backend sends HTTP 200 with an
+    // empty graph object when path graph cannot be created, e.g.
+    // because the two endpoint synsets in a path belong to different
+    // word categories. The backend should send us a different status
+    // code and an error message in this case, but until that is
+    // implemented, this works instead:
+    if (!data.nodes.length && !data.edges.length) {
+        throw new APIError("Graph data not available");
+    }
+
     var validatedData = data;
     if (!(data.hasOwnProperty("highlights") && Array.isArray(data.highlights))) {
         // ensure we have a highlights array even if the backend doesn't provide one.

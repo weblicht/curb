@@ -5,19 +5,23 @@ import SI from 'seamless-immutable';
 
 const actionTypes = hnymPathQueries.actionTypes;
 
-const defaultPrivState = SI([]);
+const defaultPrivState = SI({
+    fetching: false,
+    data: undefined,
+    error: undefined
+});
 
 
 function hnymPathsInnerReducer(state = defaultPrivState, action) {
     switch (action.type) {
     case actionTypes.HNYM_PATH_REQUESTED: {
-        return state; // no op for now
+        return state.merge({ fetching: true }); 
     }
     case actionTypes.HNYM_PATH_RETURNED: {
-        return SI(action.data);
+        return state.merge({ fetching: false, data: action.data, error: undefined });
     }
-    case actionTypes.HNYM_PATH_ERROR: {
-        return state; // no op for now
+    case actionTypes.HNYM_PATH_QUERY_ERROR: {
+        return state.merge({ fetching: false, data: undefined, error: action.error }); 
     }
     default:
         return state;
