@@ -1041,6 +1041,40 @@ function isEqualNodes(node1, node2) {
     return true;
 }
 
+// Helper to do a deep comparison of two graphs (i.e., networks). Two
+// graphs are equal if they have the same nodes and edges. Two nodes
+// are equal if they have the same ID and label string. Two edges are
+// equal if they have the same from and to properties.
+function isEqualNetworks(net1, net2) {
+    // these tests handle cases where one or both nodes are null or
+    // undefined:
+    if (typeof net1 !== typeof net2) return false;
+    if (net1 === net2) return true; 
+
+    if ((net1.nodes && !net2.nodes) || (net2.nodes && !net1.nodes)) return false;
+    if ((net1.edges && !net2.edges) || (net2.edges && !net1.edges)) return false;
+
+    // We can now assume the two networks are objects with nodes and edges arrays: 
+    if (net1.nodes.length !== net2.nodes.length) return false;
+    if (net1.edges.length !== net2.edges.length) return false;
+
+
+    const nodes1 = net1.nodes.sort(comparisonOn('id'));
+    const nodes2 = net2.nodes.sort(comparisonOn('id'));
+    var i;
+    for (i = 0; i < nodes1.length; i++) {
+        if (nodes1[i].id !== nodes2[i].id) return false; 
+        if (nodes1[i].label !== nodes2[i].label) return false;
+    }
+
+    const edges1 = net1.edges.map(e => `${e.from}${e.to}`).sort();
+    const edges2 = net2.edges.map(e => `${e.from}${e.to}`).sort();
+    for (i = 0; i < edges1.length; i++) {
+        if (edges1[i] !== edges2[i]) return false; 
+    }
+
+    return true;
+}
 
 // A container for a vis.js Network.  Renders the wrapper div and passes the ref
 // down to vis.js to draw the actual network.
@@ -1066,9 +1100,10 @@ class NetworkContainer extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.data && this.props.data.nodes && this.props.data.nodes.length) {
+        if (this.props.data && this.props.data.nodes && this.props.data.nodes.length
+            && !isEqualNetworks(prevProps.data, this.props.data)) {
             if (this.network !== null) {
-                // we're redrawing after a props change, so destroy the old network:
+                // we're redrawing after a data change, so destroy the old network:
                 this.network.destroy();
                 this.network = null;
             }
