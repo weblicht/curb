@@ -1089,6 +1089,11 @@ function isEqualNetworks(net1, net2) {
 //     both the layout and behavior of the graph; see the default
 //     options objects above, and the vis.js documentation, for more
 //     information.
+//   keepPhysicsOn (optional) :: Boolean. When true, keeps the
+//     network's physics simulation enabled even after the layout has
+//     stabilized. Defaults to false, which allows the user to more
+//     precisely position nodes one at a time after the initial layout
+//     has been set by the physics.
 //   containerStyle (optional): style object to be forwarded to the
 //     wrapper div around the network. By default renders the
 //     container div with a fixed height.
@@ -1141,6 +1146,12 @@ class NetworkContainer extends React.Component {
         };
 
         this.network = new Network(this.containerRef.current, this.props.data, options);
+
+        if (!this.props.keepPhysicsOn) {
+            this.network.on("stabilized", info => {
+                this.network.setOptions({ physics: false });
+            });
+        }
     }
 
     render() {
