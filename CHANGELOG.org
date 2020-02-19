@@ -1,5 +1,36 @@
 * 1.x
 
+** 1.3.0
+
+This release contains a fairly major change which is *not backward
+compatible*: graph visualizations are now drawn with the visjs-network
+library, instead of d3. The components for the previous visualizations
+have been removed from the Graphs and ConRels directories, because
+they depend on d3, which has been removed as a dependency because of
+its size. Thus, any project relying on these components will need to
+be upgraded to use the new visualizations.  The major changes here are:
+
+  - a new /graphs/path backend endpoint is assumed which returns data
+    in a format that is easier to work with in the context of vis.js,
+    instead of relying on the /conrels endpoint to fetch hypernym
+    relation data. Initial implementations of this endpoint have been
+    written for the projects using germanet-common at the SfS.
+  - the APIWrapper component has been generalized to allow for
+    different types of data to be returned from API endpoints;
+    API-wrapped components can now supply a data validation function
+    to ensure that data returned from a backend endpoint is valid
+    before it is dispatched via a 'RETURNED' query action.
+  - the following new components are available in the Graphs directory
+    for rendering graphs of the hypernym relation via vis.js:
+
+    + NetworkContainer, a low-level React wrapper for vis.js' Network
+    + HnymPathsBetweenGraph, a high-level component that uses
+      NetworkContainer to render the paths in the hypernym relation
+      between two synsets via their least common subsumer(s)
+    + HnymPathsToRootGraph, a high-level component that renders all
+      paths in the hypernym relation between a given synset and the
+      GNROOT synset
+
 ** 1.2.5 
 
 This release contains bug fixes and adds a few minor features, namely:
