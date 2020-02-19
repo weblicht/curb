@@ -33,8 +33,7 @@
     "visjs-network": "^4.24.11"
   },
   "dependencies": {
-    "classnames": "^2.2.6",
-    "d3": "^5.11.0"
+    "classnames": "^2.2.6"
   },
   "keywords": [
     "germanet",
