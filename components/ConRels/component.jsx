@@ -16,13 +16,13 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 import { conRelsQueries } from './actions';
-import { selectConRels, selectHyponymsTree, selectHypernymsTree, selectHnymsTrees } from './selectors';
+import { selectConRels } from './selectors';
 import { DataList, DataTable, ListItem } from '../GenericDisplay/component';
-import { VerticalTreeGraph, VerticalDoubleTreeGraph } from '../Graphs/component';
-import { dataContainerFor, treeContainerFor } from '../DataContainer/component';
+import { dataContainerFor } from '../DataContainer/component';
 import { connectWithApiQuery } from '../APIWrapper';
 
 import React from 'react';
+import SI from 'seamless-immutable';
 
 export const CON_REL_FIELD_MAP = [
     ['id', 'ConRel Id'],
@@ -93,97 +93,8 @@ function ConRelsAsTable(props) {
 var ConRelsContainer = dataContainerFor('ConRels', selectConRels);
 ConRelsContainer = connectWithApiQuery(ConRelsContainer, conRelsQueries.queryActions);
 
-var HyponymsTree = treeContainerFor('Hyponyms', selectHyponymsTree);
-HyponymsTree = connectWithApiQuery(HyponymsTree, conRelsQueries.queryActions);
-
-var HypernymsTree = treeContainerFor('Hypernyms', selectHypernymsTree);
-HypernymsTree = connectWithApiQuery(HypernymsTree, conRelsQueries.queryActions);
-
-var HnymsTree = treeContainerFor('HyperAndHyponyms', selectHnymsTrees);
-HnymsTree = connectWithApiQuery(HnymsTree, conRelsQueries.queryActions);
-
-// Not a component; rather, it uses props to make a click handler
-// function, shared by the graph display components below
-function makeNodeClickHandler(props) {
-    return function expandOrCollapseNode(d) {
-        const synset = d.data; // the original node, 
-        const synsetId = synset.id;
-        if (synset.selected) {
-            props.unselect(synsetId);
-        } else {
-            props.select(synsetId);
-            props.query({ synsetId });
-        }
-    };
-}
-
-// props:
-//   nodeClickHandler (optional): d3 event handler function to handle
-//     clicks on nodes in the graph. The function should accept a d3
-//     'datum'; the original synset object for the clicked node is
-//     available on the datum's .data property.  If not passed, a
-//     default click handler is used which 'selects' clicked nodes.
-//     Selected nodes have their related hyper- or hypo-nyms displayed
-//     in the graph.
-//     
-// These props, if given, will be passed on to VerticalDoubleTreeGraph:
-//   margin
-//   width
-//   height
-//   nodes
-//   links 
-//   forceRedraw
-function HnymsGraph(props){
-    return (
-        <VerticalDoubleTreeGraph upwardTree={props.data.children[0]}
-                                 downwardTree={props.data.children[1]}
-                                 margin={props.margin}
-                                 width={props.width}
-                                 height={props.height}
-                                 nodes={props.nodes}
-                                 links={props.links}
-                                 forceRedraw={props.forceRedraw}
-                                 nodeClickHandler={props.nodeClickHandler || makeNodeClickHandler(props)} />
-    );
-}
-
-function HyponymsGraph(props){
-    return (
-        <VerticalTreeGraph tree={props.data}
-                           flip={false}
-                           margin={props.margin}
-                           width={props.width}
-                           height={props.height}
-                           nodes={props.nodes}
-                           links={props.links}
-                           forceRedraw={props.forceRedraw}
-                           nodeClickHandler={props.nodeClickHandler || makeNodeClickHandler(props)}/>
-    );
-}
-
-function HypernymsGraph(props){
-    return (
-        <VerticalTreeGraph tree={props.data}
-                           flip={true}
-                           margin={props.margin}
-                           width={props.width}
-                           height={props.height}
-                           nodes={props.nodes}
-                           links={props.links}
-                           forceRedraw={props.forceRedraw}
-                           nodeClickHandler={props.nodeClickHandler || makeNodeClickHandler(props)}/>
-
-    );
-}
-
 export { ConRelsContainer,
          ConRelsAsList,
          ConRelsAsTable,
-         HyponymsTree,
-         HypernymsTree,
-         HnymsTree,
-         HyponymsGraph,
-         HypernymsGraph,
-         HnymsGraph
-       };
+       }; 
 
