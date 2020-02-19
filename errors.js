@@ -26,3 +26,12 @@ export class InternalError {
         console.error(msg);
     }
 }
+
+// represents an error stemming from an external source: e.g., the
+// server returned data in an unexpected format
+export class ExternalError {
+    constructor(msg) {
+        this.message = msg;
+        console.error(msg);
+    }
+}

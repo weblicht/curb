@@ -16,6 +16,7 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 import { actionTypesFromStrings } from '../../helpers';
+import { APIError, isArrayOfObjects } from './validation';
 
 import axios from 'axios';
 
@@ -29,6 +30,14 @@ import axios from 'axios';
 //     fields. The results of paramsTransformer(params) will be
 //     spliced into action objects returned by the returned action
 //     creators.
+//   dataValidator (optional) :: response data -> <anything> : a
+//     function that validates the data attribute of the response
+//     (i.e., response.data.data). This function should accept the
+//     data and throw an APIError (see validation.js) if the data is
+//     not in the right format. Otherwise, it should return validated
+//     data, which will be dispatched with the action creator for the
+//     returned data. Defaults to a function that checks whether the
+//     data is an array of objects.
 //
 // returns: {
 //   actionTypes: action types object with requested, returned, error types
@@ -42,8 +51,11 @@ import axios from 'axios';
 //   }
 // }
 export function makeQueryActions(prefix, endpoint,
-                                 paramsTransformer = (params) => undefined,
-                                ) {
+                                 paramsTransformer,
+                                 dataValidator) {
+
+    const transformer = paramsTransformer || function (params) { return undefined; }
+    const validateData = dataValidator || isArrayOfObjects;
 
     const requested = prefix + '_REQUESTED';
     const returned = prefix + '_RETURNED';
@@ -55,13 +67,13 @@ export function makeQueryActions(prefix, endpoint,
     ]);
 
     function queryRequested(params) {
-        return { type: actionTypes[requested], params, ...paramsTransformer(params) };
+        return { type: actionTypes[requested], params, ...transformer(params) };
     }
     function queryReturned(params, data) {
-        return { type: actionTypes[returned], params, ...paramsTransformer(params), data };
+        return { type: actionTypes[returned], params, ...transformer(params), data };
     }
     function queryError(params, error) {
-        return { type: actionTypes[errored], params, ...paramsTransformer(params), error };
+        return { type: actionTypes[errored], params, ...transformer(params), error };
     }
 
     function doQuery(params) {
@@ -70,11 +82,19 @@ export function makeQueryActions(prefix, endpoint,
             dispatch(queryRequested(params));
 
             function validateResponse(response) {
-                if (!(response.data && response.data.data && Array.isArray(response.data.data))) {
-                    dispatch(queryError(params, 'Server returned a response with no data array'));
-                }
-                else {
-                    dispatch(queryReturned(params, response.data.data));
+                if (!(response.data && response.data.data)) {
+                    dispatch(queryError(params, 'Server returned a response with no data field'));
+                } 
+
+                try {
+                    const validData = validateData(response.data.data);
+                    dispatch(queryReturned(params, validData));
+                } catch (e) {
+                    if (e instanceof APIError) {
+                        dispatch(queryError(params, e.message));
+                    } else {
+                        throw e;
+                    }
                 }
             }
 

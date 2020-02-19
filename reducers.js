@@ -54,6 +54,7 @@ import { frames } from './components/Frames/reducers';
 import { lexExamples } from './components/LexExamples/reducers';
 import { lexRels } from './components/LexRels/reducers';
 import { lexUnits } from './components/LexUnits/reducers';
+import { hnymPaths } from './components/Graphs/reducers';
 import { wiktDefs } from './components/WiktionaryDefs/reducers';
 
 const fullAPIReducer = withGlobalActions(combineReducers({
@@ -61,6 +62,7 @@ const fullAPIReducer = withGlobalActions(combineReducers({
     conRels,
     iliRecs,
     frames,
+    hnymPaths,
     lexExamples,
     lexRels,
     lexUnits,
