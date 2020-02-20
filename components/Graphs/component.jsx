@@ -117,7 +117,10 @@ export const DEFAULT_NETWORK_PHYSICS = {
 // restoration buttons:
 export const DEFAULT_NETWORK_INTERACTION = {
     navigationButtons: true,
-    keyboard: true,
+    keyboard: {
+        enabled: true,
+        bindToWindow: false // true interacts badly with ü key on German layout 
+    },
     multiselect: true,
 };
 
