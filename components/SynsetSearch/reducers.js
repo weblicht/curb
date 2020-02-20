@@ -35,10 +35,23 @@ const searchFormInnerState = SI({
         word: undefined,
         ignoreCase: false,
         regEx: false,
-        adjectives: false,
-        nouns: false,
-        verbs: false
+        adj: false,
+        nomen: false,
+        verben: false,
+        // state for other form fields will also be stored here when
+        // params are reset via a history button, and used to supply
+        // defaultValues to the fields on the form, but we do not
+        // explicitly manage those values via Redux because it is
+        // unnecessary and tedious
     },
+    // changing the formKey causes the search form to be re-rendered
+    // from scratch and its fields to receive default values from the
+    // params object, above. We increment the formKey below whenever
+    // that should happen, namely whenever search parameters are
+    // explicitly reset (via the Clear button or a history button),
+    // and also whenever a search is submitted, unless the form is a
+    // "refinable" one that should not be cleared.
+    formKey: 0,
     // parameters for previous searches:
     history: [], 
     // results returned by backend:
@@ -69,17 +82,20 @@ function searchFormInnerReducer(state = searchFormInnerState, action) {
         return state.merge({ params });
     }
     case actionTypes.SYNSET_SEARCH_CLEAR_SEARCH_PARAMS: {
-        return state.merge({ params: searchFormInnerState.params });
+        return state.merge({ params: searchFormInnerState.params,
+                             formKey: state.formKey + 1 });
     }
     case actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_PARAMS: {
-        return state.merge({ params: action.params });
+        return state.merge({ params: action.params,
+                             formKey: state.formKey + 1 });
     }
     case actionTypes.SYNSET_SEARCH_UPDATE_ERROR: {
         return state.merge({ error: action.error });
     }
     case actionTypes.SYNSET_SEARCH_SUBMITTED: {
         return state.merge({
-            params: searchFormInnerState.params,
+            params: action.keepState ? action.params : searchFormInnerState.params,
+            formKey: action.keepState ? state.formKey : state.formKey + 1,
             synsets: [],
             alert: undefined,
             alertClass: undefined
