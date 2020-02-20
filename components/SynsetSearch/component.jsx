@@ -49,8 +49,23 @@ import { connect } from 'react-redux';
 //     the edit distance text input (advanced search options only)
 function SynsetSearchForm(props) {
 
+    // our one piece of local state:
+    const [showAdvanced, setShowAdvanced] = React.useState(false);
+    function toggleAdvancedOptions(e) {
+        e.preventDefault();
+        setShowAdvanced(isShown => !isShown);
+    }
+    function closeAdvancedOptions(e) {
+        // close advanced options if they are open so that they don't
+        // obscure results, warning messages, etc.:
+        if (showAdvanced) {
+            setShowAdvanced(false);
+        }
+    }
+
     // submit handler for form:
     function onSubmit(formData) {
+
         const { word, ignoreCase, regEx, editDistance, ...checkboxes } = formData;
 
         var params = {
@@ -87,13 +102,6 @@ function SynsetSearchForm(props) {
         if (orthFormVariants.length) params.orthFormVariants = orthFormVariants.join(',');
 
         props.doSearch(params);
-    }
-
-    // our one piece of local state:
-    const [showAdvanced, setShowAdvanced] = React.useState(false);
-    function toggleAdvancedOptions(e) {
-        e.preventDefault();
-        setShowAdvanced(isShown => !isShown);
     }
 
     // classes for advanced search options:
@@ -138,6 +146,7 @@ function SynsetSearchForm(props) {
                        required={true}
                        asGroup={true} groupClassName="col-4" />
             <SubmitButton text="Find"
+                          onClick={closeAdvancedOptions}
                           className={props.buttonClassName}
                           extras={props.buttonExtras || "btn-primary ml-3 my-auto"} />
 
