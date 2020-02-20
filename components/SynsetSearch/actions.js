@@ -25,6 +25,7 @@ import axios from 'axios';
 // these are all per-id actions:
 export const actionTypes = actionTypesFromStrings([
     'SYNSET_SEARCH_UPDATE_SEARCH_PARAMS',
+    'SYNSET_SEARCH_CLEAR_SEARCH_PARAMS',
     'SYNSET_SEARCH_TOGGLE_CATEGORY',
     'SYNSET_SEARCH_TOGGLE_REGEX_SUPPORT',
     'SYNSET_SEARCH_UPDATE_ERROR',
@@ -32,6 +33,10 @@ export const actionTypes = actionTypesFromStrings([
     'SYNSET_SEARCH_RESULTS_RETURNED',
     'SYNSET_SEARCH_RELOAD_HISTORY'
 ])
+
+export function clearSearchParams(id) {
+    return { type: actionTypes.SYNSET_SEARCH_CLEAR_SEARCH_PARAMS, id };
+}
 
 export function updateSearchParams(id, params) {
     return { type: actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_PARAMS, id, params };

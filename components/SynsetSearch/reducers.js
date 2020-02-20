@@ -68,6 +68,9 @@ function searchFormInnerReducer(state = searchFormInnerState, action) {
 
         return state.merge({ params });
     }
+    case actionTypes.SYNSET_SEARCH_CLEAR_SEARCH_PARAMS: {
+        return state.merge({ params: searchFormInnerState.params });
+    }
     case actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_PARAMS: {
         return state.merge({ params: action.params });
     }

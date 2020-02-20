@@ -18,13 +18,14 @@
 // SynsetSearch/component.jsx
 
 import { doAdvancedSearch as doSearch,
+         clearSearchParams,
          updateSearchParams,
          reloadHistory,
          toggleCategory,
          toggleRegexSupport } from './actions';
 import { selectSearchFormState,
          selectSynsetsForSearchForm } from './selectors';
-import { Button, Checkbox, Form, Options, Select, SubmitButton, TextInput } from '../GenericForms/component';
+import { Button, Checkbox, Form, Options, ResetButton, Select, SubmitButton, TextInput } from '../GenericForms/component';
 import { dataContainerFor } from '../DataContainer/component';
 
 import classNames from 'classnames';
@@ -145,10 +146,15 @@ function SynsetSearchForm(props) {
                        extras={props.inputExtras}
                        required={true}
                        asGroup={true} groupClassName="col-4" />
-            <SubmitButton text="Find"
+            <SubmitButton text="Search"
                           onClick={closeAdvancedOptions}
                           className={props.buttonClassName}
                           extras={props.buttonExtras || "btn-primary ml-3 my-auto"} />
+
+            <ResetButton text="Clear"
+                         onClick={props.clear}
+                         className={props.buttonClassName}
+                         extras={props.buttonExtras || "btn-secondary ml-1 my-auto"} />
 
             {props.advancedEnabled &&
              <a href="#" onClick={toggleAdvancedOptions} className="ml-3 my-1">
@@ -280,6 +286,7 @@ function searchFormStateToProps(state, ownProps) {
 function searchFormDispatchToProps(dispatch, ownProps) {
     return {
         doSearch: params => dispatch(doSearch(ownProps.id, params)),
+        clear: e => dispatch(clearSearchParams(ownProps.id)),
         toggleCategory: category => e => dispatch(toggleCategory(ownProps.id, category)),
         toggleRegexSupport: e => dispatch(toggleRegexSupport(ownProps.id)),
     };
