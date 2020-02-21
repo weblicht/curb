@@ -36,17 +36,17 @@ import { connect } from 'react-redux';
 // Renders a search form with text input and submit button for synset searches 
 // props:
 //   id :: String, an identifier for the search form
-//   advancedEnabled (optional) :: Boolean: when true, a link to
+//   advanced (optional) :: Boolean: when true, a link to
 //     display advanced search options is made available and the
 //     user's selections for these options are submitted with the
 //     form. Otherwise, the only search option is to ignore case,
 //     which displays as a checkbox next to the submit button.
 //     Defaults to false.
-//   refiningEnabled (optional) :: Boolean: when true, the search form
+//   refinable (optional) :: Boolean: when true, the search form
 //     will not be cleared after a successful submit, and instead keep
 //     its state. This allows the user to see the results and then
 //     adjust the search options to further refine them. Defaults to
-//     props.advancedEnabled, so that an advanced search form is
+//     props.advanced, so that an advanced search form is
 //     refinable by default.
 //   className, extras (optional): for the form element. 
 //   inputClassName, inputExtras (optional), className and extras for
@@ -84,10 +84,10 @@ function SynsetSearchForm(props) {
 
     // search forms with advanced options should be refinable by
     // default, but we allow the caller to override by explicitly
-    // setting refiningEnabled to false:
-    const keepState = (props.refiningEnabled === undefined)
-          ? !!props.advancedEnabled
-          : props.refiningEnabled;
+    // setting refinable to false:
+    const keepState = (props.refinable === undefined)
+          ? !!props.advanced
+          : props.refinable;
 
     // submit handler for form:
     function onSubmit(formData) {
@@ -144,14 +144,14 @@ function SynsetSearchForm(props) {
                          className={props.resetButtonClassName}
                          extras={props.resetButtonExtras || "btn-secondary ml-1 my-auto"} />
 
-            {props.advancedEnabled &&
+            {props.advanced &&
              <Button onClick={toggleAdvancedOptions}
                      className={props.optionsButtonClassName}
                      extras={props.optionsButtonExtras || "btn-link ml-1 my-auto"}>
                {showAdvanced ? "Hide" : "Show"} search options
              </Button>
             }
-            {!props.advancedEnabled &&
+            {!props.advanced &&
              // when the advanced options are not enabled, we show the
              // ignore case checkbox inline in the main search form,
              // with default classes that space it away from the subit
@@ -166,7 +166,7 @@ function SynsetSearchForm(props) {
             }
           </div>
 
-          {props.advancedEnabled &&
+          {props.advanced &&
            <div className={advancedContainerClasses}>
              <div className={advancedDropdownClasses}>
                <Button className="close" onClick={closeAdvancedOptions}>&times;</Button>

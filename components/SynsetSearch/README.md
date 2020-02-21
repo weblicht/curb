@@ -9,8 +9,8 @@ displaying the results of those searches.
 
 Displays a search form for synsets, including a text input, a submit
 button, and a checkbox for ignoring case. Advanced search options,
-available on a popup display, can also be enabled via the
-`advancedEnabled` prop.
+available on a popup display, can also be enabled via the `advanced`
+prop.
 
 The `id` prop is required and must be unique in the application, since
 it is used to track the state of the form in Redux.
