@@ -392,10 +392,12 @@ class SynsetSearchHistoryNav extends React.Component {
                         {this.props.emptyMessage || "No search history to display."}
                       </div>;
         const buttons = itemsToDisplay.map(
-            item => <Button text={item.params.word}
+            item => <Button title={`${item.numResults} results`}
                             onClick={this.props.redoSearch(item.params)}
                             className={this.props.buttonClassName}
-                            extras={this.props.buttonExtras} />
+                            extras={this.props.buttonExtras}>
+                      {item.params.word}
+                    </Button>
         );
         
         return (
