@@ -63,7 +63,16 @@ export function receiveResults(id, data, params) {
 }
 
 export function reloadHistory(id) {
-    const history = JSON.parse(localStorage.getItem(id + '.searchHistory')) || [];
+    var history = [];
+    try {
+        const rawHistory = JSON.parse(localStorage.getItem(id + '.searchHistory')) || [];
+        // minimal check to make sure we get usable data from localStorage:
+        history = rawHistory.filter(obj => obj.hasOwnProperty('params')
+                                           && obj.hasOwnProperty('numResults'))
+    } catch (e) {
+        // no-op; just send the empty array to the store
+    }
+
     return { type: actionTypes.SYNSET_SEARCH_RELOAD_HISTORY, id, history };
 }
     
