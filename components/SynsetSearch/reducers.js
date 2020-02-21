@@ -124,6 +124,12 @@ function searchFormInnerReducer(state = searchFormInnerState, action) {
             history: action.history
         });
     }
+    case actionTypes.SYNSET_SEARCH_CLEAR_HISTORY: {
+        return state.merge({
+            history: []
+        });
+    }
+
     default:
         return state;
     }

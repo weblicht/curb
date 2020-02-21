@@ -31,7 +31,8 @@ export const actionTypes = actionTypesFromStrings([
     'SYNSET_SEARCH_UPDATE_ERROR',
     'SYNSET_SEARCH_SUBMITTED',
     'SYNSET_SEARCH_RESULTS_RETURNED',
-    'SYNSET_SEARCH_RELOAD_HISTORY'
+    'SYNSET_SEARCH_RELOAD_HISTORY',
+    'SYNSET_SEARCH_CLEAR_HISTORY',
 ])
 
 export function clearSearchParams(id) {
@@ -74,6 +75,14 @@ export function reloadHistory(id) {
     }
 
     return { type: actionTypes.SYNSET_SEARCH_RELOAD_HISTORY, id, history };
+}
+
+export function clearHistory(id, removePersisted) {
+    if (removePersisted) {
+        localStorage.removeItem(id + '.searchHistory');
+    }
+    return { type: actionTypes.SYNSET_SEARCH_CLEAR_HISTORY, id };
+
 }
     
 
