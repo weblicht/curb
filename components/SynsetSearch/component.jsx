@@ -58,6 +58,10 @@ import { connect } from 'react-redux';
 //     extras for the reset button. Defaults style the button as a
 //     secondary control and space it slightly right from the submit
 //     button.  
+//   optionsButtonClassName, optionsButtonExtras (optional), className
+//     and extras for the Show/Hide search options button. Defaults
+//     style the button as a link and space it slightly right from the
+//     reset button.
 //   checkboxClassName, checkboxExtras (optional), className and
 //     extras for all checkboxes on the form.
 //   editDistanceClassName, editDistanceExtras (optional), className and extras for
@@ -141,9 +145,11 @@ function SynsetSearchForm(props) {
                          extras={props.resetButtonExtras || "btn-secondary ml-1 my-auto"} />
 
             {props.advancedEnabled &&
-             <a href="#" onClick={toggleAdvancedOptions} className="ml-3 my-1">
+             <Button onClick={toggleAdvancedOptions}
+                     className={props.optionsButtonClassName}
+                     extras={props.optionsButtonExtras || "btn-link ml-1 my-auto"}>
                {showAdvanced ? "Hide" : "Show"} search options
-             </a>
+             </Button>
             }
             {!props.advancedEnabled &&
              // when the advanced options are not enabled, we show the
