@@ -169,6 +169,7 @@ function SynsetSearchForm(props) {
           {props.advancedEnabled &&
            <div className={advancedContainerClasses}>
              <div className={advancedDropdownClasses}>
+               <Button className="close" onClick={closeAdvancedOptions}>&times;</Button>
                <h5>Search term interpretation</h5>
                <div className="form-group">
                  <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
