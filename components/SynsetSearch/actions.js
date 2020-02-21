@@ -147,13 +147,14 @@ function asSearchQueryParams(formData) {
     }
     
     // convert other checkbox values to comma-separated lists for the backend:
+    var category;
     var wordCategories = [];
     var wordClasses = [];
     var orthFormVariants = [];
     Object.entries(checkboxes).forEach(
         ([name, state]) => {
             if (state !== "on") return;
-            if (WORD_CATEGORY_VALUES.includes(name)) wordCategories.push(name);
+            if (category = WORD_CATEGORY_VALUES_MAP[name]) wordCategories.push(category);
             if (WORD_CLASS_VALUES.includes(name)) wordClasses.push(name);
             if (ORTH_VARIANT_VALUES.includes(name)) orthFormVariants.push(name);
         }
@@ -212,11 +213,16 @@ export const WORD_CLASS_OPTIONS = [
 
 // these values are coded as field names in the form 
 export const WORD_CLASS_VALUES = WORD_CLASS_OPTIONS.map(wc => wc.value);
-export const WORD_CATEGORY_VALUES = [
-    'adj',
-    'nomen',
-    'verben'
-];
+
+// maps front-end names for the word category form fields to the
+// values expected by the backend:
+export const WORD_CATEGORY_VALUES_MAP = {
+    adjectives: 'adj',
+    nouns: 'nomen',
+    verbs: 'verben'
+};
+export const WORD_CATEGORY_VALUES = Object.values(WORD_CATEGORY_VALUES_MAP); 
+
 export const ORTH_VARIANT_VALUES = [
       'orthForm',
       'orthVar',

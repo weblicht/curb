@@ -204,24 +204,24 @@ function SynsetSearchForm(props) {
                    <h5>Word category</h5>
                    <p className="small text-muted">Empty selection searches all categories.</p>
                    <Checkbox id={`${props.id}-adjectives`} label="Adjectives"
-                             name="adj"
+                             name="adjectives"
                              asGroup={false} 
-                             checked={props.params.adj}
-                             onChange={props.toggleCategory('adj')}
+                             checked={props.params.adjectives}
+                             onChange={props.toggleCategory('adjectives')}
                              className={props.checkboxClassName}
                              extras={props.checkboxExtras} />
                    <Checkbox id={`${props.id}-nouns`} label="Nouns"
-                             name="nomen"
+                             name="nouns"
                              asGroup={false} 
-                             checked={props.params.nomen}
-                             onChange={props.toggleCategory('nomen')}
+                             checked={props.params.nouns}
+                             onChange={props.toggleCategory('nouns')}
                              className={props.checkboxClassName}
                              extras={props.checkboxExtras} />
                    <Checkbox id={`${props.id}-verbs`} label="Verbs"
-                             name="verben"
+                             name="verbs"
                              asGroup={false} 
-                             checked={props.params.verben}
-                             onChange={props.toggleCategory('verben')}
+                             checked={props.params.verbs}
+                             onChange={props.toggleCategory('verbs')}
                              className={props.checkboxClassName}
                              extras={props.checkboxExtras} />
                  </div>
@@ -449,12 +449,12 @@ function WordClassCheckboxes(props) {
     }
 
     function isDisabled(wordClass) {
-        const allUnchecked = !props.params.nomen && !props.params.adj && !props.params.verben;
+        const allUnchecked = !props.params.nouns && !props.params.adjectives && !props.params.verbs;
 
         if (allUnchecked) return false;
-        if (props.params.nomen && wordClass.nouns) return false;
-        if (props.params.adj && wordClass.adjectives) return false;
-        if (props.params.verben && wordClass.verbs) return false;
+        if (props.params.nouns && wordClass.nouns) return false;
+        if (props.params.adjectives && wordClass.adjectives) return false;
+        if (props.params.verbs && wordClass.verbs) return false;
 
         return true;
     }

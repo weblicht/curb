@@ -35,9 +35,9 @@ const searchFormInnerState = SI({
         word: undefined,
         ignoreCase: false,
         regEx: false,
-        adj: false,
-        nomen: false,
-        verben: false,
+        adjectives: false,
+        nouns: false,
+        verbs: false,
         // state for other form fields will also be stored here when
         // params are reset via a history button, and used to supply
         // defaultValues to the fields on the form, but we do not
