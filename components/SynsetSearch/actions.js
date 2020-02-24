@@ -169,7 +169,15 @@ function asSearchQueryParams(formData) {
     return params;
 }
 
-// Constants needed by asSearchQueryParams and elsewhere:
+// Constants needed by asSearchQueryParams and in the components:
+
+// WORD_CLASS_OPTIONS defines the appearance and behavior of the word class checkboxes.
+// Properties:
+//   value: the word class string sent to the backend
+//   label: for display next to checkbox (for now, the same as value)
+//   nouns/verb/adjectives: flags indicating which categories contain this class.
+//      Used to enable and disable class options in the form depending on selected
+//      word categories.
 export const WORD_CLASS_OPTIONS = [
     { label: 'Allgemein', value: 'Allgemein', nouns: false, verbs: true, adjectives: true },
     { label: 'Artefakt', value: 'Artefakt', nouns: true, verbs: false, adjectives: false },
@@ -211,18 +219,21 @@ export const WORD_CLASS_OPTIONS = [
     { label: 'Zeit', value: 'Zeit', nouns: true, verbs: false, adjectives: true },
 ];
 
-// these values are coded as field names in the form 
+// list of word class values needed in asSearchQueryParams:
 export const WORD_CLASS_VALUES = WORD_CLASS_OPTIONS.map(wc => wc.value);
 
-// maps front-end names for the word category form fields to the
-// values expected by the backend:
+// maps front-end names (used on the form and in the store) for the
+// word category checkboxes to the values expected by the backend:
 export const WORD_CATEGORY_VALUES_MAP = {
     adjectives: 'adj',
     nouns: 'nomen',
     verbs: 'verben'
 };
+
+// list of word category values expected by the backend:
 export const WORD_CATEGORY_VALUES = Object.values(WORD_CATEGORY_VALUES_MAP); 
 
+// list of orth variant values expected by the backend:
 export const ORTH_VARIANT_VALUES = [
       'orthForm',
       'orthVar',
