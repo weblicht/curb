@@ -1,4 +1,4 @@
-// Copyright 2019 Richard Lawrence
+// Copyright 2020 Richard Lawrence
 //
 // This file is part of germanet-common.
 //
@@ -22,12 +22,44 @@ import SI from 'seamless-immutable';
 
 // internal state for a particular search box:
 const searchFormInnerState = SI({
-    ignoreCase: false,
-    currentSearchTerm: '',
-    history: [],
+    // params represents current search parameters, which are used to
+    // populate the default values in the search form. These values
+    // are restored from history items, so that when a previous search
+    // is re-run, the search form will reflect the parameters set at
+    // the time. We also manage the state of the regex and word category
+    // checkboxes here; they need to be controlled components *and*
+    // their state needs to be re-populated from history via props, so
+    // they have to be managed in Redux rather than in local component
+    // state.
+    params: {
+        word: undefined,
+        ignoreCase: false,
+        regEx: false,
+        adjectives: false,
+        nouns: false,
+        verbs: false,
+        // state for other form fields will also be stored here when
+        // params are reset via a history button, and used to supply
+        // defaultValues to the fields on the form, but we do not
+        // explicitly manage those values via Redux because it is
+        // unnecessary and tedious
+    },
+    // changing the formKey causes the search form to be re-rendered
+    // from scratch and its fields to receive default values from the
+    // params object, above. We increment the formKey below whenever
+    // that should happen, namely whenever search parameters are
+    // explicitly reset (via the Clear button or a history button),
+    // and also whenever a search is submitted, unless the form is a
+    // "refinable" one that should not be cleared.
+    formKey: 0,
+    // parameters for previous searches:
+    history: [], 
+    // results returned by backend:
     synsets: [], 
-    alert: undefined, // message for user
-    alertClass: undefined, // 'info', 'warning', 'success', etc.: Bootstrap class for alert message
+    // message for user:
+    alert: undefined, 
+    // Bootstrap class for alert message: 'info', 'warning', 'success', etc.
+    alertClass: undefined, 
     error: undefined
 })
 export { searchFormInnerState as defaultSearchFormState }; 
@@ -35,25 +67,39 @@ export { searchFormInnerState as defaultSearchFormState };
 // manages private state for an individual search box
 function searchFormInnerReducer(state = searchFormInnerState, action) {
     switch (action.type) {
-    // we have actions both to TOGGLE and SET ignore case because
-    // TOGGLE is best suited to easily handling clicks on the
-    // checkbox, but SET is best suited to updating the checkbox
-    // explicitly with the value from a previous search
-    case actionTypes.SYNSET_SEARCH_TOGGLE_IGNORE_CASE: {
-        return state.merge({ ignoreCase: !state.ignoreCase });
+    case actionTypes.SYNSET_SEARCH_TOGGLE_REGEX_SUPPORT: {
+        const params = state.params.merge({
+            regEx: !state.params.regEx
+        });
+
+        return state.merge({ params });
     }
-    case actionTypes.SYNSET_SEARCH_SET_IGNORE_CASE: {
-        return state.merge({ ignoreCase: action.ignoreCase });
+    case actionTypes.SYNSET_SEARCH_TOGGLE_CATEGORY: {
+        const params = state.params.merge({
+            [action.category]: !state.params[action.category]
+        });
+
+        return state.merge({ params });
     }
-    case actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_TERM: {
-        return state.merge({ currentSearchTerm: action.searchTerm });
+    case actionTypes.SYNSET_SEARCH_CLEAR_SEARCH_PARAMS: {
+        return state.merge({ params: searchFormInnerState.params,
+                             formKey: state.formKey + 1 });
+    }
+    case actionTypes.SYNSET_SEARCH_UPDATE_SEARCH_PARAMS: {
+        return state.merge({ params: action.params,
+                             formKey: state.formKey + 1 });
     }
     case actionTypes.SYNSET_SEARCH_UPDATE_ERROR: {
         return state.merge({ error: action.error });
     }
     case actionTypes.SYNSET_SEARCH_SUBMITTED: {
+        const params  = {
+            ...action.params,
+            word: action.keepTerm ? action.params.word : undefined
+        };
         return state.merge({
-            currentSearchTerm: '',
+            params,
+            formKey: state.formKey + 1,
             synsets: [],
             alert: undefined,
             alertClass: undefined
@@ -66,8 +112,7 @@ function searchFormInnerReducer(state = searchFormInnerState, action) {
         // deal with updating a history item we've already partially
         // recorded, and with the possibility of network failures.
         const newHistoryItem = SI({
-            word: action.params.word,
-            ignoreCase: action.params.ignoreCase,
+            params: action.params,
             numResults: action.data.length
         });
 
@@ -83,6 +128,12 @@ function searchFormInnerReducer(state = searchFormInnerState, action) {
             history: action.history
         });
     }
+    case actionTypes.SYNSET_SEARCH_CLEAR_HISTORY: {
+        return state.merge({
+            history: []
+        });
+    }
+
     default:
         return state;
     }
