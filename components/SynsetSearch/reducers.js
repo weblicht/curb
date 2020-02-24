@@ -93,9 +93,13 @@ function searchFormInnerReducer(state = searchFormInnerState, action) {
         return state.merge({ error: action.error });
     }
     case actionTypes.SYNSET_SEARCH_SUBMITTED: {
+        const params  = {
+            ...action.params,
+            word: action.keepState ? action.params.word : undefined
+        };
         return state.merge({
-            params: action.keepState ? action.params : searchFormInnerState.params,
-            formKey: action.keepState ? state.formKey : state.formKey + 1,
+            params,
+            formKey: state.formKey + 1,
             synsets: [],
             alert: undefined,
             alertClass: undefined
