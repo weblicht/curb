@@ -42,12 +42,11 @@ import { connect } from 'react-redux';
 //     form. Otherwise, the only search option is to ignore case,
 //     which displays as a checkbox next to the submit button.
 //     Defaults to false.
-//   refinable (optional) :: Boolean: when true, the search form
-//     will not be cleared after a successful submit, and instead keep
-//     its state. This allows the user to see the results and then
-//     adjust the search options to further refine them. Defaults to
-//     props.advanced, so that an advanced search form is
-//     refinable by default.
+//   keepTerm (optional) :: Boolean: when true, the search term will
+//     not be cleared after a successful submit. This better allows
+//     the user to see the results and then adjust the search to
+//     further refine them. Defaults to props.advanced, so that an
+//     advanced search form behaves this way by default.
 //   className, extras (optional): for the form element. 
 //   inputClassName, inputExtras (optional), className and extras for
 //     the text input representing the search term.
@@ -82,16 +81,16 @@ function SynsetSearchForm(props) {
         }
     }
 
-    // search forms with advanced options should be refinable by
+    // search forms with advanced options should keep its term by
     // default, but we allow the caller to override by explicitly
-    // setting refinable to false:
-    const keepState = (props.refinable === undefined)
+    // setting props.keepTerm to false:
+    const keepTerm = (props.keepTerm === undefined)
           ? !!props.advanced
-          : props.refinable;
+          : props.keepTerm;
 
     // submit handler for form:
     function onSubmit(formData) {
-        props.doSearch(formData, keepState);
+        props.doSearch(formData, keepTerm);
     }
 
     // classes for advanced search options:
@@ -276,7 +275,7 @@ function searchFormStateToProps(state, ownProps) {
 
 function searchFormDispatchToProps(dispatch, ownProps) {
     return {
-        doSearch: (params, keepState) => dispatch(doSearch(ownProps.id, params, keepState)),
+        doSearch: (params, keepTerm) => dispatch(doSearch(ownProps.id, params, keepTerm)),
         clear: e => dispatch(clearSearchParams(ownProps.id)),
         toggleCategory: category => e => dispatch(toggleCategory(ownProps.id, category)),
         toggleRegexSupport: e => dispatch(toggleRegexSupport(ownProps.id)),

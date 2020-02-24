@@ -55,8 +55,8 @@ export function updateError(id, error) {
     return { type: actionTypes.SYNSET_SEARCH_UPDATE_ERROR, id, error };
 }
 
-export function submitSearch(id, params, keepState) {
-    return { type: actionTypes.SYNSET_SEARCH_SUBMITTED, id, params, keepState };
+export function submitSearch(id, params, keepTerm) {
+    return { type: actionTypes.SYNSET_SEARCH_SUBMITTED, id, params, keepTerm };
 }
 
 export function receiveResults(id, data, params) {
