@@ -1,5 +1,35 @@
 * 1.x
 
+** 1.4.0
+
+This release introduces powerful new advanced search options in the
+SynsetSearchForm. By setting advanced={true} in a SynsetSearchForm,
+you can now search with support for regular expressions or edit
+distance, and narrow by word category and class or orthographic
+variant.
+
+The change is mostly backward-compatible, but the appearance of the
+search form has changed slightly, even when the advanced options are
+not enabled. Most importantly, the form now contains a reset button
+next to the search button which clears the search form. (You can
+obtain the appearance of the old form without the reset button by
+passing resetButtonExtras="d-none" to SynsetSearchForm.)
+
+Using these new advanced search options requires a backend which
+supports the corresponding query parameters at the /synsets API
+endpoint.  This endpoint is currently in development for
+germanet-rover at the SfS and supported by changes in the development
+version of the GermaNet Java API.
+
+Note: when using the advanced search options, search result sets can
+be much larger. This can make it necessary to limit the number of
+results that are rendered inside a SynsetSearchResults data container
+(especially if rendering those results requires making further HTTP
+requests). The advanced search options are off by default;
+applications which enable them are expected to handle the greater
+number of results in a manner that is appropriate for their way of
+rendering the data.
+
 ** 1.3.1
 
 This is purely a bugfix release that fixes an issue with keyboard
