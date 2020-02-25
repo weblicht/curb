@@ -200,7 +200,7 @@ function SynsetSearchForm(props) {
 
                <div className="row">
                  <div className="col">
-                   <h5>Word category</h5>
+                   <h5>Word categories</h5>
                    <p className="small text-muted">Empty selection searches all categories.</p>
                    <Checkbox id={`${props.id}-adjectives`} label="Adjectives"
                              name="adjectives"
