@@ -47,7 +47,7 @@ corresponding search form.
 ```
 import { SynsetSearchForm, SynsetSearchResults, SynsetsAsTable } from '@sfstuebingen/germanet-common/components';
 
-<SynsetSearchForm id="mainSearch" advancedEnabled={true} />
+<SynsetSearchForm id="mainSearch" advanced={true} />
 <SynsetSearchResults containerId="mainSearchResults" source="mainSearch" displayAs={SynsetsAsTable}/>
 ```
 
