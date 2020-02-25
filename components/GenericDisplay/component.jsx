@@ -302,8 +302,9 @@ export function DataTableRow(props) {
 // props:
 //   data :: [ Object ], the data objects which will be formatted as the rows of the table
 //   fieldMap :: [ [String, String] ], array mapping data field names to display names
-//   displayFields :: [ String ], array of data fields to be displayed
-//     This should be a subset of the keys in fieldMap.
+//   displayFields (optional) :: [ String ], array of data fields to be displayed
+//     This should be a subset of the keys in fieldMap. Defaults to displaying
+//     all fields in fieldMap.
 //   displayItemAs (optional) :: Object -> HTML table row,
 //      a component to display a single data object as a table row.
 //      Defaults to DataTableRow.
@@ -325,10 +326,13 @@ export function DataTable(props) {
 
     const RowComponent = props.displayItemAs || DataTableRow;
 
+    // display all fields in fieldMap by default:
+    const displayFields = props.displayFields || props.fieldMap.map(field => field[0]);
+
     return (
         <table className={withDefault('table', props)}>
           <DataTableHeaders fieldMap={props.fieldMap}
-                            displayFields={props.displayFields}
+                            displayFields={displayFields}
                             sortFields={props.sortFields}
                             sortWith={props.sortWith}
                             className={props.headClassName}
@@ -340,7 +344,7 @@ export function DataTable(props) {
                                      choose={props.choose} unchoose={props.unchoose}
                                      select={props.select} unselect={props.unselect}
                                      sortWith={props.sortWith} reset={props.reset}
-                                     displayFields={props.displayFields}/>
+                                     displayFields={displayFields}/>
             )}
           </tbody>
         </table>
