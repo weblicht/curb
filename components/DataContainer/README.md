@@ -33,12 +33,16 @@ Both of these functions accept three arguments:
   - a Redux selector function for that data, 
   - a function mapping each object in the container to its unique ID
   
-The third argument is optional; if not supplied, it will default to a
-function that looks for an `.id` field on data objects.
+If not supplied, the third argument will default to a function that
+maps data objects to the value of their `.id` field. **Note**: it is
+important to supply this function if your data objects do not have
+this field, because many other components assume they will be able to
+identify data objects via this function (for example, to generate keys
+for table rows or list items).
 
-These functions return components that you can instantiate to be a
-container for a certain type of data.  For example, you call
-`dataContainerFor` like this:
+`dataContainerFor` and `treeContainerFor` return components that you
+can instantiate to be a container for a certain type of data. For
+example, you call `dataContainerFor` like this:
 
 ```
 import { dataContainerFor } from '@sfstuebingen/germanet-common/components';
@@ -51,13 +55,12 @@ The returned component (`SynsetsContainer`, in the example above) will accept pr
   - `data`: the array of data objects in the container
   - `displayAs`: a component to render the data in this container
   - `containerId`: an identifier for the container
-  - `idFor`: a function that maps a data object in the container to
+  - `idFor`: the function that maps a data object in the container to
     its unique identifier
   
-The `idFor` prop will be automatically supplied, and the `data` will
-automatically be loaded into the container by the selector function
-from the Redux store when the container is rendered.  You must pass
-`displayAs` and `containerId` yourself.
+The `data` will automatically be loaded into the container by the
+selector function from the Redux store when the container is rendered.
+You must pass `displayAs` and `containerId` yourself.
 
 So in this example, you could instantiate `SynsetsContainer` like so:
 

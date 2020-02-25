@@ -37,13 +37,14 @@ const CONTAINER_TYPES = {
 //   name :: String, a name to use for the returned component;
 //     'Container' will be appended
 //   dataSelector :: globalState -> ownProps -> [ DataObject ]
-//     a selector function to pull data objects from the Redux store into this container
-//     It should return *undefined* if and only if the data is not yet
-//     in the store. (By contrast, if the data is present in the store
-//     but *empty*, the selector should return some other
-//     empty-but-trueish-value, such as [] or {}.)
-//   idFromItem (optional) :: DataObject -> identifier for that object.
-//      By default, this function works like: item => item.id
+//     a selector function to pull data objects from the Redux store
+//     into this container It should return *undefined* if and only if
+//     the data is not yet in the store. (By contrast, if the data is
+//     present in the store but *empty*, the selector should return
+//     some other empty-but-trueish-value, such as [] or {}.)
+//   idFromItem :: DataObject -> identifier for that object.
+//      By default, this function works like: item => item.id; this
+//      function is thus required if data objects do not have an .id
 function containerFor(type, name, dataSelector, idFromItem) {
 
     // Helpers for combining data with metadata from container state:
