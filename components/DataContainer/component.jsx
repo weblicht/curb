@@ -67,10 +67,11 @@ function containerFor(type, name, dataSelector, idFromItem) {
 
     function addMetadataToRows(rows, props) {
         return rows.map(
-            item => ({ ...item,
-                       chosen: props.chosenItemId === idFor(item),
-                       selected: isSelected(item, props),
-                     })
+            item => ({
+                ...item,
+                chosen: props.chosenItemId === idFor(item),
+                selected: isSelected(item, props),
+            })
         );
     }
 
