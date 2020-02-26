@@ -1,5 +1,20 @@
 * 1.x
 
+** 1.4.1 
+
+This release contains very minor changes but fixes one user-visible
+bug: in the advanced search form, the column containing word category
+checkboxes is now labeled "Word Categories" (plural), to be consistent
+with the other column headers.
+
+Other changes:
+
+  - the displayFields prop for the DataTable component in
+    GenericDisplay is now optional, and defaults to displaying columns
+    for every field in the provided fieldMap, which is almost always
+    what is wanted
+  - some documentation improvements
+
 ** 1.4.0
 
 This release introduces powerful new advanced search options in the
