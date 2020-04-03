@@ -21,7 +21,7 @@ function hnymPathsInnerReducer(state = defaultPrivState, action) {
         return state.merge({ fetching: false, data: action.data, error: undefined });
     }
     case actionTypes.HNYM_PATH_QUERY_ERROR: {
-        return state.merge({ fetching: false, data: undefined, error: action.error }); 
+        return state.merge({ fetching: false, error: action.error }); 
     }
     default:
         return state;
