@@ -1,5 +1,14 @@
 * 1.x
 
+** 1.4.2
+
+This release fixes a problem that prevented graphs from displaying
+when the backend is unreachable, even if the relevant data is already
+present.  This was needed to make graphs with sample data work in
+tutorials.
+
+It also includes security updates for npm dependencies.  
+
 ** 1.4.1 
 
 This release contains very minor changes but fixes one user-visible
