@@ -20,7 +20,7 @@
 import { actionTypesFromStrings } from '../../helpers';
 import { apiPath } from '../../constants';
 
-import axios from 'axios';
+import { gcAxiosInstance as axios } from '../Auth/actions';
 
 // these are all per-id actions:
 export const actionTypes = actionTypesFromStrings([
@@ -109,10 +109,11 @@ export function doAdvancedSearch(id, params, keepState) {
     return function (dispatch) {
         const config = { params: asSearchQueryParams(params) };
         dispatch(submitSearch(id, params, keepState));
+
         return axios.get(apiPath.synsets, config)
             .then(response => dispatch(receiveResults(id, response.data.data, params)),
                   // TODO: more generalized error handling? logging?
-                  error => dispatch(updateError(id, `Failed to retrieve results for "${params.word}".`)) 
+                  error => dispatch(updateError(id, `Failed to retrieve results for "${params.word}".`))  
              );
     };
 }

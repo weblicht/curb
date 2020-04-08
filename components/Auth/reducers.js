@@ -15,13 +15,28 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
-import { actionTypesFromStrings } from './helpers';
+import { actionTypes } from './actions';
 
-export const globalActions = actionTypesFromStrings([
-    'RESET_GERMANET_COMMON',
-]);
+import SI from 'seamless-immutable';
 
-export function resetGermanetCommon() {
-    return { type: globalActions.RESET_GERMANET_COMMON };
+const defaultAuthState = SI({
+    authRequired: false
+});
+
+export function authentication(state = defaultAuthState, action) {
+    switch (action.type) {
+    case actionTypes.API_AUTH_ERROR: {
+        return state.merge({ authRequired: true });
+    }
+    case actionTypes.API_AUTH_OK: {
+        return state.merge({ authRequired: false });
+    }
+
+    default:
+        return state;
+    }
 }
 
+
+       
+ 

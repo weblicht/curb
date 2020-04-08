@@ -15,13 +15,6 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
-import { actionTypesFromStrings } from './helpers';
-
-export const globalActions = actionTypesFromStrings([
-    'RESET_GERMANET_COMMON',
-]);
-
-export function resetGermanetCommon() {
-    return { type: globalActions.RESET_GERMANET_COMMON };
+export function isAuthRequired(globalState) {
+    return globalState.authentication.authRequired;
 }
-

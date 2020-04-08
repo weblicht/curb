@@ -38,6 +38,10 @@ function withGlobalActions(reducer) {
 
 // Defintions of top-level reducers that can be imported by consuming applications:
 
+// Authentication:
+import { authentication as _authentication } from './components/Auth/reducers';
+export const authentication = withGlobalActions(_authentication);
+
 // Synset searches: 
 import { synsetSearches as _synsetSearches } from './components/SynsetSearch/reducers';
 export const synsetSearches = withGlobalActions(_synsetSearches);
