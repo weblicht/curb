@@ -16,5 +16,5 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 export function isAuthRequired(globalState) {
-    return globalState.authentication.authRequired;
+    return globalState.auth.authRequired;
 }

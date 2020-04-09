@@ -23,7 +23,7 @@ const defaultAuthState = SI({
     authRequired: false
 });
 
-export function authentication(state = defaultAuthState, action) {
+export function auth(state = defaultAuthState, action) {
     switch (action.type) {
     case actionTypes.API_AUTH_ERROR: {
         return state.merge({ authRequired: true });

@@ -16,6 +16,7 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 import { actionTypesFromStrings } from '../../helpers';
+import { isAuthRequired } from './selectors';
 import axios from 'axios';
 
 export const actionTypes = actionTypesFromStrings([
@@ -35,7 +36,7 @@ export const gcAxiosInstance = axios.create();
 
 // Setup function for axios instance; should be run at application init,
 // with a reference to the application's store.
-export function configureApiAuthentication(store) {
+export function configureApiAuth(store) {
 
     // If we get an HTTP 401 from the API, we record this in the state
     // so that useful UI can be shown:
@@ -48,9 +49,9 @@ export function configureApiAuthentication(store) {
     }
 
     // If we later get an HTTP 200 from the API, we assume the user
-    // has reauthenticated, so we clear the associated state:
+    // has reauthenticated/reauthorized, so we clear the associated state:
     function detectAuthorized(response) {
-        const wasUnauthorized = store.getState().authentication.authRequired;
+        const wasUnauthorized = isAuthRequired(store.getState());
         if (wasUnauthorized && response.status === 200) {
             store.dispatch(authOK());
         }
