@@ -48,5 +48,40 @@ const myRootReducer = combineReducers({
 });
 ```
 
+## Use
+
+Once API authorization handling has been configured, a flag will be
+set in the Redux store whenever an API call fails with a 401 error.
+You can detect that this has happened using the `isAuthRequired`
+selector:
+```
+import { isAuthRequired } from '@sfstuebingen/germanet-common/components/Auth/selectors';
+import { connect } from 'react-redux';
+
+function SomeComponent(props) {
+    if (props.authRequired) {
+       // do whatever makes sense for your application to alert the user
+       // to re-authenticate/re-authorize
+    }
+    // ...
+}
+
+function mapStateToProps(state) {
+    return {
+        // ...
+        authRequired: isAuthRequired(state)
+    };
+}
+SomeComponent = connect(mapStateToProps)(SomeComponent);
+```
+
+In most cases it should not be necessary to manage the state of this
+flag: any API request that fails with a 401 error sets it to true, and
+any subsequent API call which succeeds will automatically reset it to
+false. But if necessary, you can also manually set the flag to true by
+dispatching the `authError()` action, and reset it to false by
+dispatching the `authOK()` action, in [Auth/actions.js](./actions.js).
+
+
 
 
