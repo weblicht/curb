@@ -16,5 +16,12 @@
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
 export function isAuthRequired(globalState) {
-    return globalState.auth.authRequired;
+    try {
+        return globalState.auth.authRequired;
+    } catch (e) {
+        console.error("You called isAuthRequired, but didn't configure auth support correctly.\n" +
+                      "Make sure you have installed the auth reducer and called configureApiAuth.\n" +
+                      "See the germanet-common Auth documentation.")
+        return false;
+    }
 }
