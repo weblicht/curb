@@ -17,8 +17,7 @@
 
 import { actionTypesFromStrings } from '../../helpers';
 import { APIError, isArrayOfObjects } from './validation';
-
-import { gcAxiosInstance as axios } from '../Auth/actions';
+import { gcAxiosInstance as axios } from '../../constants';
 
 // Makes action types and action creators for querying data at an API endpoint
 //

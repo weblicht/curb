@@ -18,9 +18,7 @@
 // SynsetSearch/actions.js
 // Action types and creators for synset searches
 import { actionTypesFromStrings } from '../../helpers';
-import { apiPath } from '../../constants';
-
-import { gcAxiosInstance as axios } from '../Auth/actions';
+import { apiPath, gcAxiosInstance as axios } from '../../constants';
 
 // these are all per-id actions:
 export const actionTypes = actionTypesFromStrings([
