@@ -1,5 +1,12 @@
 * 1.x
 
+** 1.4.3
+
+This release makes a small change to allow the consuming application
+to pass a custom instance of axios, which germanet-common will then
+use to make its API calls. This enables, for example, handling
+authorization errors via axios interceptors.
+
 ** 1.4.2
 
 This release fixes a problem that prevented graphs from displaying
