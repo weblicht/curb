@@ -24,3 +24,4 @@ export const globalActions = actionTypesFromStrings([
 export function resetGermanetCommon() {
     return { type: globalActions.RESET_GERMANET_COMMON };
 }
+

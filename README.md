@@ -170,3 +170,21 @@ window.GERMANET_API_PREFIX = '/germanet';
 then API requests will go to endpoints like `/germanet/api/synsets`.
 If you need more control over the exact path, you should edit the
 `urlRoot` variable in the top-level constants.js module.
+
+### Using a custom axios instance
+
+The library uses [axios](https://github.com/axios/axios) to make API
+requests. If you need to provide a custom instance of axios, you can
+do so with the `installAxiosInstance` function in [constants.js](./):
+```
+import { installAxiosInstance } from '@sfstuebingen/germanet-common/constants';
+import axios from 'axios';
+
+const myAxiosInstance = axios.create();
+
+// tell germanet-common to make API requests with your custom axios instance:
+installAxiosInstance(myAxiosInstance);
+```
+This is useful if, for example, you need to catch and respond to HTTP
+401 errors that result from API requests, which you can do 
+with axios' [interceptors](https://github.com/axios/axios#interceptors).

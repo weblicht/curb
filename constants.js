@@ -18,8 +18,6 @@
 const prefix = window.GERMANET_API_PREFIX || window.APP_CONTEXT_PATH || "";
 const urlRoot = prefix + "/api"; // window.location.origin;
 
-// For now, we define only a subset of the endpoints which are already
-// available in gernedit.
 export const apiPath = {
     compounds: `${urlRoot}/compounds`, 
     conRels: `${urlRoot}/conrels`,
@@ -33,4 +31,16 @@ export const apiPath = {
     synsets: `${urlRoot}/synsets`,
     wiktDefs: `${urlRoot}/wikt_defs`, 
 };
+
+// We use an axios instance to make API requests; this instance
+// is used by all action creators in germanet-common that touch the API.
+// This is not technically a constant, because consuming applications need
+// to be able to override it with their own custom instance.  We allow
+// that using the installAxiosInstance function, below.
+import axios from 'axios';
+export var gcAxiosInstance = axios.create();
+
+export function installAxiosInstance(instance) {
+    gcAxiosInstance = instance;
+}
 
