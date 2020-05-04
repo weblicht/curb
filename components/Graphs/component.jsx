@@ -23,7 +23,7 @@ import { connectWithApiQuery } from '../APIWrapper';
 import React from 'react';
 import { connect } from 'react-redux';
 import SI from 'seamless-immutable';
-import { Network } from 'visjs-network';
+import { Network } from 'vis-network';
 import classNames from 'classnames';
 
 

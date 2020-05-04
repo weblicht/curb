@@ -31,8 +31,15 @@
     "seamless-immutable": "^7.1.4"
   },
   "dependencies": {
+    "@egjs/hammerjs": "^2.0.17",
     "classnames": "^2.2.6",
-    "visjs-network": "^4.24.11"
+    "keycharm": "^0.3.1",
+    "moment": "^2.25.1",
+    "timsort": "^0.3.0",
+    "uuid": "^7.0.3",
+    "vis-data": "^6.5.1",
+    "vis-network": "^7.6.2",
+    "vis-util": "^4.0.0"
   },
   "keywords": [
     "germanet",
