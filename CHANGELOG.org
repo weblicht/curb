@@ -1,5 +1,11 @@
 * 1.x
 
+** 1.4.4
+
+This release changes only dependencies.  The package now depends on
+the vis-network package (rather than the visjs-network package, which
+is outdated and doesn't seem to be updated anymore).  
+
 ** 1.4.3
 
 This release makes a small change to allow the consuming application
