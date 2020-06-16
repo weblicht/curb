@@ -477,19 +477,17 @@ export function List(props) {
 }
 
 // props:
-//   id :: a key for the list item
-//   idFor (optional) :: typeof data -> id,
-//      a function to compute the .id from .data if .id is not given  
 //   data (optional) :: Object, the contents of the list item;
 //      defaults to props.children
-//   onClick (optional) :: Event handler for clicks on the list item
 //   className (optional), defaults to 'list-group-item'
 //   extras (optional), extra classes for list item
+// All other props, if given, will be passed down to the produced <li> element
 export function ListItem(props) {
-    const key = props.id || (props.idFor && props.idFor(props.data));
+    const { data, className, extras, ...rest } = props;
+    const classes = classNames(className || 'list-group-item', extras);
+
     return (
-        <li key={key} className={withDefault('list-group-item', props)}
-            onClick={props.onClick}>
+        <li {...rest} className={classes}>
           {props.data || props.children}
         </li>
     );
