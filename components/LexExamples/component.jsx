@@ -48,7 +48,7 @@ function ExampleAsListItem(props) {
           : null;
 
     return (
-        <ListItem id={props.data.id}
+        <ListItem key={props.data.id}
                   className={props.className}
                   extras={props.extras}>
           {frameTypeWithDash} {props.data.text}  

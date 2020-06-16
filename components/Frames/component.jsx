@@ -42,7 +42,7 @@ export const FRAME_ALL_FIELDS = FRAME_FIELD_MAP.map(entry => entry[0]);
 function FrameAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
-        <ListItem id={props.data.id}
+        <ListItem key={props.data.id}
                   className={props.className}
                   extras={props.extras}>
           {props.data.frameType}

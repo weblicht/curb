@@ -47,7 +47,7 @@ export const WIKTDEF_ALL_FIELDS = WIKTDEF_FIELD_MAP.map(entry => entry[0]);
 // className and extras props, if given, will be passed on to ListItem
 function WiktDefAsListItem(props) {
     return (
-        <ListItem id={props.data.id}
+        <ListItem key={props.data.id}
                   className={props.className}
                   extras={props.extras}>
           <em>{props.data.orthForm}</em> &ndash; {props.data.wknParaphrase}

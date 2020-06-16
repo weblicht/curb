@@ -49,7 +49,7 @@ export const ILIREC_ALL_FIELDS = ILIREC_FIELD_MAP.map(entry => entry[0]);
 function ILIRecordAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
-        <ListItem id={props.data.id}
+        <ListItem key={props.data.id}
                   className={props.className}
                   extras={props.extras}>
           <em>{props.data.pwnWord}</em> ({props.data.relation.replace('_', ' ')}) &ndash; {props.data.pwn20Paraphrase}  

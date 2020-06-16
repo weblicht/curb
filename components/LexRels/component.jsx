@@ -40,7 +40,7 @@ function LexRelAsListItem(props) {
     // TODO: is there a more sensible default to provide here?
     const relDisplay = props.data.relType.replace('_', ' ');
     return (
-        <ListItem id={props.data.id}
+        <ListItem key={props.data.id}
                   className={props.className}
                   extras={props.extras}>
           {`LexUnit ${props.data.fromLexUnitId} ${relDisplay} LexUnit ${props.data.toLexUnitId}`}

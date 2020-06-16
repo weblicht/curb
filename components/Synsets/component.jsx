@@ -53,7 +53,7 @@ export const SYNSET_ALL_FIELDS = SYNSET_FIELD_MAP.map(entry => entry[0]);
 function SynsetAsListItem(props) {
     return (
         // TODO: is this a reasonable default?
-        <ListItem id={props.data.id}
+        <ListItem key={props.data.id}
                   className={props.className}
                   extras={props.extras}>
           <Delimited data={props.data.orthForms} />

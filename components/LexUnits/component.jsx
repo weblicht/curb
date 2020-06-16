@@ -65,10 +65,8 @@ function LexUnitAsOption(props) {
 //   data :: Object, a lex unit
 // className and extras props, if given, will be passed on to ListItem
 function LexUnitAsListItem(props) {
-    const luId = props.data.id;
-
     return (
-        <ListItem id={luId} 
+        <ListItem key={props.data.id} 
                   className={props.className}
                   extras={props.extras}>
           {props.data.orthForm}
