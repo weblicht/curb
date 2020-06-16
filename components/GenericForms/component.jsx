@@ -44,6 +44,7 @@ function withDefault(dfault, props) {
 //     any ValidationErrors object thrown by the validator.
 //   className (optional), extras (optional): combined to create the className
 //     for the <form> (no default)
+// All other props, if given, will be passed down to the <form> element 
 export function Form(props) {
 
     // remove props that we can't send on to the <form> element:
