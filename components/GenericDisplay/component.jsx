@@ -357,19 +357,22 @@ export function DataTable(props) {
 //     Note: terms and defs should be co-indexed
 //   className (optional)
 //   extras (optional), extra classes for dl element
+// All other props, if given, will be passed down to the produced <dl> element 
 export function DefList(props) {
     if (!(props.terms && props.terms.length)) return null;
 
+    const { terms, defs, className, extras, ...rest } = props;
+
     return (
         // no default class name needed for dl in Bootstrap
-        <dl className={classNames(props.className, props.extras)}>
-                {props.terms.map(
-                    (term, idx) =>
-                        <React.Fragment key={term}>
-                          <dt>{term}</dt>
-                          <dd>{props.defs[idx]}</dd>
-                        </React.Fragment>
-                )}
+        <dl {...rest} className={classNames(className, extras)}>
+          {terms.map(
+              (term, idx) =>
+                  <React.Fragment key={term}>
+                    <dt>{term}</dt>
+                    <dd>{defs[idx]}</dd>
+                  </React.Fragment>
+          )}
         </dl>
     );
 }
@@ -429,24 +432,27 @@ export function EmptyTable(props) {
 //    data (optional) :: String, content of heading; defaults to props.children
 //    className
 //    extras
+// All other props, if given, will be passed down to the produced <h*> element 
 export function Heading(props) {
-    const classnames = classNames(props.className, props.extras);
-    const text = props.data || props.children;
-    switch (props.level) {
+    const { level, data, className, extras, ...rest } = props;
+
+    const classnames = classNames(className, extras);
+    const text = data || props.children;
+    switch (level) {
     case 1:
-        return <h1 className={classnames}>{text}</h1>;
+        return <h1 {...rest} className={classnames}>{text}</h1>;
     case 2:
-        return <h2 className={classnames}>{text}</h2>;
+        return <h2 {...rest} className={classnames}>{text}</h2>;
     case 3:
-        return <h3 className={classnames}>{text}</h3>;
+        return <h3 {...rest} className={classnames}>{text}</h3>;
     case 4:
-        return <h4 className={classnames}>{text}</h4>;
+        return <h4 {...rest} className={classnames}>{text}</h4>;
     case 5:
-        return <h5 className={classnames}>{text}</h5>;
+        return <h5 {...rest} className={classnames}>{text}</h5>;
     case 6:
-        return <h6 className={classnames}>{text}</h6>;
+        return <h6 {...rest} className={classnames}>{text}</h6>;
     default:
-        throw new InternalError(`Heading was rendered with nonsensical level=${props.level}`);
+        throw new InternalError(`Heading was rendered with nonsensical level=${level}`);
     }
 }
 
@@ -454,12 +460,15 @@ export function Heading(props) {
 //   ordered :: Bool
 //   className (optional), defaults to 'list-group'
 //   extras (optional), extra classes for list
+// All other props, if given, will be passed down to the produced <ol> or <ul> element
 export function List(props) {
-    const classes = withDefault('list-group', props);
-    if (props.ordered) {
-        return (<ol className={classes}>{props.children}</ol>);
+    const { ordered, className, extras, ...rest } = props;
+    const classes = classNames(className || 'list-group', extras);
+    
+    if (ordered) {
+        return (<ol {...rest} className={classes}>{props.children}</ol>);
     } else {
-        return (<ul className={classes}>{props.children}</ul>);
+        return (<ul {...rest} className={classes}>{props.children}</ul>);
     }
 }
 
