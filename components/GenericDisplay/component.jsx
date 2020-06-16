@@ -58,16 +58,20 @@ export function Alert(props) {
 //   title (optional) :: String
 //   level (required only if title given) :: Number, the level of the card heading 
 //   children :: used as content for body of card
+//   header (optional): content to put before the card body, e.g. a CardHeader
+//   footer (optional): content to put after the card body, e.g. a CardFooter
 //   extras
 //   bodyExtras, extras for card body
 //   Note: className does nothing here, since there is no reason to use this component *except* for the .card* classes it introduces
 export function Card(props) {
     return (
         <div className={classNames('card', props.extras)}>
+          {props.header}
           <div className={classNames('card-body', props.bodyExtras)}>
             {props.title && <Heading level={props.level} className='card-title' data={props.title}/>}
             {props.children}
           </div>
+          {props.footer}
         </div>
     );
 }
