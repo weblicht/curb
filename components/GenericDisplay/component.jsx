@@ -548,6 +548,7 @@ export function TabbedPanes(props) {
                                              item.buttonExtras
                                             )}
                        id={item.id + "-tab"}
+                       key={item.id}
                        href={"#" + item.id}
                        role="tab"
                        aria-controls={item.id + '-pane'}
@@ -568,6 +569,7 @@ export function TabbedPanes(props) {
                                                item.contentExtras
                                               )}
                          id={item.id + '-pane'}
+                         key={item.id}
                          data-id={item.id}
                          role="tabpanel"
                          aria-labelledby={item.id + "-tab"}>
