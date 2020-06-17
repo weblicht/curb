@@ -132,37 +132,39 @@ function SynsetSearchForm(props) {
                        className={props.inputClassName}
                        extras={props.inputExtras}
                        required={true}
-                       asGroup={true} groupClassName="col-4" />
-            <SubmitButton text="Search"
-                          onClick={closeAdvancedOptions}
-                          className={props.submitButtonClassName}
-                          extras={props.submitButtonExtras || "btn-primary ml-3 my-auto"} />
+                       asGroup={true} groupClassName="col-sm-4" />
+            <div className="col-sm-8 mt-2 mt-sm-0">
+              <SubmitButton text="Search"
+                            onClick={closeAdvancedOptions}
+                            className={props.submitButtonClassName}
+                            extras={props.submitButtonExtras || "btn-primary mr-1 my-auto"} />
 
-            <ResetButton text="Clear"
-                         onClick={props.clear}
-                         className={props.resetButtonClassName}
-                         extras={props.resetButtonExtras || "btn-secondary ml-1 my-auto"} />
-
-            {props.advanced &&
-             <Button onClick={toggleAdvancedOptions}
-                     className={props.optionsButtonClassName}
-                     extras={props.optionsButtonExtras || "btn-link ml-1 my-auto"}>
-               {showAdvanced ? "Hide" : "Show"} search options
-             </Button>
-            }
-            {!props.advanced &&
-             // when the advanced options are not enabled, we show the
-             // ignore case checkbox inline in the main search form,
-             // with default classes that space it away from the subit
-             // button; otherwise, we put it down in the advanced
-             // options:
-             <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
-                       name="ignoreCase"
-                       defaultChecked={props.params.ignoreCase}
-                       asGroup={true} groupClassName="form-check-inline"
-                       className={props.checkboxClassName}
-                       extras={props.checkboxExtras || "my-auto"} />
-            }
+              <ResetButton text="Clear"
+                           onClick={props.clear}
+                           className={props.resetButtonClassName}
+                           extras={props.resetButtonExtras || "btn-secondary mr-1 my-auto"} />
+              
+              {props.advanced &&
+               <Button onClick={toggleAdvancedOptions}
+                       className={props.optionsButtonClassName}
+                       extras={props.optionsButtonExtras || "btn-link my-auto"}>
+                 {showAdvanced ? "Hide" : "Show"} search options
+               </Button>
+              }
+              {!props.advanced &&
+               // when the advanced options are not enabled, we show the
+               // ignore case checkbox inline in the main search form,
+               // with default classes that space it away from the subit
+               // button; otherwise, we put it down in the advanced
+               // options:
+               <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
+                         name="ignoreCase"
+                         defaultChecked={props.params.ignoreCase}
+                         asGroup={true} groupClassName="form-check-inline"
+                         className={props.checkboxClassName}
+                         extras={props.checkboxExtras || "my-auto"} />
+              }
+            </div>
           </div>
 
           {props.advanced &&
