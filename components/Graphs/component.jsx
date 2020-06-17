@@ -347,7 +347,7 @@ export { HnymPathsBetweenGraph };
 // Renders a graph of all paths from a given synset to GNROOT.
 // props:
 //   fromSynsetId: the ID of the synset from which the paths should start
-// Other props are forwarded to NetworkContainer to configured the display
+// Other props are forwarded to NetworkContainer to configure the display
 // of the graph.
 export function HnymPathsToRootGraph(props) {
     const GERNEDIT_ROOT_ID = "51001";
