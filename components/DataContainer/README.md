@@ -33,12 +33,12 @@ Both of these functions accept three arguments:
   - a Redux selector function for that data, 
   - a function mapping each object in the container to its unique ID
   
-If not supplied, the third argument will default to a function that
-maps data objects to the value of their `.id` field. **Note**: it is
-important to supply this function if your data objects do not have
-this field, because many other components assume they will be able to
-identify data objects via this function (for example, to generate keys
-for table rows or list items).
+The third argument is optional. If not supplied, it will default to a
+function that maps data objects to the value of their `.id` field.
+**Note**: it is important to supply this function if your data objects
+do not have this field, because many other components assume they will
+be able to identify data objects via this function (for example, to
+generate keys for table rows or list items).
 
 `dataContainerFor` and `treeContainerFor` return components that you
 can instantiate to be a container for a certain type of data. For
@@ -59,7 +59,8 @@ The returned component (`SynsetsContainer`, in the example above) will accept pr
     its unique identifier
   
 The `data` will automatically be loaded into the container by the
-selector function from the Redux store when the container is rendered.
+selector function from the Redux store when the container is rendered,
+and the `idFor` function will also be automatically supplied.
 You must pass `displayAs` and `containerId` yourself.
 
 So in this example, you could instantiate `SynsetsContainer` like so:
