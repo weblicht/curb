@@ -394,6 +394,7 @@ class SynsetSearchHistoryNav extends React.Component {
                       </div>;
         const buttons = itemsToDisplay.map(
             item => <Button title={`${item.numResults} results`}
+                            key={item.params.word + item.numResults}
                             onClick={this.props.redoSearch(item.params)}
                             className={this.props.buttonClassName}
                             extras={this.props.buttonExtras}>
