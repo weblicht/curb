@@ -404,7 +404,7 @@ export function Delimited(props) {
     // documentation, so it may break.  See
     // https://stackoverflow.com/questions/23618744/rendering-comma-separated-list-of-links/40276830#40276830
     return props.data.map(
-            (el, idx) => [(idx > 0 ? delim : ''), formatter(el)]
+        (el, idx) => [(idx > 0 ? delim : ''), <React.Fragment key={idx}>{formatter(el)}</React.Fragment>]
     );
 }
 
