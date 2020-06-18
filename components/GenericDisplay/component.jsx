@@ -107,6 +107,7 @@ export function CardHeader(props) {
 //     defaults to ListItem
 //     All data container control props (.choose, .select, etc.) will also
 //     be passed on to this component if they are given.
+//   idFor :: DataObject -> identifier
 //   ordered (optional) :: Bool
 //   className (optional)
 //   extras (optional)
@@ -121,6 +122,7 @@ export function DataList(props) {
         <List ordered={props.ordered} className={props.className} extras={props.extras}>
           {props.data.map(
               item => <ItemComponent data={item} idFor={props.idFor}
+                                     key={typeof props.idFor  === 'function' ? props.idFor(item) : undefined}
                                      choose={props.choose} unchoose={props.unchoose}
                                      select={props.select} unselect={props.unselect}
                                      className={props.itemClassName} extras={props.itemExtras}/>
@@ -314,6 +316,7 @@ export function DataTableRow(props) {
 //      Defaults to DataTableRow.
 //      Data container control props (.choose, etc.), if given, will be passed on
 //      to this component.
+//   idFor :: DataObject -> identifier
 //   sortFields (optional) :: [ String ], array of fields to add sort buttons for in header
 //      Should be a subset of displayFields.
 //   sortWith (required for sortFields) :: callback,
@@ -345,6 +348,7 @@ export function DataTable(props) {
           <tbody className={classNames(props.bodyClassName, props.bodyExtras)}>
             {props.data.map(
                 row => <RowComponent data={row} idFor={props.idFor}
+                                     key={typeof props.idFor  === 'function' ? props.idFor(row) : undefined}
                                      choose={props.choose} unchoose={props.unchoose}
                                      select={props.select} unselect={props.unselect}
                                      sortWith={props.sortWith} reset={props.reset}
