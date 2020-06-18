@@ -88,14 +88,14 @@ function CompoundAsGrid(props) {
                       ['category', 'Category']];
     const displayFields = fieldMap.map(field => field[0]);
 
-    const head = props.data.head.merge({title: 'Head'});
-    const mod1 = props.data.modifier1.merge({title: 'Modifier 1'});
-    const mod2 = props.data.modifier2.merge({title: 'Modifier 2'});
+    const head = props.data.head.merge({title: 'Head', key: 'head'});
+    const mod1 = props.data.modifier1.merge({title: 'Modifier 1', key: 'mod1'});
+    const mod2 = props.data.modifier2.merge({title: 'Modifier 2', key: 'mod2'});
     const constituents = [head, mod1, mod2];
     
     return (
         <DataTable {...props}
-                   data={constituents} idFor={obj => obj.id}
+                   data={constituents} idFor={obj => obj.key}
                    fieldMap={fieldMap} displayFields={displayFields} />
     );
 }
