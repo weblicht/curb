@@ -487,13 +487,13 @@ export function Options(props) {
 //   warnings (optional) :: [String], messages to be displayed as warning Alerts
 export function FormAlerts(props) {
     const successAlert = props.success
-          ? [<Alert type='success' text={props.success}/>]
+          ? [<Alert key='success' type='success' text={props.success}/>]
           : [];
     const warningAlerts = props.warnings && props.warnings.length
-          ? props.warnings.map(w => <Alert type='warning' text={w}/>)
+          ? props.warnings.map((w, idx) => <Alert key={'warning' + idx} type='warning' text={w}/>)
           : [];
     const errorAlert = props.error
-          ? [<Alert type='danger' text={props.error}/>]
+          ? [<Alert key='error' type='danger' text={props.error}/>]
           : [];
 
     return errorAlert.concat(warningAlerts).concat(successAlert);
