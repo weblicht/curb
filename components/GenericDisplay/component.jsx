@@ -181,7 +181,7 @@ export function DataSelect(props) {
                 label={props.label} labelClassName={props.labelClassName} labelExtras={props.labelExtras}
                 feedback={props.feedback} feedbackClassName={props.feedbackClassName} feedbackExtras={props.feedbackExtras}
                 asGroup={props.asGroup} groupClassName={props.groupClassName} groupExtras={props.groupExtras}>
-          {props.data.map(d => <ItemComponent {...props} data={d} />)}
+          {props.data.map(d => <ItemComponent key={props.idFor(d)} {...props} data={d} />)}
         </Select>
     );
 }
