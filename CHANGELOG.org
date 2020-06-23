@@ -1,5 +1,49 @@
 * 1.x
 
+** 1.4.5
+
+This release fixes some minor warts and warnings.  The major changes are:
+
+1) React key errors have been fixed in various places. The components
+   in SynsetSearch and GenericDisplay now do a better job of setting keys.
+2) The Card component in GenericDisplay now supports header and footer props.
+3) Components in GenericDisplay which are direct wrappers of HTML
+   elements now forward any additional props they receive to those
+   elements. In particular, the following components now support this
+   behavior:
+   - Header
+   - List
+   - ListItem
+   - DefList
+
+
+Note: there is one very minor backwards-incompatible change. Due to
+the changes in (1) and (3), the props interface of the ListItem
+component has changed, so that it no longer requires an id prop, or
+idFor and data props. If these props are provided, they will now be
+passed on to the underlying <li> element. The previous behavior was
+incorrect, per the advice at:
+
+https://reactjs.org/docs/lists-and-keys.html#extracting-components-with-keys
+
+To upgrade, simply provide the value previously passed to the id prop
+(or the result of idFor(data)) as the key value for the ListItem
+instead, e.g.,
+
+<ListItem id="foo">...</ListItem>
+
+should become 
+
+<ListItem key="foo">...</ListItem>
+ 
+and 
+
+<ListItem idFor={someFunc} data={someObj} />
+
+should become
+
+<ListItem key={someFunc(someObj)} data={someObj} />
+
 ** 1.4.4
 
 This release changes only dependencies.  The package now depends on
