@@ -268,9 +268,13 @@ export function SubmitButton(props) {
 // props:
 //   label :: String
 //   feedback (optional) :: String, message to display below checkbox 
-//   asGroup (optional) :: Bool. If true, the checkbox and its label will be
-//     wrapped in a <div> with classes indicating they form a group;
-//     otherwise, they will be rendered as a React.Fragment
+//   inline (optional) :: Bool. If true, 'form-check-inline' will be added to
+//     the classes on the <div> surrounding the checkbox and label, allowing
+//     multiple checkboxes to appear in the same row in a form.
+//   asGroup (optional) :: Bool. If true, the checkbox and its label
+//    and feedback will be wrapped in a <div> with classes indicating
+//    they form a group; otherwise, they will be rendered as a
+//    React.Fragment. 
 //   className (optional), defaults to 'form-check-input'
 //   extras (optional), extra classes for checkbox input
 //   labelClassName (optional), defaults to 'form-check-label'
@@ -311,7 +315,7 @@ export function Checkbox(props) {
 
     return (
         <FragmentOrGroup asGroup={asGroup} className={groupClassName} extras={groupExtras}>
-          <div className="form-check">
+          <div className={classNames({"form-check": true, "form-check-inline": props.inline})}>
             <input {...rest}
                    type='checkbox'
                    id={id}
