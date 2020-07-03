@@ -156,7 +156,7 @@ function SynsetSearchForm(props) {
               {!props.advanced &&
                // when the advanced options are not enabled, we show the
                // ignore case checkbox inline in the main search form,
-               // with default classes that space it away from the subit
+               // with default classes that space it away from the submit
                // button; otherwise, we put it down in the advanced
                // options:
                <Checkbox id={`${props.id}-ignoreCase`} label="Ignore case"
@@ -193,7 +193,7 @@ function SynsetSearchForm(props) {
                  <TextInput id={`${props.id}-editDistance`} label="Edit distance"
                             name="editDistance"
                             type="number"
-                            min={0}
+                            min={0} // TODO: max??
                             defaultValue={props.params.editDistance}
                             asGroup={false}  
                             readOnly={props.params.regEx}
