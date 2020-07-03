@@ -294,7 +294,7 @@ export function SubmitButton(props) {
 //    required 
 export function Checkbox(props) {
     // remove the props that we can't send down to the <input> element:
-    const { label, feedback, asGroup,
+    const { label, feedback, asGroup, inline,
             className, extras,
             labelClassName, labelExtras,
             feedbackClassName, feedbackExtras,
