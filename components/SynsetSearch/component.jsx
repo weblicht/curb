@@ -47,6 +47,8 @@ import { connect } from 'react-redux';
 //     the user to see the results and then adjust the search to
 //     further refine them. Defaults to props.advanced, so that an
 //     advanced search form behaves this way by default.
+//   autoFocus (optional) :: Boolean: when false, the search term input
+//     will *not* be autofocused. Defaults to true if undefined.
 //   className, extras (optional): for the form element. 
 //   inputClassName, inputExtras (optional), className and extras for
 //     the text input representing the search term.
@@ -127,7 +129,7 @@ function SynsetSearchForm(props) {
                        label="Search for" labelClassName="sr-only"
                        type="search"
                        defaultValue={props.params.word}
-                       autoFocus={true}
+                       autoFocus={props.autoFocus === undefined ? true : props.autoFocus}
                        placeholder="Enter a word or Synset Id"
                        className={props.inputClassName}
                        extras={props.inputExtras}
