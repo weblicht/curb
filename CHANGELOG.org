@@ -1,5 +1,17 @@
 * 1.x
 
+** 1.4.6
+
+This release adds some small conveniences:
+
+1) The SynsetSearchForm component now accepts an =autoFocus= prop, which
+   can be used to prevent the text input in the form from stealing focus
+   from other inputs on the page.
+
+2) The Checkbox component now accepts an =inline= prop, which can be
+   used to align checkboxes horizontally in a form (even when the form
+   itself does not have the =form-inline= CSS class).
+
 ** 1.4.5
 
 This release fixes some minor warts and warnings.  The major changes are:
