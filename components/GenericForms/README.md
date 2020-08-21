@@ -179,11 +179,13 @@ to form submission and the roundtrip to the server. `ManagedForm`
 accepts these props:
 
   - `submitTo`: unlike in `Form`, where this prop can be an arbitrary
-     callback, in `ManagedForm` it *must* be a Redux thunk action
-     creator that accepts form data and returns a thunk. `ManagedForm`
-     will automatically call `dispatch` on this thunk on form
-     submission. The thunk must return the Promise associated with
-     the axios request that submits this data to the server.
+     callback, in `ManagedForm` it must be a function that accepts
+     form data, makes a request, and returns a Promise associated with
+     the request. This Promise must resolve to the server response
+     associated with the request if the request is successful, and be
+     rejected otherwise. (The simplest way to do this is to use
+     [axios](https://github.com/axios/axios) to make the request, and
+     return the Promise that axios returns. See example below.)
   - `onSuccess` (optional): a callback to be called after the form has
      been submitted successfully (i.e., the request made by `submitTo`
      completes with a 200-level response). You can use this, for
@@ -191,9 +193,7 @@ accepts these props:
      the form. The callback will be passed the same `formState` object
      as the child render function (see below), and can be used to call
      effectful code to update the user interface based on the
-     submitted form data. Like `submitTo`, the `onSuccess` callback
-     may return a thunk; if it does, `ManagedForm` will automatically
-     dispatch this thunk.
+     submitted form data. 
   - `validator` (optional): a validator function (same as for `Form`)
 
 
@@ -207,9 +207,7 @@ This function should accept the form state and return its body.
 Here is a more realistic example that demonstrates how to use `ManagedForm`:
 ```
 function updateLexUnit(formData) {
-    return function(dispatch) {
-        return axios.post('/api/lexunits', formData);
-    };
+    return axios.post('/api/lexunits', formData);
 }
 
 function LexUnitEditingForm(props) {
@@ -232,8 +230,7 @@ function LexUnitEditingForm(props) {
 Notice:
 
   - the `updateLexUnit` action creator accepts the form data, and
-    returns a thunk which returns the result of `axios.post`, which is
-    a Promise
+    returns the result of `axios.post`, which is a Promise
   - the only child of `ManagedForm` is an arrow function that maps
     `formState` to the form body
   - properties of the `formState` are used to: (a) render both

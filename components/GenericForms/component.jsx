@@ -22,7 +22,6 @@ import { Alert } from '../GenericDisplay/component';
 
 import React from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 
 // helper for constructing className prop.  The convention is:
 // props.className, if given, *replaces* the default class name;
@@ -89,11 +88,13 @@ export function Form(props) {
 }
 
 // props:
-//   submitTo: a Redux thunk action creator that accepts form data and returns the Promise
-//     associated with an axios request.
-//   onSuccess (optional): a callback to be called after the form has been submitted
-//     successfully, (i.e., the request made by submitTo completes with a 200-level
-//     response). 
+//   submitTo: a callback that accepts the form data, makes a request with
+//     the data, and returns a Promise that will resolve to the
+//     server's response if successful, or an error if the request was unsuccessful
+//     (e.g., the Promise returned by an axios request).
+//   onSuccess (optional): a callback to be called after the form has
+//     been submitted successfully, (i.e., the request made by
+//     submitTo completes with a 200-level response).
 // other props, including validator, will be passed on to <Form>.
 // children: a ManagedForm should have exactly one child, which should
 //   act as a render function: it will receive an object representing
@@ -169,7 +170,7 @@ class ManagedForm extends React.Component {
         });
         
 
-        this.props.dispatchThunk(this.props.submitTo(data))
+        this.props.submitTo(data)
             .then(response => {
                 // TODO: this is also the place to set formErrors and fieldErrors
                 // with server-side validation errors, once the backend supports it: 
@@ -177,15 +178,7 @@ class ManagedForm extends React.Component {
                                 serverResponse: response });
                  
                 if (typeof this.props.onSuccess === 'function') {
-                    const thunk = this.props.onSuccess(this.formState());
-
-                    // onSuccess might just be called for its local side effects
-                    // and return nothing useful. But users may also return a
-                    // Redux action creator so that successful submission can update
-                    // non-local UI:
-                    if (typeof thunk === 'function') {
-                        this.props.dispatchThunk(thunk);
-                    }
+                    this.props.onSuccess(this.formState());
                 }
             })
             .catch(error => this.requestErrors(error));
@@ -219,13 +212,6 @@ class ManagedForm extends React.Component {
     }
 }
 
-function managedFormDispatchToProps(dispatch) {
-    return {
-        dispatchThunk: dispatch,
-    };
-}
-
-ManagedForm = connect(undefined, managedFormDispatchToProps)(ManagedForm);
 export { ManagedForm }
 
 
