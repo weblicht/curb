@@ -15,17 +15,6 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with germanet-common.  If not, see <https://www.gnu.org/licenses/>.
 
-export * from './Compounds/component';
-export * from './ConRels/component';
 export * from './DataContainer/component';
-export * from './Frames/component';
-export * from './Graphs/component';
 export * from './GenericDisplay/component';
 export * from './GenericForms/component';
-export * from './ILIRecords/component';
-export * from './LexExamples/component';
-export * from './LexRels/component';
-export * from './LexUnits/component';
-export * from './Synsets/component';
-export * from './SynsetSearch/component';
-export * from './WiktionaryDefs/component';
