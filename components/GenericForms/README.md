@@ -233,7 +233,7 @@ Notice:
     returns the result of `axios.post`, which is a Promise
   - the only child of `ManagedForm` is an arrow function that maps
     `formState` to the form body
-  - properties of the `formState` are used to: (a) render both
+  - properties of the `formState` are used: (a) to render both
     successful submission and any errors as alerts, (b) to reset the
     form state via the Reset button, and (c) to disable the Submit
     button while the form is submitting
@@ -404,7 +404,7 @@ the new data.  That's because the user has set its `value`, and React
 will not use the newly-set `defaultValue` to overwrite the user-set
 `value` when re-rendering an uncontrolled component.
 
-The solution to this kind of problem is to set the `key` on the
+The solution to this kind of problem is to set a `key` on the
 `ManagedForm` or `Form` that changes when the data in the parent
 component changes. This forces React to create a new form, instead of
 updating the existing form. For more on this, see [this React blog
