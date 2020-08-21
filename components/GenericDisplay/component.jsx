@@ -55,6 +55,27 @@ export function Alert(props) {
 }
 
 // props:
+//   type (optional) :: String representing a (Bootstrap 4) badge class,
+//      e.g. 'primary', or 'warning', 'danger' or 'success'; defaults to 'info'
+//   text (optional) :: String, defaults to props.children
+//   className (optional), defaults to 'badge' plus the alert class
+//      determined by props.type
+//   extras (optional), extras for badge span
+export function Badge(props) {
+    const type = props.type ? 'badge-' + props.type : 'badge-info';
+
+    // type gets rolled into the className, so that props.className
+    // can override *both* badge classes:
+    const fullClassName = `badge ${type}`;
+    
+    return (
+        <span className={withDefault(fullClassName, props)}>
+          {props.text || props.children}
+        </span>
+    ); 
+}
+
+// props:
 //   title (optional) :: String
 //   level (required only if title given) :: Number, the level of the card heading 
 //   children :: used as content for body of card
