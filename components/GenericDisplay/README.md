@@ -45,9 +45,20 @@ prop
 ### Data container display components
 
 These components are intended to provide a generic interface for
-rendering data in a [data container](../DataContainer).  They make use
-of the data and control props from a data container, and pass them on
-to their children.
+rendering data in a data container (see [DataContainer in the
+germanet-common
+library](https://github.com/Germanet-sfs/germanet-common/tree/master/components/DataContainer)),
+which is just an array of data objects together with some props for
+controlling state associated with them.
+
+**Note**: For the moment, the DataContainer higher order component has
+not been moved into this library, because it introduces a dependency
+on react-redux; but this might change in the future. You can still use
+these components without DataContainer by conforming to their props
+interface. Most of the data container control props are optional until
+you want to do things that require keeping track of container state
+beyond the objects themselves, like selecting items or dynamically
+sorting tables.
 
 `DataList`: given an array of data objects and a component to render
 individual items, generate an HTML list of that data
@@ -82,11 +93,10 @@ There are a few conventions to be aware of when using these components.
 
 ### Data flow
 
-As elsewhere in this library, data to be displayed is generally passed
-as either an object or an array on the `data` prop.  In a few
-exceptional cases (e.g. `Button`, `ListItem`) it is also possible to
-pass the data as the component's children, for convenience and
-flexibility.
+Data to be displayed is generally passed as either an object or an
+array on the `data` prop. In a few exceptional cases (e.g. `Button`,
+`ListItem`) it is also possible to pass the data as the component's
+children, for convenience and flexibility.
 
 ### Styling
 
