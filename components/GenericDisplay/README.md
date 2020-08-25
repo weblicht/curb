@@ -119,6 +119,8 @@ These two props are combined via the `classNames` function from the
 valid argument for that function is a valid value for these props.
      
 On some components, there are also corresponding props to pass as
-`className` and `extras` to associated or contained components, such
-as for the label on a `Checkbox`.
+`className` and `extras` to contained components or HTML elements. For
+example, the `EmptyTable` component accepts `headClassName` and
+`headExtras` props, which are used to style the thead element inside
+the table.
    
