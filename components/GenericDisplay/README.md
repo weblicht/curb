@@ -14,6 +14,9 @@ and a useful props interface.
 `Alert`: wrap some content in a div with an appropriate Bootstrap
 alert class
 
+`Badge`: wrap some content in a span with an appropriate Bootstrap
+badge class
+
 `Card`: wrap some content in a Bootstrap card div and add a title
 
 `CardFooter`: wrap some content in a Bootstrap card footer div within
