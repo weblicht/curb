@@ -2,13 +2,15 @@
 
 ** 1.5
 
-This is actually the first release of this library. The library
-contains code split out from germanet-common 1.4.6; hence the version
-number. The generic, lower-level components have been moved out of
-germanet-common to enable them to be reused in projects that have
+This is actually the first release of this library: a Collection of
+Utilities for React and Bootstrap (curb). The library contains code
+split out from germanet-common 1.4.6; hence the version number. The
+generic, lower-level components have been moved out of germanet-common
+into this library to enable them to be reused in projects that have
 nothing to do with GermaNet.
 
-There have been a few small changes as a result of the split:
+Users coming from germanet-common should be aware that there have been
+a few small changes as a result of the split:
 
 - The props interface to the =ManagedForm= component is now slightly
   different: the =submitTo= and =onSuccess= callbacks should no longer
@@ -16,4 +18,18 @@ There have been a few small changes as a result of the split:
   callbacks are simply called directly inside =ManagedForm=. This
   keeps the library free of dependencies on Redux, redux-thunk, and
   react-redux.
-
+- The =actionTypesFromStrings= helper has been renamed to
+  =makeActionTypes=
+- There have been various documentation updates
+- There is a new =Badge= component in GenericDisplay
+  
+Users who are *not* coming from germanet-common should be aware that
+some of the generic components in this library (namely, the Data*
+components, e.g. =DataTable=) still assume the props interface that is
+used in germanet-common to render a DataContainer, although
+DataContainer component itself has not been moved into this library.
+You can use these components without a DataContainer, so long as you
+conform to this props interface; see the note about this in the
+GenericDisplay README. This situation may change in a future release,
+either by moving the DataContainer component to this library, or by
+changing the props interface of these components.
