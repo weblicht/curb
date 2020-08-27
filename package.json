@@ -1,7 +1,7 @@
 {
-  "name": "@sfstuebingen/react-utils",
+  "name": "@sfstuebingen/curb",
   "homepage": "",
-  "version": "1.4.6",
+  "version": "1.5.0",
   "description": "Common React components for SfS web UIs",
   "module": "index.js",
   "author": "Richard Lawrence",

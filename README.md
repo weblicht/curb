@@ -28,7 +28,7 @@ across the library:
 The library is available as a package on NPM in the `@sfstuebingen`
 scope.  To install the package, run
 ```
-npm install --save '@sfstuebingen/react-utils'
+npm install --save '@sfstuebingen/curb'
 ```
 in the directory containing your node_modules directory. (For internal
 projects at the SfS, this is probably `webui`.) 
@@ -58,13 +58,13 @@ which causes problems with React in particular.
 In general, you should just import the object you want using the full
 path within this package to the file where it is defined:
 ```
-import { makeByIdReducer } from '@sfstuebingen/react-utils/helpers;
+import { makeByIdReducer } from '@sfstuebingen/curb/helpers;
 ```
 
 As a shortcut, you can import any React component from the library
-from `@sfstuebingen/react-utils/components`, so you can leave off
+from `@sfstuebingen/curb/components`, so you can leave off
 the name of the directory containing the component:
 ```
-import { Button, Card } from '@sfstuebingen/react-utils/components';
+import { Button, Card } from '@sfstuebingen/curb/components';
 ```
 
