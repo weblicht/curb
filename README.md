@@ -1,10 +1,13 @@
-# React-utils
+# curb
 
 This is a Javascript library for building Web applications using React
-at the SfS. It contains generic components for rendering data into a
-concrete UI, and implements some conventions for styling those
-components. It also contains some utility functions that are useful in
-React projects.
+and Bootstrap at the SfS. It contains generic components for rendering
+data into a concrete UI, and implements some conventions for styling
+those components. It also contains some utility functions that are
+useful in React projects.
+
+"curb" stands for *c*ollection of *u*tilities for *R*eact and
+*B*ootstrap. 
 
 ## Code structure
 
