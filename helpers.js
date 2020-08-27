@@ -21,10 +21,10 @@ import { InternalError } from './errors';
 
 import SI from 'seamless-immutable';
 
-// actionTypesFromStrings :: [ String ] -> Object
+// makeActionTypes :: [ String ] -> Object
 // Given an array of strings, returns an object using those strings as field names.
 // This object can be used to represent a set of action types.
-export function actionTypesFromStrings (strs) {
+export function makeActionTypes (strs) {
     var types = {};
     strs.forEach(function(key) {
         types[key] = key;
